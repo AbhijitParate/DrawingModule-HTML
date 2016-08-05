@@ -1,0 +1,51 @@
+/*Container for the whole page*/
+.outerContainer {
+    width: 1366px;
+    height: 768px;
+    margin: 0 auto;
+}
+
+.controlsContainer {
+    width: 1366px;
+    height: 150px;
+    float: left;
+    background-color: aqua;
+    }
+
+.observationsContainer{
+    width: 100px;
+    height: 518px;
+    float: left;
+    background-color: cadetblue;
+}
+
+.editor{
+    width: 1266px;
+    height: 518px;
+    float: left;
+    /*background-color: black;*/
+}
+
+.attachmentContainer{
+    height: 30px;
+    width: 1366px;
+    background-color: royalblue;
+    clear: both;
+}
+
+.saveContainer{
+    height: 70px;
+    width: 1366px;
+    background-color: darkslategray;
+    clear: both;
+}
+
+/*This is to change the cursor while inside the canvas.*/
+.editor:hover{
+cursor: crosshair;
+}
+
+.editor:active{
+cursor: crosshair;
+}
+

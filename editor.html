@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drawing Editor</title>
+    <link rel="stylesheet" type="text/css" href="./editor.css">
+    <link rel="stylesheet" type="text/css" href="./controls.css">
+    <script type="text/javascript" src="./editor.js"></script>
+    <!--<script type="text/javascript" src="./circles.js"></script>-->
+</head>
+<body>
+    <div class="outerContainer">
+        <div class="controlsContainer">
+            <div class="controlGroup groupDraw" >
+                <h3>Draw</h3>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="erase" >Erase</button>
+                <button class="action-small" name="draw" id="pencil">Pencil</button>
+                <button class="action-small" name="draw" id="shape">Shape</button>
+                <button class="action-small" name="draw" id="select">Select</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="pen" onclick="changeMode('pen')">Pen</button>
+                <button class="action-small" name="draw" id="text">Text</button>
+            </div>
+            <div class="controlGroup groupImage" >
+                <h3>Image</h3>
+                <button class="action-small">Magnify</button>
+                <button class="action-small">Center</button>
+                <button class="action-small">Flip</button>
+                <button class="action-small">Crop</button>
+                <button class="action-small">Fit</button>
+                <button class="action-small">Rotate</button>
+            </div>
+            <div class="controlGroup groupColor" >
+                <h3>Color</h3>
+                <button style="background-color: darkgrey" class="action-large" id="black">Black</button>
+                <button style="background-color: darkgrey" class="action-small" id="red">Red</button>
+                <button style="background-color: darkgrey" class="action-small" id="green">Green</button>
+                <button style="background-color: darkgrey" class="action-small" id="blue">Blue</button>
+                <button style="background-color: darkgrey" class="action-small" id="yellow">Yellow</button>
+            </div>
+            <div class="controlGroup groupEdit" >
+                <h3>Edit</h3>
+                <button class="action-small" id="hide">Hide</button>
+                <button style="background-color: darkgrey" class="action-small" id="clear">Clear</button>
+                <button class="action-small" id="undo">Undo</button>
+                <button class="action-small" id="redo">Redo</button>
+            </div>
+            <div class="controlGroup groupUpload" >
+                <h3>Upload</h3>
+                <button class="action-small">Camera</button>
+                <button class="action-small">Template</button>
+            </div>
+            <div class="controlGroup groupAttach" >
+                <h3>Attach</h3>
+                <button class="action-small">Video</button>
+                <button class="action-small">Audio</button>
+                <button class="action-small">Note</button>
+                <button class="action-small">Image</button>
+            </div>
+            <div class="controlGroup groupPrint" >
+                <h3>Print</h3>
+                <button class="action-large">Print</button>
+            </div>
+        </div>
+        <div class="observationsContainer">
+
+        </div>
+        <div class="editor">
+            <canvas id="canvas" width="1266" height="518">
+
+            </canvas>
+        </div>
+        <div class="attachmentContainer">
+            <h3>Attachments:</h3>
+        </div>
+        <div class="saveContainer">
+            <button class="action-wide" >SAVE</button>
+            <button class="action-wide" >RESET</button>
+        </div>
+
+    </div>
+</body>
+</html>
