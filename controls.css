@@ -1,0 +1,86 @@
+.controlGroup {
+    /*width: 225px;*/
+    height: 150px;
+    float: left;
+}
+
+.controlGroup > h3 {
+    text-align: center;
+    margin: 0;
+    height: 22px;
+}
+
+.action-small {
+    width: 60px;
+    height: 60px;
+    float: left;
+    margin: 2px;
+}
+
+.action-large {
+    width: 124px;
+    height: 124px;
+    float: left;
+    margin: 2px;
+}
+
+.action-wide {
+    width: 130px;
+    height: 65px;
+    float: left;
+    margin: 2px;
+}
+
+.groupDraw{
+    width: 192px;
+    background-color: green;
+}
+
+.groupImage{
+    width: 192px;
+    background-color: lawngreen;
+}
+
+.groupColor{
+    width: 256px;
+    background-color: yellow;
+}
+
+.groupSize{
+    width: 64px;
+    background-color: gray;
+}
+
+.groupEdit{
+    width: 128px;
+    background-color: green;
+}
+
+.groupUpload{
+    width: 64px;
+    background-color: lawngreen;
+}
+
+.groupAttach{
+    width: 128px;
+    background-color: yellow;
+}
+
+.groupPrint{
+    width: 128px;
+    background-color: green;
+    float: right;
+
+}
+
+.attachmentContainer{
+    height: 30px;
+}
+
+.attachmentContainer > h3{
+
+}
+
+.saveContainer >button{
+    float: right;
+}
