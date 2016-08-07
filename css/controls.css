@@ -33,42 +33,42 @@
 
 .groupDraw{
     width: 192px;
-    background-color: green;
+    background-color: darkgray;
 }
 
 .groupImage{
     width: 192px;
-    background-color: lawngreen;
+    background-color: darkgray;
 }
 
 .groupColor{
     width: 256px;
-    background-color: yellow;
+    background-color: darkgray;
 }
 
 .groupSize{
     width: 64px;
-    background-color: gray;
+    background-color: darkgray;
 }
 
 .groupEdit{
     width: 128px;
-    background-color: green;
+    background-color: darkgray;
 }
 
 .groupUpload{
     width: 64px;
-    background-color: lawngreen;
+    background-color: darkgray;
 }
 
 .groupAttach{
     width: 128px;
-    background-color: yellow;
+    background-color: darkgray;
 }
 
 .groupPrint{
     width: 128px;
-    background-color: green;
+    background-color: darkgray;
     float: right;
 
 }
