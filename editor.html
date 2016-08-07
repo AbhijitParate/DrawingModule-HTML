@@ -5,20 +5,24 @@
     <title>Drawing Editor</title>
     <link rel="stylesheet" type="text/css" href="./editor.css">
     <link rel="stylesheet" type="text/css" href="./controls.css">
-    <script type="text/javascript" src="./editor.js"></script>
-    <!--<script type="text/javascript" src="./circles.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="literallycanvas.css" >
+    <!--<script type="text/javascript" src="./editor.js"></script>-->
+    <script type="text/javascript" src="./jquery-3.1.0.min.js"></script>
+
 </head>
 <body>
     <div class="outerContainer">
         <div class="controlsContainer">
             <div class="controlGroup groupDraw" >
+                <!--<div class="tools" >-->
                 <h3>Draw</h3>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="erase" >Erase</button>
-                <button class="action-small" name="draw" id="pencil">Pencil</button>
-                <button class="action-small" name="draw" id="shape">Shape</button>
-                <button class="action-small" name="draw" id="select">Select</button>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="pen" onclick="changeMode('pen')">Pen</button>
-                <button class="action-small" name="draw" id="text">Text</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="eraser">Erase</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="pencil">Pencil</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="shape">Shape</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="arrow">Arrow</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="line">Line</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="text">Text</button>
+                <!--</div>-->
             </div>
             <div class="controlGroup groupImage" >
                 <h3>Image</h3>
@@ -31,11 +35,18 @@
             </div>
             <div class="controlGroup groupColor" >
                 <h3>Color</h3>
-                <button style="background-color: darkgrey" class="action-large" id="black">Black</button>
-                <button style="background-color: darkgrey" class="action-small" id="red">Red</button>
-                <button style="background-color: darkgrey" class="action-small" id="green">Green</button>
-                <button style="background-color: darkgrey" class="action-small" id="blue">Blue</button>
-                <button style="background-color: darkgrey" class="action-small" id="yellow">Yellow</button>
+                <button style="background-color: darkgrey" class="action-large" id="black" >Black</button>
+                <button style="background-color: darkgrey" class="action-small" id="red" >Red</button>
+                <button style="background-color: darkgrey" class="action-small" id="green" >Green</button>
+                <button style="background-color: darkgrey" class="action-small" id="blue" >Blue</button>
+                <button style="background-color: darkgrey" class="action-small" id="yellow" >Yellow</button>
+            </div>
+            <div class="controlGroup groupSize" >
+                <h3>Size</h3>
+                <p style="float: right; margin-top: 5%; margin-right: 5%;">50</p>
+                <input type="range" name="size" title="size" id="size" min="10" max="50" step="10" value="30"
+                       style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;">
+                <p style="float: right; margin-top: 100%; margin-right: 5%;">10</p>
             </div>
             <div class="controlGroup groupEdit" >
                 <h3>Edit</h3>
@@ -64,10 +75,10 @@
         <div class="observationsContainer">
 
         </div>
-        <div class="editor">
-            <canvas id="canvas" width="1266" height="518">
-
-            </canvas>
+        <div class="editor" id="editor" >
+            <!--<canvas id="canvas" width="1266" height="518">-->
+            <div class="literally core" style="width: 1266px; height: 518px;"></div>
+            <!--</canvas>-->
         </div>
         <div class="attachmentContainer">
             <h3>Attachments:</h3>
@@ -78,5 +89,7 @@
         </div>
 
     </div>
+    <script type="text/javascript" src="./literallycanvas-core.js"></script>
+    <script type="text/javascript" src="./LitCan.js"></script>
 </body>
 </html>
