@@ -66,6 +66,11 @@
     background-color: darkgray;
 }
 
+.groupZoom{
+    width: 64px;
+    background-color: darkgray;
+}
+
 .groupPrint{
     width: 128px;
     background-color: darkgray;

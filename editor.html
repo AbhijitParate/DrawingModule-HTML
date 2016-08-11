@@ -6,27 +6,42 @@
     <link rel="stylesheet" type="text/css" href="css/editor.css">
     <link rel="stylesheet" type="text/css" href="css/controls.css">
     <link rel="stylesheet" type="text/css" href="css/literallycanvas.css" >
-    <!--<script type="text/javascript" src="./editor.js"></script>-->
-    <script type="text/javascript" src="js/jquery-3.1.0.min.js"></script>
+    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">-->
+
+    <!--jQuery-->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+
+    <!--Literally Canvas-->
+    <script type="text/javascript" src="js/literallycanvas-core.js"></script>
+
+    <!--Custom JavaScript for Drawing Module Editor-->
+    <!--<script type="text/javascript" src="js/editor.js"></script>-->
+    <!--<script type="text/javascript" src="js/drawing-module-editor.js"></script>-->
 
 </head>
 <body>
     <div class="outerContainer">
         <div class="controlsContainer">
             <div class="controlGroup groupDraw" >
-                <!--<div class="tools" >-->
                 <h3>Draw</h3>
                 <button style="background-color: darkgrey" class="action-small" name="draw" id="eraser">Erase</button>
                 <button style="background-color: darkgrey" class="action-small" name="draw" id="pencil">Pencil</button>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="shape">Shape</button>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="arrow">Arrow</button>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="line">Line</button>
+                <select class="action-small" name="draw" id="shape" title="Shapes">
+                    <option selected>Shapes</option>
+                    <option value="line" >Line</option>
+                    <option value="arrow" >Arrow</option>
+                    <option value="rectangle">Rectangle</option>
+                    <option value="circle">Circle</option>
+                    <option value="polygon">Polygon</option>
+                </select>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="select">Select</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="line"></button>
                 <button style="background-color: darkgrey" class="action-small" name="draw" id="text">Text</button>
-                <!--</div>-->
             </div>
             <div class="controlGroup groupImage" >
                 <h3>Image</h3>
-                <button class="action-small">Magnify</button>
+                <button class="action-small" id="magnify">Magnify</button>
                 <button class="action-small">Center</button>
                 <button class="action-small">Flip</button>
                 <button class="action-small">Crop</button>
@@ -67,6 +82,11 @@
                 <button class="action-small">Note</button>
                 <button class="action-small">Image</button>
             </div>
+            <div class="controlGroup groupZoom" >
+                <h3>Zoom</h3>
+                <button class="action-small" id="zoom-in">In</button>
+                <button class="action-small" id="zoom-out">Out</button>
+            </div>
             <div class="controlGroup groupPrint" >
                 <h3>Print</h3>
                 <button class="action-large">Print</button>
@@ -77,7 +97,8 @@
         </div>
         <div class="editor" id="editor" >
             <!--<canvas id="canvas" width="1266" height="518">-->
-            <div class="literally core" style="width: 1264px; height: 516px;"></div>
+            <div class="magnifying-glass"></div>
+            <div class="drawing-module-canvas" style="" id="canvas"></div>
             <!--</canvas>-->
         </div>
         <div class="attachmentContainer">
@@ -89,21 +110,32 @@
         </div>
 
     </div>
-    <script type="text/javascript" src="js/literallycanvas-core.js"></script>
-    <script type="text/javascript" src="js/LitCan.js"></script>
+
+    <script type="text/javascript" src="js/drawing-module-editor.js"></script>
 
     <div class="outerContainer">
         <h2 > Change Log</h2>
-        <h3 > Week 1: June 26</h3>
-            <p> * Added Layout: css and js files </p>
-            <p> * Added pencil, eraser, colors </p>
-        <h3 > Week 2: July 24</h3>
-            <p> * Added Arrow, Line, Shape (Rectangle) </p>
-            <p> * Added clear canvas </p>
+
+        <h3 > Week 4: August 13</h3>
+            <p> * Added jQuery and jQuery UI </p>
+            <p> * Added shapes select menu</p>
+            <p> * Disable right click context menu on canvas</p>
+            <p> * Added Zoom In and Out feature</p>
+            <p> * Added reset zoom</p>
+            <p> * Added select tool to select and move drawings.</p>
+
         <h3 > Week 3: July 31</h3>
             <p> * Added Text </p>
             <p> * Added Undo-Redo </p>
             <p> * Added size of pencil width change (buggy) </p>
+
+        <h3 > Week 2: July 24</h3>
+            <p> * Added Arrow, Line, Shape (Rectangle) </p>
+            <p> * Added clear canvas </p>
+
+        <h3 > Week 1: June 26</h3>
+            <p> * Added Layout: css and js files </p>
+            <p> * Added pencil, eraser, colors </p>
     </div>
 
 </body>

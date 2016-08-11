@@ -50,3 +50,16 @@ cursor: crosshair;
 cursor: crosshair;
 }
 
+.magnifying-glass {
+    z-index: 100;
+    position: absolute;
+    overflow: hidden;
+}
+
+.drawing-module-canvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1264px;
+    height: 516px;
+}

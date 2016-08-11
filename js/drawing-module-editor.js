@@ -1,23 +1,17 @@
-//noinspection JSUnresolvedFunction
 /**
  * Created by abhijit on 8/6/16.
  */
-// $(document).ready(function(){
-    var lc = LC.init(document.getElementsByClassName('literally core')[0]);
+$(document).ready(function(){
+    var lc = LC.init(document.getElementsByClassName('drawing-module-canvas')[0]);
+
+    $(".drawing-module-canvas").contextmenu(function (e) {
+        e.preventDefault();
+    });
+
+
 
     $("#clear").click(function() {
         lc.clear();
-    });
-
-    // var strokeSize = document.getElementById('size');
-    // strokeSize.addEventListener("input", function(){
-    //     lc.trigger('setStrokeWidth', strokeSize.value);
-    // }, false);
-
-    $("#size").on("change", function() {
-        // alert(this.value);
-        lc.trigger('setStrokeWidth', this.value);
-        // lc.trigger('setStrokeWidth', $(this).val());
     });
 
     $("#redo").click(function() {
@@ -25,6 +19,39 @@
     });
     $("#undo").click(function() {
         lc.undo();
+    });
+
+    $("#zoom-in").click(function () {
+        lc.zoom(0.1);
+    });
+    $("#zoom-out").click(function () {
+        lc.zoom(-0.1);
+    });
+
+    $("#shape").on('input', function () {
+
+        var toolName = $("#shape").val();
+        // alert(toolName);
+        if(toolName == 'line'){
+            var line = new LC.tools.Line(lc);
+            lc.setTool(line);
+        } else if(toolName == 'arrow'){
+            var arrow = new LC.tools.Line(lc);
+            arrow.hasEndArrow = true;
+            lc.setTool(arrow);
+        } else if(toolName == 'rectangle'){
+            var rectangle = new LC.tools.Rectangle(lc);
+            lc.setTool(rectangle);
+        } else if(toolName == 'circle'){
+            var circle = new LC.tools.Ellipse(lc);
+            lc.setTool(circle);
+        } else if(toolName == 'polygon'){
+            var polygon = new LC.tools.Polygon(lc);
+            lc.setTool(polygon);
+        } else {
+            var pen = new LC.tools.Pencil(lc);
+            lc.setTool(pen);
+        }
     });
 
     var tools = [
@@ -39,28 +66,9 @@
             tool: new LC.tools.Eraser(lc)
         },
         {
-            name: 'rectangle',
-            el: document.getElementById('shape'),
-            tool: new LC.tools.Rectangle(lc)
-        },
-        {
-            name: 'line',
-            el: document.getElementById('line'),
-            tool: new LC.tools.Line(lc)
-        },
-        {
             name: 'text',
             el: document.getElementById('text'),
             tool: new LC.tools.Text(lc)
-        },
-        {
-            name: 'arrow',
-            el: document.getElementById('arrow'),
-            tool: function() {
-                arrow = new LC.tools.Line(lc);
-                arrow.hasEndArrow = true;
-                return arrow;
-            }()
         },
         {
             name: 'clear',
@@ -68,12 +76,15 @@
             tool: function() {
                 lc.clear();
             }()
+        },{
+            name: 'select',
+            el: document.getElementById('select'),
+            tool: new LC.tools.SelectShape(lc)
         }
     ];
 
     var activateTool = function(t) {
         lc.setTool(t.tool);
-
         tools.forEach(function(t2) {
             if (t == t2) {
                 t2.el.style.backgroundColor = 'yellow';
@@ -91,7 +102,6 @@
         };
     });
     activateTool(tools[0]);
-
 
     var colors = [
         {
@@ -137,26 +147,10 @@
     });
     activateColors(colors[0]);
 
-/*
-    var slider = [
-        {
-            name: 'size',
-            el: document.getElementById('size'),
-            slide: $("#size").val()
-        }
-    ];
-
-    var activateSlider = function(s) {
-        lc.trigger('setStrokeWidth', s.slide);
-    };
-
-    slider.forEach(function(s) {
-        s.el.style.cursor = "pointer";
-        s.el.onclick = function(e) {
-            e.preventDefault();
-            activateSlider(s);
-        };
+    $("#size").change(function() {
+        // alert($("#size").val());
+        lc.trigger('setStrokeWidth',$("#size").val());
     });
-    activateSlider(slider[0]);
-    */
-// });
+
+
+});
