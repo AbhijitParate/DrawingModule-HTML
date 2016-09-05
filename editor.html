@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="css/editor.css">
     <link rel="stylesheet" type="text/css" href="css/controls.css">
     <link rel="stylesheet" type="text/css" href="css/literallycanvas.css" >
-    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
 
     <!--jQuery-->
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
@@ -14,10 +14,15 @@
 
     <!--Literally Canvas-->
     <script type="text/javascript" src="js/literallycanvas-core.js"></script>
+    <!--<script type="text/javascript" src="js/dropzone.js"></script>-->
+    <!--<script type="text/javascript" src="js/fileupload.js"></script>-->
+    <script type="text/javascript" src="js/webcam.js"></script>
+    <script src="https://parall.ax/parallax/js/jspdf.js"></script>
 
     <!--Custom JavaScript for Drawing Module Editor-->
     <!--<script type="text/javascript" src="js/editor.js"></script>-->
     <!--<script type="text/javascript" src="js/drawing-module-editor.js"></script>-->
+    <script type="text/javascript" src="js/drawing-module-editor.js"></script>
 
 </head>
 <body>
@@ -59,7 +64,7 @@
             <div class="controlGroup groupSize" >
                 <h3>Size</h3>
                 <p style="float: right; margin-top: 5%; margin-right: 5%;">50</p>
-                <input type="range" name="size" title="size" id="size" min="10" max="50" step="10" value="30"
+                <input type="range" name="size" title="size" id="size" min="1" max="50" step="2" value="10"
                        style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;">
                 <p style="float: right; margin-top: 100%; margin-right: 5%;">10</p>
             </div>
@@ -72,24 +77,29 @@
             </div>
             <div class="controlGroup groupUpload" >
                 <h3>Upload</h3>
-                <button class="action-small">Camera</button>
-                <button class="action-small">Template</button>
+                <button class="action-small" id="camera">Camera</button>
+                <button class="action-small" id="upload">Upload</button>
+                <input type="file" name="imagefile" id="imagefile" accept="image/*" hidden>
             </div>
             <div class="controlGroup groupAttach" >
                 <h3>Attach</h3>
-                <button class="action-small">Video</button>
-                <button class="action-small">Audio</button>
-                <button class="action-small">Note</button>
-                <button class="action-small">Image</button>
+                <button class="action-small dropzone" id="video" >Video</button>
+                <button class="action-small" id="audio" >Audio</button>
+                <button class="action-small" id="notes" >Note</button>
+                <button class="action-small" id="image" >Image</button>
             </div>
             <div class="controlGroup groupZoom" >
                 <h3>Zoom</h3>
-                <button class="action-small" id="zoom-in">In</button>
-                <button class="action-small" id="zoom-out">Out</button>
+                <!--<button class="action-small" id="zoom-in">In</button>-->
+                <!--<button class="action-small" id="zoom-out">Out</button>-->
+                <p style="float: right; margin-top: 5%; margin-right: 5%;">+1</p>
+                <input type="range" name="zoom" title="zoom" id="zoom" min="0" max="2" step="0.2" value="1"
+                       style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;">
+                <p style="float: right; margin-top: 100%; margin-right: 5%;">-1</p>
             </div>
             <div class="controlGroup groupPrint" >
                 <h3>Print</h3>
-                <button class="action-large">Print</button>
+                <button class="action-large" id="print">Print</button>
             </div>
         </div>
         <div class="observationsContainer">
@@ -101,20 +111,63 @@
             <div class="drawing-module-canvas" style="" id="canvas"></div>
             <!--</canvas>-->
         </div>
-        <div class="attachmentContainer">
+        <div class="attachmentContainer" id="attachments">
             <h3>Attachments:</h3>
+            <!--<input id="fileupload" type="file" name="files[]" multiple>-->
         </div>
         <div class="saveContainer">
-            <button class="action-wide" >SAVE</button>
-            <button class="action-wide" >RESET</button>
+            <button class="action-wide" id="save-image" >SAVE</button>
+            <button class="action-wide" id="reset">RESET</button>
         </div>
 
     </div>
 
-    <script type="text/javascript" src="js/drawing-module-editor.js"></script>
+    <div id="dialog-insert" title="Upload Image">
+        <div id="tabs">
+        <ul>
+            <li><a href="#webcam">WebCam</a></li>
+            <li><a href="#template">Templates</a></li>
+        </ul>
+
+        <div id="webcam">
+            <div id="front-cam" style="width:320px; height:240px;">
+
+            </div>
+
+            <form>
+                <input type=button id="capture" value="Take Snapshot" >
+            </form>
+
+        </div>
+
+        <div id="template">
+            <label>
+                <select size="5" style="width: 200px">
+                    <option>Template 1</option>
+                    <option>Template 2</option>
+                    <option>Template 3</option>
+                    <option>Template 4</option>
+                    <option>Template 5</option>
+                </select>
+            </label>
+            <input id="fileupload" type="file" name="files">
+        </div>
+
+        </div>
+    </div>
+
 
     <div class="outerContainer">
         <h2 > Change Log</h2>
+
+        <h3 > Week 5: August 31</h3>
+            <p> * Fixed slider to change pensize size </p>
+            <p> * Added zooming with slider </p>
+            <p> * Fixed template tab.
+                User can upload image in Template tab now. </p>
+            <p> * Capture image using webcam and export to canvas.  </p>
+            <p> * Upload user selected image to canvas. </p>
+            <p> * Print / Download canvas image as PDF </p>
 
         <h3 > Week 4: August 13</h3>
             <p> * Added jQuery and jQuery UI </p>
