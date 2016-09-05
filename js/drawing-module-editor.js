@@ -2,12 +2,90 @@
  * Created by abhijit on 8/6/16.
  */
 $(document).ready(function(){
-    var lc = LC.init(document.getElementsByClassName('drawing-module-canvas')[0]);
+
+    var lc = LC.init(document.getElementsByClassName('drawing-module-canvas')[0], {backgroundColor : '#fff'});
 
     $(".drawing-module-canvas").contextmenu(function (e) {
         e.preventDefault();
     });
 
+    $("#save-image").click(function () {
+        window.open(lc.getImage().toDataURL());
+    });
+
+    $("#camera").click(function () {
+        $("#dialog-insert").dialog( "open" );
+        Webcam.attach("#front-cam");
+    });
+
+    $("#template").click(function () {
+        Webcam.reset();
+    });
+
+    var webcamImage ;
+
+    $("#capture").click(function () {
+        Webcam.snap( function(data_uri) {
+            document.getElementById('front-cam').innerHTML = '<img src="'+data_uri+'"/>';
+            webcamImage = data_uri;
+        } );
+    });
+
+    $("#tabs").tabs({
+        select: function() {
+            alert("PRESSED TAB!");
+        }
+    });
+
+    $("#dialog-insert").dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            "OK": function() {
+                $( this ).dialog( "close" );
+                Webcam.reset();
+                var newImage = new Image();
+                newImage.src = webcamImage;
+                lc.saveShape(LC.createShape('Image', {x: 10, y: 10, image: newImage}));
+            },
+            "Cancel": function() {
+                $( this ).dialog( "close" );
+                Webcam.reset();
+            }
+        }
+    });
+
+    $("#print").click(function () {
+        var imgData = lc.getImage().toDataURL("image/jpeg");
+        var pdf = new jsPDF('landscape');
+        pdf.addImage( imgData, 'JPEG', 0, 0);
+        pdf.save("download.pdf");
+    });
+
+    $("#upload").click(function () {
+        $("#imagefile").click();
+    });
+
+
+    $("#imagefile").change(function () {
+
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                // $('#blah').attr('src', e.target.result);
+                var newImage = new Image();
+                newImage.src = e.target.result;
+                lc.saveShape(LC.createShape('Image', {x: 10, y: 10, image: newImage}));
+            };
+
+            reader.readAsDataURL(this.files[0]);
+        }
+
+    });
 
 
     $("#clear").click(function() {
@@ -19,13 +97,6 @@ $(document).ready(function(){
     });
     $("#undo").click(function() {
         lc.undo();
-    });
-
-    $("#zoom-in").click(function () {
-        lc.zoom(0.1);
-    });
-    $("#zoom-out").click(function () {
-        lc.zoom(-0.1);
     });
 
     $("#shape").on('input', function () {
@@ -145,12 +216,25 @@ $(document).ready(function(){
             activateColors(t);
         };
     });
+
     activateColors(colors[0]);
 
-    $("#size").change(function() {
-        // alert($("#size").val());
-        lc.trigger('setStrokeWidth',$("#size").val());
+    $("#size").change(function(e) {
+        lc.trigger('setStrokeWidth', parseInt($(e.currentTarget).val(), 10));
+        // parseInt($(e.currentTarget).val(), 10);
     });
+
+    var oldZoom = 0;
+
+    $("#zoom").change(function (e) {
+
+        lc.zoom(-1 * oldZoom);
+
+        lc.zoom(($(e.currentTarget).val() - 1));
+
+        oldZoom = $(e.currentTarget).val();
+    });
+    
 
 
 });
