@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="css/controls.css">
     <link rel="stylesheet" type="text/css" href="css/literallycanvas.css" >
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
 
     <!--jQuery-->
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
@@ -18,6 +19,8 @@
     <!--<script type="text/javascript" src="js/fileupload.js"></script>-->
     <script type="text/javascript" src="js/webcam.js"></script>
     <script src="https://parall.ax/parallax/js/jspdf.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
+
 
     <!--Custom JavaScript for Drawing Module Editor-->
     <!--<script type="text/javascript" src="js/editor.js"></script>-->
@@ -30,8 +33,8 @@
         <div class="controlsContainer">
             <div class="controlGroup groupDraw" >
                 <h3>Draw</h3>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="eraser">Erase</button>
                 <button style="background-color: darkgrey" class="action-small" name="draw" id="pencil">Pencil</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="eraser">Erase</button>
                 <select class="action-small" name="draw" id="shape" title="Shapes">
                     <option selected>Shapes</option>
                     <option value="line" >Line</option>
@@ -41,8 +44,8 @@
                     <option value="polygon">Polygon</option>
                 </select>
                 <button style="background-color: darkgrey" class="action-small" name="draw" id="select">Select</button>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="line"></button>
                 <button style="background-color: darkgrey" class="action-small" name="draw" id="text">Text</button>
+                <button style="background-color: darkgrey" class="action-small" name="draw" id="line"></button>
             </div>
             <div class="controlGroup groupImage" >
                 <h3>Image</h3>
@@ -55,11 +58,11 @@
             </div>
             <div class="controlGroup groupColor" >
                 <h3>Color</h3>
-                <button style="background-color: darkgrey" class="action-large" id="black" >Black</button>
-                <button style="background-color: darkgrey" class="action-small" id="red" >Red</button>
-                <button style="background-color: darkgrey" class="action-small" id="green" >Green</button>
-                <button style="background-color: darkgrey" class="action-small" id="blue" >Blue</button>
-                <button style="background-color: darkgrey" class="action-small" id="yellow" >Yellow</button>
+                <button class="action-large" id="colorpicker" >Color Pallet</button>
+                <button class="action-small" id="red" >Red</button>
+                <button class="action-small" id="green" >Green</button>
+                <button class="action-small" id="blue" >Blue</button>
+                <button class="action-small" id="yellow" >Yellow</button>
             </div>
             <div class="controlGroup groupSize" >
                 <h3>Size</h3>
@@ -93,7 +96,7 @@
                 <!--<button class="action-small" id="zoom-in">In</button>-->
                 <!--<button class="action-small" id="zoom-out">Out</button>-->
                 <p style="float: right; margin-top: 5%; margin-right: 5%;">+1</p>
-                <input type="range" name="zoom" title="zoom" id="zoom" min="0" max="2" step="0.2" value="1"
+                <input type="range" name="zoom" title="zoom" id="zoom" min="1" max="4" step="0.5" value="2"
                        style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;">
                 <p style="float: right; margin-top: 100%; margin-right: 5%;">-1</p>
             </div>
@@ -122,36 +125,34 @@
 
     </div>
 
-    <div id="dialog-insert" title="Upload Image">
-        <div id="tabs">
-        <ul>
-            <li><a href="#webcam">WebCam</a></li>
-            <li><a href="#template">Templates</a></li>
-        </ul>
+    <div id="dialog-upload" title="Upload Image">
+        <div id="template">
+            <div id="controls" style="float: left">
+            <label>
+                <select id="template-select" size="6" style="width: 200px">
+                    <option value="template-1">Template 1</option>
+                    <option value="template-2">Template 2</option>
+                    <option value="template-3">Template 3</option>
+                    <option value="template-4">Template 4</option>
+                    <option value="template-5">Template 5</option>
+                </select>
+            </label>
+            <input id="fileupload" type="file" name="files" style="display: -webkit-box;">
+            </div>
+            <div id="preview" style="display: -webkit-box;">
+                <img id="preview-image" src="images/no-preview.jpg" style="width: auto; height: 400px;">
+            </div>
+        </div>
+    </div>
 
+    <div id="dialog-webcam" title="Capture Image">
         <div id="webcam">
             <div id="front-cam" style="width:320px; height:240px;">
 
             </div>
-
             <form>
                 <input type=button id="capture" value="Take Snapshot" >
             </form>
-
-        </div>
-
-        <div id="template">
-            <label>
-                <select size="5" style="width: 200px">
-                    <option>Template 1</option>
-                    <option>Template 2</option>
-                    <option>Template 3</option>
-                    <option>Template 4</option>
-                    <option>Template 5</option>
-                </select>
-            </label>
-            <input id="fileupload" type="file" name="files">
-        </div>
 
         </div>
     </div>
@@ -160,16 +161,24 @@
     <div class="outerContainer">
         <h2 > Change Log</h2>
 
-        <h3 > Week 5: August 31</h3>
-            <p> * Fixed slider to change pensize size </p>
+        <h3 > Update 6 : September 17 </h3>
+            <p> * Added Color pallet</p>
+            <p> * Added user defined image upload dialog </p>
+            <p> * Added preview of selected image </p>
+            <p> * Added sample templates for demo purpose </p>
+            <p> * Preview of user selected image from device </p>
+            <p> * Fixed Zoom and Stroke-size slider </p>
+
+        <h3 > Update 5: August 31</h3>
+            <p> * Fixed slider to change pen stroke size </p>
             <p> * Added zooming with slider </p>
             <p> * Fixed template tab.
                 User can upload image in Template tab now. </p>
-            <p> * Capture image using webcam and export to canvas.  </p>
+            <p> * Capture image using web-cam and export to canvas.  </p>
             <p> * Upload user selected image to canvas. </p>
             <p> * Print / Download canvas image as PDF </p>
 
-        <h3 > Week 4: August 13</h3>
+        <h3 > Update 4: August 13</h3>
             <p> * Added jQuery and jQuery UI </p>
             <p> * Added shapes select menu</p>
             <p> * Disable right click context menu on canvas</p>
@@ -177,16 +186,16 @@
             <p> * Added reset zoom</p>
             <p> * Added select tool to select and move drawings.</p>
 
-        <h3 > Week 3: July 31</h3>
+        <h3 > Update 3: July 31</h3>
             <p> * Added Text </p>
             <p> * Added Undo-Redo </p>
             <p> * Added size of pencil width change (buggy) </p>
 
-        <h3 > Week 2: July 24</h3>
+        <h3 > Update 2: July 24</h3>
             <p> * Added Arrow, Line, Shape (Rectangle) </p>
             <p> * Added clear canvas </p>
 
-        <h3 > Week 1: June 26</h3>
+        <h3 > Update 1: June 26</h3>
             <p> * Added Layout: css and js files </p>
             <p> * Added pencil, eraser, colors </p>
     </div>

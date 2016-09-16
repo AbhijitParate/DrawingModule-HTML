@@ -9,5 +9,6 @@
     <orderEntry type="library" name="jquery-3.1.0" level="application" />
     <orderEntry type="library" name="jquery-ui" level="application" />
     <orderEntry type="library" name="jspdf" level="application" />
+    <orderEntry type="library" name="spectrum" level="application" />
   </component>
 </module>
