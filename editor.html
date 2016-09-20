@@ -66,10 +66,10 @@
             </div>
             <div class="controlGroup groupSize" >
                 <h3>Size</h3>
-                <p style="float: right; margin-top: 5%; margin-right: 5%;">50</p>
-                <input type="range" name="size" title="size" id="size" min="1" max="50" step="2" value="10"
+                <p style="float: right; margin-top: 5%; margin-right: 5%;">30</p>
+                <input type="range" name="size" title="size" id="size" min="1" max="30" step="3" value="5"
                        style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;">
-                <p style="float: right; margin-top: 100%; margin-right: 5%;">10</p>
+                <p style="float: right; margin-top: 100%; margin-right: 5%;">1</p>
             </div>
             <div class="controlGroup groupEdit" >
                 <h3>Edit</h3>
@@ -86,19 +86,19 @@
             </div>
             <div class="controlGroup groupAttach" >
                 <h3>Attach</h3>
-                <button class="action-small dropzone" id="video" >Video</button>
-                <button class="action-small" id="audio" >Audio</button>
-                <button class="action-small" id="notes" >Note</button>
-                <button class="action-small" id="image" >Image</button>
+                <button class="action-small" id="attachVideo" >Video</button>
+                <button class="action-small" id="attachAudio" >Audio</button>
+                <button class="action-small" id="attachNote"  >Note</button>
+                <button class="action-small" id="attachImage" >Image</button>
             </div>
             <div class="controlGroup groupZoom" >
                 <h3>Zoom</h3>
                 <!--<button class="action-small" id="zoom-in">In</button>-->
                 <!--<button class="action-small" id="zoom-out">Out</button>-->
-                <p style="float: right; margin-top: 5%; margin-right: 5%;">+1</p>
+                <p style="float: right; margin-top: 5%; margin-right: 5%;">200%</p>
                 <input type="range" name="zoom" title="zoom" id="zoom" min="1" max="4" step="0.5" value="2"
                        style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;">
-                <p style="float: right; margin-top: 100%; margin-right: 5%;">-1</p>
+                <p style="float: right; margin-top: 70%; margin-right: 5%;">50%</p>
             </div>
             <div class="controlGroup groupPrint" >
                 <h3>Print</h3>
@@ -114,15 +114,15 @@
             <div class="drawing-module-canvas" style="" id="canvas"></div>
             <!--</canvas>-->
         </div>
-        <div class="attachmentContainer" id="attachments">
-            <h3>Attachments:</h3>
-            <!--<input id="fileupload" type="file" name="files[]" multiple>-->
+        <div class="attachmentContainer">
+            <h3 style="display:inline;">Attachments:</h3>
+            <button id="showAttachments" style="display:inline;"> Show attachments</button>
+            <input id="attachmentInput" type="file" name="files[]" multiple hidden>
         </div>
         <div class="saveContainer">
             <button class="action-wide" id="save-image" >SAVE</button>
             <button class="action-wide" id="reset">RESET</button>
         </div>
-
     </div>
 
     <div id="dialog-upload" title="Upload Image">
@@ -153,13 +153,29 @@
             <form>
                 <input type=button id="capture" value="Take Snapshot" >
             </form>
+        </div>
+    </div>
 
+    <div id="dialog-attachment" title="Attachments">
+        <div id="attachments-list" style="float: left; overflow-y:auto; height: 100%; width: 40%">
+
+        </div>
+        <div id="attachment-preview" style="display: -webkit-box;" >
+            <img id="preview-attachment" src="images/no-preview.jpg" style="width: auto; height: 400px">
         </div>
     </div>
 
 
     <div class="outerContainer">
         <h2 > Change Log</h2>
+
+        <h3 > Update 7 : September 20 </h3>
+            <p> * Modified size and zoom scale</p>
+            <p> * Added attachments action for Video, Audio, Notes and Image buttons.</p>
+            <p> * Added dialog to show selected attachments. </p>
+            <p> * Attachments can be removed on click onf cross image next to the attachment name. </p>
+            <p> * Added attach more files from attachments dialog. </p>
+            <p> * Added preview of attached image files in the attachments dialog. </p>
 
         <h3 > Update 6 : September 17 </h3>
             <p> * Added Color pallet</p>

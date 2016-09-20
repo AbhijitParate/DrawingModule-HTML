@@ -63,3 +63,10 @@ cursor: crosshair;
     width: 1264px;
     height: 516px;
 }
+
+.attachmentButton{
+    height: 12px;
+    width: 12px;
+    background: url('./../images/remove.png') 10px 10px no-repeat;
+    background-size: 100%;'
+}

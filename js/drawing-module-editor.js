@@ -5,6 +5,9 @@ $(document).ready(function(){
 
     var lc = LC.init(document.getElementsByClassName('drawing-module-canvas')[0], {backgroundColor : '#fff'});
 
+    $("body").on("click", ".attachmentFileRemove", removeFile);
+    $("body").on("click", ".attachmentFilePreview", previewAttachment);
+
     // This is to disable right click on canvas
     $(".drawing-module-canvas").contextmenu(function (e) {
         e.preventDefault();
@@ -15,30 +18,120 @@ $(document).ready(function(){
         window.open(lc.getImage().toDataURL());
     });
 
-
-
-
-    // $("#template").click(function () {
-    //     Webcam.reset();
-    // });
-
-
     var uploadImage = new Image() ;
+    var attachedImage = new Image() ;
 
     $("#capture").click(function () {
         Webcam.snap( function(data_uri) {
             document.getElementById('front-cam').innerHTML = '<img src="'+data_uri+'"/>';
             uploadImage = data_uri;
-        } );
+        });
+    });
+
+    // Image button click
+    $("#attachImage").click(function () {
+        $("#attachmentInput").click();
+    });
+
+    // Video button click
+    $("#attachVideo").click(function () {
+        $("#attachmentInput").click();
+    });
+
+    // Audio button click
+    $("#attachAudio").click(function () {
+        $("#attachmentInput").click();
+    });
+
+    // Note button click
+    $("#attachNote").click(function () {
+        $("#attachmentInput").click();
+    });
+
+    var attachments = [];
+
+    function removeFile() {
+        var file = $(this).data("file");
+        console.info(file +" removed.");
+        for(var i=0;i<attachments.length;i++) {
+            if(attachments[i].name === file) {
+                attachments.splice(i,1);
+                break;
+            }
+        }
+        // alert(file.name +" removed.");
+        $(this).parent().remove();
+    }
+
+    function previewAttachment() {
+        var file = $(this).data("file");
+        console.info(file + " clicked.");
+
+        for(var i=0;i<attachments.length;i++) {
+            if(attachments[i].name === file) {
+                var reader = new FileReader();
+                reader.onload = (function(e) {
+                    attachedImage = e.target.result;
+                });
+                reader.readAsDataURL(attachments[i]);
+            }
+        }
+        $("#preview-attachment").attr('src',attachedImage);
+    }
+
+    $("#attachmentInput").on("change", function (e) {
+
+        var files = e.target.files;
+        var filesArr = Array.prototype.slice.call(files);
+        var selDiv = $("#attachments-list");
+
+        filesArr.forEach(function(f) {
+
+            // if(!f.type.match("image.*")||!f.type.match("audio.*")||!f.type.match("video.*")||!f.type.match("text.*")) {
+            if(!f.type.match("image.*")) {
+                return;
+            }
+
+            attachments.push(f);
+
+            // alert("File selected->" + f.name);
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                // selDiv.append(f.name + " | ");
+
+
+                selDiv.append(
+                "<div id='attachmentBlock'>"
+                    + "<img src='./images/remove1.png' class='attachmentFileRemove' data-file='"+ f.name + "' height='12px' width='12px' />"
+                    + "<a class='attachmentFilePreview' data-file='" + f.name + "'>"+ f.name +"</a><br/>"
+                +"</div>" )
+            };
+            reader.readAsDataURL(f);
+        });
     });
 
 
 
-    // $("#tabs").tabs({
-    //     select: function() {
-    //         alert("PRESSED TAB!");
-    //     }
-    // });
+    $("#dialog-attachment").dialog({
+        resizable: false,
+        height: "auto",
+        width: "auto",
+        close: function () {
+        },
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            "Add more attachments": function() {
+                $("#attachmentInput").click();
+            },
+            "OK": function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    });
+
 
     // creates dialog on click of webcam button
     $("#dialog-webcam").dialog({
@@ -151,6 +244,10 @@ $(document).ready(function(){
 
     $("#upload").click(function () {
         $("#dialog-upload").dialog( "open" );
+    });
+
+    $("#showAttachments").click(function () {
+        $("#dialog-attachment").dialog( "open" );
     });
 
 
