@@ -3,10 +3,19 @@
  */
 $(document).ready(function(){
 
-    var lc = LC.init(document.getElementsByClassName('drawing-module-canvas')[0], {backgroundColor : '#fff'});
+    var lc = LC.init(document.getElementsByClassName('drawing-module-canvas')[0], {backgroundColor : '#fff', keyboardShortcuts : true});
 
     $("body").on("click", ".attachmentFileRemove", removeFile);
     $("body").on("click", ".attachmentFilePreview", previewAttachment);
+
+    $("#test-shapes").click(function (e) {
+        console.info(lc.shapes);
+    });
+
+    $("#test-selected-shape").click(function (e) {
+        console.info();
+    });
+
 
     // This is to disable right click on canvas
     $(".drawing-module-canvas").contextmenu(function (e) {
@@ -59,7 +68,6 @@ $(document).ready(function(){
                 break;
             }
         }
-        // alert(file.name +" removed.");
         $(this).parent().remove();
     }
 
@@ -186,7 +194,7 @@ $(document).ready(function(){
         modal: true,
         autoOpen: false,
         buttons: {
-            "OK": function() {
+            "Use selected image": function() {
                 $( this ).dialog( "close" );
                 var newImage = new Image();
                 newImage.src = uploadImage;
@@ -226,7 +234,20 @@ $(document).ready(function(){
 
 
     $("#template-select").change(function () {
-        $("#preview-image").attr('src',"images/templates/"+$(this).val()+".jpg");
+        var imagePath = "./images/templates/"+ $(this).val() + ".jpg";
+        console.info(imagePath);
+        $("#preview-image").attr('src',imagePath);
+
+        var blob = null;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", imagePath);
+        xhr.responseType = "blob";
+        xhr.onload = function()
+        {
+            blob = xhr.response;
+            uploadImage = URL.createObjectURL(this.response);
+        };
+        xhr.send();
     });
 
     $("#print").click(function () {
