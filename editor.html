@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Drawing Editor</title>
+
+    <!--CSS-->
     <link rel="stylesheet" type="text/css" href="css/editor.css">
     <link rel="stylesheet" type="text/css" href="css/controls.css">
     <link rel="stylesheet" type="text/css" href="css/literallycanvas.css" >
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
+
+    <!--VideoJS CSS-->
+    <link href="//vjs.zencdn.net/5.8/video-js.min.css" rel="stylesheet">
+    <link href="./css/videojs.record.css" rel="stylesheet">
 
     <!--jQuery-->
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
@@ -22,9 +28,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
 
 
+    <!--Video Recording-->
+    <script src="//vjs.zencdn.net/5.8/video.min.js"></script>
+    <script src="https://cdn.WebRTC-Experiment.com/RecordRTC.js"></script>
+    <script src="./js/videojs.record.js"></script>
+    <script src="./js/wavesurfer.js"> </script>
+
+    <!--Audio Recording-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.1.2/plugin/wavesurfer.microphone.min.js"></script>
+    <script src="//collab-project.github.io/videojs-wavesurfer/dist/videojs.wavesurfer.min.js"></script>
+
     <!--Custom JavaScript for Drawing Module Editor-->
-    <!--<script type="text/javascript" src="js/editor.js"></script>-->
-    <!--<script type="text/javascript" src="js/drawing-module-editor.js"></script>-->
     <script type="text/javascript" src="js/drawing-module-editor.js"></script>
 
 </head>
@@ -33,9 +48,9 @@
         <div class="controlsContainer">
             <div class="controlGroup groupDraw" >
                 <h3>Draw</h3>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="pencil">Pencil</button>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="eraser">Erase</button>
-                <select class="action-small" name="draw" id="shape" title="Shapes">
+                <button class="action-small" name="draw" id="pencil" title="pencil tool to draw on below canvas with default color(black).">Pencil</button>
+                <button class="action-small" name="draw" id="eraser" title="eraser tool to erase contents on below canvas.">Erase</button>
+                <select class="action-small" name="draw" id="shape"  title="Select different shapes to draw on canvas.">
                     <option selected>Shapes</option>
                     <option value="line" >Line</option>
                     <option value="arrow" >Arrow</option>
@@ -43,9 +58,9 @@
                     <option value="circle">Circle</option>
                     <option value="polygon">Polygon</option>
                 </select>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="select">Select</button>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="text">Text</button>
-                <button style="background-color: darkgrey" class="action-small" name="draw" id="test">TEST</button>
+                <button class="action-small" name="draw" id="select" title="Select a shape. Selected shape can be moved across canvas.">Select</button>
+                <button class="action-small" name="draw" id="text" title="Add text to canvas for annotation">Text</button>
+                <button class="action-small" name="draw" id="test" title="Not available to use">TEST</button>
             </div>
             <div class="controlGroup groupImage" >
                 <h3>Image</h3>
@@ -73,54 +88,54 @@
             </div>
             <div class="controlGroup groupEdit" >
                 <h3>Edit</h3>
-                <button class="action-small" id="hide">Hide</button>
-                <button style="background-color: darkgrey" class="action-small" id="clear">Clear</button>
-                <button class="action-small" id="undo">Undo</button>
-                <button class="action-small" id="redo">Redo</button>
+                <button class="action-small" id="hide" title="Not available">Hide</button>
+                <button class="action-small" id="clear" title="Clear all contents from canvas">Clear</button>
+                <button class="action-small" id="undo" title="Undo previous action">Undo</button>
+                <button class="action-small" id="redo" title="Redo previously undone action">Redo</button>
             </div>
             <div class="controlGroup groupUpload" >
                 <h3>Upload</h3>
-                <button class="action-small" id="camera">Camera</button>
-                <button class="action-small" id="upload">Upload</button>
+                <button class="action-small" id="camera" title="Capture image using web-cam.">Camera</button>
+                <button class="action-small" id="upload" title="Upload image template or local file system.">Upload</button>
                 <input type="file" name="imagefile" id="imagefile" accept="image/*" hidden>
             </div>
             <div class="controlGroup groupAttach" >
                 <h3>Attach</h3>
-                <button class="action-small" id="attachVideo" >Video</button>
-                <button class="action-small" id="attachAudio" >Audio</button>
-                <button class="action-small" id="attachNote"  >Note</button>
-                <button class="action-small" id="attachImage" >Image</button>
+                <button class="action-small" id="attachVideo" title="Select local video or capture new video and add to attachments.">Video</button>
+
+                <button class="action-small" id="attachAudio" title="Select local audio or capture new audio and add to attachments.">Audio</button>
+                <input id="attachmentAudio" type="file" name="audios[]" accept="audio/*" hidden>
+                <button class="action-small" id="attachNote" title="Select local image or capture new image and add to attachments.">Note</button>
+                <input id="attachmentNotes" type="file" name="images[]" accept="text/plain"  hidden>
+                <button class="action-small" id="attachImage" title="Select local note/text file or create new note and add to attachments.">Image</button>
+                <input id="attachmentImage" type="file" name="notes[]" accept="image/*" hidden>
             </div>
             <div class="controlGroup groupZoom" >
                 <h3>Zoom</h3>
-                <!--<button class="action-small" id="zoom-in">In</button>-->
-                <!--<button class="action-small" id="zoom-out">Out</button>-->
                 <p style="float: right; margin-top: 5%; margin-right: 5%;">200%</p>
-                <input type="range" name="zoom" title="zoom" id="zoom" min="1" max="4" step="0.5" value="2"
-                       style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;">
+                <input type="range" name="zoom" id="zoom" min="1" max="4" step="0.5" value="2" style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;" title="Zoom in and out into canvas.">
                 <p style="float: right; margin-top: 70%; margin-right: 5%;">50%</p>
             </div>
             <div class="controlGroup groupPrint" >
                 <h3>Print</h3>
-                <button class="action-large" id="print">Print</button>
+                <button class="action-large" id="print" title="Print the contents of canvas as PDF document.">Print</button>
             </div>
         </div>
         <div class="observationsContainer">
 
         </div>
         <div class="editor" id="editor" >
-            <!--<canvas id="canvas" width="1266" height="518">-->
-            <div class="magnifying-glass"></div>
+            <!--<div class="magnifying-glass"></div>-->
             <div class="drawing-module-canvas" style="" id="canvas"></div>
-            <!--</canvas>-->
         </div>
         <div class="attachmentContainer">
             <h3 style="display:inline;">Attachments:</h3>
-            <button id="showAttachments" style="display:inline;"> Show attachments</button>
+            <button id="showAttachments" style="display:inline;" title="Shows dialog with list of attachments and their preview"> Show attachments</button>
+            <!--todo: Add list of show attachments with preview, try below input for now to assign the files. but its better to use a customized data structure for the purpose-->
             <input id="attachmentInput" type="file" name="files[]" multiple hidden>
         </div>
         <div class="saveContainer">
-            <button class="action-wide" id="save-image" >SAVE</button>
+            <button class="action-wide" id="save-image" title="Print the contents of canvas as JPEG image." >SAVE</button>
             <button class="action-wide" id="reset">RESET</button>
         </div>
     </div>
@@ -157,14 +172,72 @@
     </div>
 
     <div id="dialog-attachment" title="Attachments">
-        <div id="attachments-list" style="float: left; overflow-y:auto; height: 100%; width: 40%">
+        <div id="attachments-list" style="float: left; overflow-y:auto;">
 
         </div>
-        <div id="attachment-preview" style="display: -webkit-box;" >
-            <img id="preview-attachment" src="images/no-preview.jpg" style="width: auto; height: 400px">
+        <div id="attachment-preview" style="display: flex;" >
+            <img id="preview-attachment" src="images/no-preview.jpg" style="width: 400px; height: 300px">
         </div>
     </div>
 
+    <div id="dialog-attach-video" title="Video">
+        <div id="video-selection" style="float: left;">
+            <input id="attachmentVideo" type="file" name="videos[]" accept="video/mp4,video/x-m4v,video/*" hidden>
+            <button id="upload-video" class="uploadCaptureButton" > Upload </button>
+            <button id="capture-video" class="uploadCaptureButton" > Capture </button>
+        </div>
+        <div id="attachment-preview-video" style="display: flex;" >
+            <span style="width: 400px; height: 300px">
+                <!--To capture new video using VideoJS-->
+                <video id="capture-video-preview" class="video-js vjs-default-skin previewWindow"> </video>
+                <!--To play selected video using upload button-->
+                <video id="uploaded-video-preview" class="video-js vjs-default-skin previewWindow" controls autoplay>
+                    <source id="uploaded-video-source" src="">
+                </video>
+            </span>
+        </div>
+    </div>
+
+    <div id="dialog-attach-audio" title="Audio">
+        <div id="audio-selection" style="float: left;">
+            <button id="upload-audio" value="hide" class="uploadCaptureButton" > Upload </button>
+            <button id="capture-audio"  value="show" class="uploadCaptureButton" > Capture </button>
+        </div>
+        <div id="attachment-preview-audio" style="display: flex;" >
+            <span style="width: 400px; height: 300px">
+                <!--To capture new audio using VideoJS-->
+                <audio id="capture-audio-preview" class="video-js vjs-default-skin previewWindow"> </audio>
+                <!--To play selected audio using upload button-->
+                <audio id="uploaded-audio-preview" class="video-js vjs-default-skin previewWindow" controls autoplay>
+                    <source id="uploaded-audio-source" src="">
+                </audio>
+            </span>
+        </div>
+    </div>
+
+    <div id="dialog-attach-image" title="Image">
+        <div id="image-selection" style="float: left;" >
+            <button id="upload-image" value="hide" class="uploadCaptureButton" > Upload </button>
+            <button id="capture-image"  value="show" class="uploadCaptureButton" > Capture </button>
+        </div>
+        <div id="attachment-preview-image" style="display: flex;" >
+            <!--To capture new image using VideoJS-->
+            <video id="capture-image-preview" class="video-js vjs-default-skin previewWindow"> </video>
+            <!--To play selected image using upload button-->
+            <img id="uploaded-image-preview" class="previewWindow" src="images/no-preview.jpg">
+        </div>
+    </div>
+
+    <div id="dialog-attach-note" title="Notes">
+        <div id="note-selection" style="float: left;" >
+            <button id="upload-note" value="hide" class="uploadCaptureButton" > Upload </button>
+            <button id="capture-note"  value="show" class="uploadCaptureButton" > New Note </button>
+        </div>
+        <div id="attachment-preview-note" style="display: -webkit-box;" >
+            <textarea id="note-preview" class="previewWindow" title="Preview Text"> </textarea>
+            <!--todo: Add rich text editor-->
+        </div>
+    </div>
 
     <!--<div>-->
         <!--<button id="test-shapes"> Shapes </button>-->
@@ -174,6 +247,11 @@
 
     <div class="outerContainer">
         <h2 > Change Log</h2>
+
+        <h3> Update 8 : September 27</h3>
+            <p> * Added Video, Audio, Image and Notes upload with preview</p>
+            <p> * Added tooltips</p>
+            <p> * Refactored code</p>
 
         <h3 > Update 7.1 : September 21 </h3>
             <p> * Fixed image upload from templates </p>

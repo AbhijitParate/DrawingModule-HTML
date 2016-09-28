@@ -70,3 +70,12 @@ cursor: crosshair;
     background: url('./../images/remove.png') 10px 10px no-repeat;
     background-size: 100%;'
 }
+
+.uploadCaptureButton{
+    width: 150px; height: 40px; margin: 25px; float: left; clear: left;
+}
+
+.previewWindow {
+    width: 400px;
+    height: 300px;
+}

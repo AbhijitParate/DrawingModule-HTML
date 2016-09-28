@@ -11,5 +11,10 @@
     <orderEntry type="library" name="jspdf" level="application" />
     <orderEntry type="library" name="spectrum" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="video" level="application" />
+    <orderEntry type="library" name="RecordRTC" level="application" />
+    <orderEntry type="library" name="wavesurfer" level="application" />
+    <orderEntry type="library" name="videojs.wavesurfer" level="application" />
+    <orderEntry type="library" name="wavesurfer.microphone" level="application" />
   </component>
 </module>

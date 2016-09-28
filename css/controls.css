@@ -33,7 +33,7 @@
 
 .groupDraw{
     width: 192px;
-    background-color: darkgray;
+    /*background-color: darkgray;*/
 }
 
 .groupImage{
@@ -43,7 +43,7 @@
 
 .groupColor{
     width: 256px;
-    /*background-color: darkgray;*/
+    background-color: darkgray;
 }
 
 .groupSize{
@@ -53,7 +53,7 @@
 
 .groupEdit{
     width: 128px;
-    background-color: darkgray;
+    /*background-color: darkgray;*/
 }
 
 .groupUpload{
@@ -88,4 +88,17 @@
 
 .saveContainer >button{
     float: right;
+}
+
+/* place fullscreen control on right side of the player */
+.video-js .vjs-control.vjs-fullscreen-control {
+    position: absolute;
+    right: 0;
+}
+
+/* make sure the custom controls are always visible because
+   the plugin hides and replace the video.js native mobile
+   controls */
+.vjs-using-native-controls .vjs-control-bar {
+    display: flex !important;
 }
