@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
 
     <!--VideoJS CSS-->
-    <link href="//vjs.zencdn.net/5.8/video-js.min.css" rel="stylesheet">
+    <link href="//vjs.zencdn.net/5.9.2/video-js.min.css" rel="stylesheet">
     <link href="./css/videojs.record.css" rel="stylesheet">
 
     <!--jQuery-->
@@ -29,15 +29,19 @@
 
 
     <!--Video Recording-->
-    <script src="//vjs.zencdn.net/5.8/video.min.js"></script>
-    <script src="https://cdn.WebRTC-Experiment.com/RecordRTC.js"></script>
-    <script src="./js/videojs.record.js"></script>
+    <script src="//vjs.zencdn.net/5.9.2/video.min.js"></script>
+    <script src="https://webrtcexperiment-webrtc.netdna-ssl.com/RecordRTC.js"></script>
+    <!--<script src="./js/videojs.record.js"></script>-->
+    <script src="https://collab-project.github.io/videojs-record/dist/videojs.record.min.js"></script>
     <script src="./js/wavesurfer.js"> </script>
 
     <!--Audio Recording-->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.1.2/plugin/wavesurfer.microphone.min.js"></script>
-    <script src="//collab-project.github.io/videojs-wavesurfer/dist/videojs.wavesurfer.min.js"></script>
+    <script src="https://collab-project.github.io/videojs-wavesurfer/dist/wavesurfer.min.js"></script>
+    <script src="https://collab-project.github.io/videojs-wavesurfer/dist/wavesurfer.microphone.min.js"></script>
+    <script src="https://collab-project.github.io/videojs-wavesurfer/dist/videojs.wavesurfer.min.js"></script>
+
+    <!--BlobUtil-->
+    <script src="//wzrd.in/standalone/blob-util@latest"></script>
 
     <!--Custom JavaScript for Drawing Module Editor-->
     <script type="text/javascript" src="js/drawing-module-editor.js"></script>
@@ -131,7 +135,6 @@
         <div class="attachmentContainer">
             <h3 style="display:inline;">Attachments:</h3>
             <button id="showAttachments" style="display:inline;" title="Shows dialog with list of attachments and their preview"> Show attachments</button>
-            <!--todo: Add list of show attachments with preview, try below input for now to assign the files. but its better to use a customized data structure for the purpose-->
             <input id="attachmentInput" type="file" name="files[]" multiple hidden>
         </div>
         <div class="saveContainer">
@@ -172,11 +175,23 @@
     </div>
 
     <div id="dialog-attachment" title="Attachments">
-        <div id="attachments-list" style="float: left; overflow-y:auto;">
+        <div id="attachments" style="float: left; overflow-y:auto; width: 200px;">
+
+            <div id="attachments-empty" >
+                <p style="text-align: center; vertical-align: middle; line-height: 100%;" > No attachments </p>
+            </div>
+
+            <div id="attachments-not-empty" >
+                <ul id="attachments-list" style="padding: 0;">
+
+                </ul>
+            </div>
 
         </div>
-        <div id="attachment-preview" style="display: flex;" >
-            <img id="preview-attachment" src="images/no-preview.jpg" style="width: 400px; height: 300px">
+        <div id="attachment-preview-container" style="display: flex; border-left: solid 1px;" >
+            <span id="attachment-preview" style="width: 400px; height: 300px; align-items: center; justify-content: center; display: inline-flex">
+                <p> Click item for preview </p>
+            </span>
         </div>
     </div>
 
@@ -249,8 +264,8 @@
         <h2 > Change Log</h2>
 
         <h3> Update 8 : September 27</h3>
-            <p> * Added Video, Audio, Image and Notes upload with preview</p>
-            <p> * Added tooltips</p>
+            <p> * Added Video, Audio, Image and Notes upload as attachment with preview </p>
+            <p> * Added tooltips </p>
             <p> * Refactored code</p>
 
         <h3 > Update 7.1 : September 21 </h3>

@@ -79,3 +79,8 @@ cursor: crosshair;
     width: 400px;
     height: 300px;
 }
+
+.attachmentFilePreview{
+    margin-left: 5px;
+    font-size: medium;
+}
