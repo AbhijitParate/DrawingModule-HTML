@@ -16,5 +16,6 @@
     <orderEntry type="library" name="wavesurfer" level="application" />
     <orderEntry type="library" name="videojs.wavesurfer" level="application" />
     <orderEntry type="library" name="wavesurfer.microphone" level="application" />
+    <orderEntry type="library" name="videojs.record" level="application" />
   </component>
 </module>

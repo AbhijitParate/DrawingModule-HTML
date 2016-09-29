@@ -5,7 +5,14 @@ $(document).ready(function(){
 
     var uploadImage = new Image();
     var attachedImage = new Image();
+    var attachmentId = 0;
 
+    function Attachment(name, type, data) {
+        this.id = attachmentId++;
+        this.name = name;
+        this.type = type;
+        this.data = data;
+    }
 
     // Attachments related
     var attachmentImage;
@@ -64,16 +71,15 @@ $(document).ready(function(){
 
     // Attachment->Audio button click
     $("#attachAudio").click(function () {
-        // $("#attachmentInput").click();
         $("#dialog-attach-audio").dialog("open");
     });
 
     // Attachment->Note button click
     $("#attachNote").click(function () {
-        // $("#attachmentInput").click();
         $("#dialog-attach-note").dialog("open");
     });
 
+    // Attachment Video dialog -> Upload Button
     $("#upload-video").click(function () {
         $("#attachment-preview-video").hide();
         $("#capture-video-preview").show();
@@ -82,9 +88,9 @@ $(document).ready(function(){
         videoPlayer.recorder.reset();
 
         $("#attachmentVideo").click();
-
     });
 
+    // Attachment Audio dialog -> Upload Button
     $("#upload-audio").click(function () {
         $("#attachment-preview-audio").hide();
         $("#capture-audio-preview").show();
@@ -95,6 +101,7 @@ $(document).ready(function(){
         $("#attachmentAudio").click();
     });
 
+    // Attachment Image dialog -> Upload Button
     $("#upload-image").click(function () {
         $("#attachment-preview-image").hide();
         $("#capture-image-preview").show();
@@ -104,50 +111,43 @@ $(document).ready(function(){
         $("#attachmentImage").click();
     });
 
+    // Attachment Image dialog -> Upload Button
     $("#upload-note").click(function () {
         $("#attachment-preview-note").hide();
         $("#note-preview").hide();
         $("#attachmentNotes").click();
     });
 
-
+    // Attachment Video dialog -> Capture Button
     $("#capture-video").click(function () {
         $("#attachment-preview-video").show();
         $("#capture-video-preview").show();
         $("#uploaded-video-preview").hide();
         $("#uploaded-video-preview").get(0).pause();
-        attachmentVideo = null;
     });
 
+    // Attachment Audio dialog -> Capture Button
     $("#capture-audio").click(function () {
         $("#attachment-preview-audio").show();
         $("#capture-audio-preview").show();
         $("#uploaded-audio-preview").hide();
         $("#uploaded-audio-preview").get(0).pause();
-        attachmentAudio = null;
     });
 
+    // Attachment Image dialog -> Capture Button
     $("#capture-image").click(function () {
         $("#attachment-preview-image").show();
         $("#capture-image-preview").show();
         $("#uploaded-image-preview").hide();
-        attachmentAudio = null;
     });
 
-    $("#capture-image").click(function () {
-        $("#attachment-preview-note").show();
-        $("#note-preview").show();
-
-        attachmentNotes = null;
-    });
-
+    // Attachment Notes dialog -> New Note Button
     $("#capture-note").click(function () {
         $("#attachment-preview-note").show();
-        $("#note-preview").show();
-        $("#note-preview").attr("enable", "enable");
-        $("#note-preview").val("");
-
-        attachmentNotes = null;
+        var preview =  $("#note-preview");
+        preview.show();
+        preview.attr("enable", "enable");
+        preview.val("");
     });
 
     var videoPlayer
@@ -166,21 +166,19 @@ $(document).ready(function(){
             }
         });
 
-    videoPlayer.on('startRecord', function()
-    {
+    videoPlayer.on('startRecord', function() {
         console.log('started recording!');
-        attachmentVideo = null;
     });
 
-    videoPlayer.on('finishRecord', function()
-    {
+    videoPlayer.on('finishRecord', function() {
         // the blob object contains the image data that
         // can be downloaded by the user, stored on server etc.
         console.log('snapshot ready: ', videoPlayer.recordedData);
-        attachmentVideo = videoPlayer.recordedData;
+        attachmentVideo = new Attachment("video_"+getTimeStamp()+".webm", "video", videoPlayer.recordedData.video );
     });
 
-    var audioPlayer = videojs("capture-audio-preview",
+    var audioPlayer =
+        videojs("capture-audio-preview",
         {
             controls: true,
             width: 400,
@@ -203,21 +201,19 @@ $(document).ready(function(){
             }
         });
 
-    audioPlayer.on('startRecord', function()
-    {
+    audioPlayer.on('startRecord', function() {
         console.log('started recording!');
-        attachmentAudio = null;
     });
 
-    audioPlayer.on('finishRecord', function()
-    {
+    audioPlayer.on('finishRecord', function() {
         // the blob object contains the image data that
         // can be downloaded by the user, stored on server etc.
-        console.log('snapshot ready: ', audioPlayer.recordedData);
-        attachmentVideo = audioPlayer.recordedData;
+        // console.log('snapshot ready: ', audioPlayer.recordedData);
+        attachmentAudio = new Attachment("audio_"+getTimeStamp()+".wav", "audio", audioPlayer.recordedData );
     });
 
-    var imagePlayer = videojs("capture-image-preview",
+    var imagePlayer =
+        videojs("capture-image-preview",
         {
             controls: true,
             width: 400,
@@ -234,143 +230,208 @@ $(document).ready(function(){
             }
         });
 
-    imagePlayer.on('startRecord', function()
-    {
+    imagePlayer.on('startRecord', function() {
         console.log('started recording!');
-        attachmentVideo = null;
     });
 
-    imagePlayer.on('finishRecord', function()
-    {
+    imagePlayer.on('finishRecord', function() {
         // the blob object contains the image data that
         // can be downloaded by the user, stored on server etc.
-        console.log('snapshot ready: ', imagePlayer.recordedData);
-        attachmentImage = imagePlayer.recordedData;
+        // console.log('snapshot ready: ', imagePlayer.recordedData);
+        attachmentImage = new Attachment("image_"+getTimeStamp()+".png", "image", imagePlayer.recordedData );
     });
+
+    var currentPreviewFile;
 
     function removeFile() {
         var file = $(this).data("file");
         console.info(file + " removed.");
         for (var i = 0; i < attachments.length; i++) {
-            if (attachments[i].name === file) {
+            if (attachments[i].id === file) {
                 attachments.splice(i, 1);
                 break;
             }
         }
         $(this).parent().remove();
+
+        if(currentPreviewFile == file){
+            var preview = $("#attachment-preview");
+            preview.empty();
+            preview.append(
+                '<p> Click item for preview </p>'
+            );
+        }
+
+        if(attachments.length == 0){
+            $("#attachment-preview").hide();
+            $("#attachments-not-empty").hide();
+            $("#attachments-empty").show();
+        }
     }
 
     function previewAttachment() {
-        var file = $(this).data("file");
-        console.info(file.name + " clicked.");
+        var id = $(this).data("file");
+        currentPreviewFile = id;
+        console.info(id + " clicked.");
 
-        for (var i = 0; i < attachments.length; i++) {
-            if (attachments[i].name === file) {
-                var reader = new FileReader();
-                reader.onload = (function (e) {
-                    attachedImage = e.target.result;
-                });
-                reader.readAsDataURL(attachments[i]);
+        var preview = $("#attachment-preview");
+
+        for (var i = 0, attachment; i < attachments.length; i++) {
+            attachment = attachments[i];
+            if (attachment.id === id) {
+                console.info(attachment.type);
+                switch (attachment.type){
+                    case "image":
+                        console.info("Image file");
+                        preview.empty();
+                        preview.append(
+                            '<img class="previewWindow" src='+ attachment.data +'>'
+                        );
+                        break;
+                    case "video":
+                        console.info("Video file");
+                        preview.empty();
+                        if(attachment.data instanceof Blob) {
+                            var videoReader = new FileReader();
+                            videoReader.onloadend = (function (e) {
+                                preview.append(
+                                      '<video class="video-js vjs-default-skin previewWindow" controls autoplay>'
+                                    +   '<source src=' + e.target.result + '>'
+                                    + '</video>');
+                            });
+                            videoReader.readAsDataURL(attachment.data);
+                        } else {
+                            preview.append(
+                                  '<video class="video-js vjs-default-skin previewWindow" controls autoplay>'
+                                +   '<source src=' + attachment.data + '>'
+                                + '</video>'
+                            );
+                        }
+
+                        console.info("Video data-> "+attachment.data);
+                        break;
+                    case "audio":
+                        console.info("Audio file");
+                        preview.empty();
+                        if(attachment.data instanceof Blob){
+                            var audioReader = new FileReader();
+                            audioReader.onloadend = (function (e) {
+                                preview.append(
+                                    '<audio class="video-js vjs-default-skin previewWindow" controls autoplay>' +
+                                        '<source src='+ e.target.result +'>' +
+                                    '</audio>'
+                                );
+                            });
+                            audioReader.readAsDataURL(attachment.data);
+                        } else {
+                            preview.append(
+                                '<audio class="video-js vjs-default-skin previewWindow" controls autoplay>' +
+                                '<source src='+ attachment.data +'>' +
+                                '</audio>'
+                            );
+                        }
+
+                        console.info("Audio data-> "+attachment.data);
+                        break;
+                    case "note":
+                        console.info("Text file");
+                        var fileReader = new FileReader();
+                        fileReader.onloadend = (function (e) {
+                            preview.empty();
+                            preview.append(
+                                '<textarea class="previewWindow" title="Preview Text" disabled>' +
+                                    e.target.result +
+                                '</textarea>'
+                            );
+                        });
+                        fileReader.readAsText(attachment.data);
+
+                        break;
+                }
             }
         }
-        $("#preview-attachment").attr('src', attachedImage);
     }
 
-    // Attachments list with preview
-    $("#attachmentInput").on("change", function (e) {
+    function generateAttachmentsList() {
 
-        var files = e.target.files;
-        var filesArr = Array.prototype.slice.call(files);
-        var selDiv = $("#attachments-list");
+        console.info("Total attachments->" + attachments.length + " files");
+        console.info("Attachments->" + attachments);
 
-        for (var i = 0, f; f = files[i]; i++) {
+        if(attachments.length != 0){
+            $("#attachments-empty").hide();
+            $("#attachment-preview").show();
+            $("#attachments-not-empty").show();
 
-            // if(!f.type.match("image.*")||!f.type.match("audio.*")||!f.type.match("video.*")||!f.type.match("text.*")) {
-            // if(!f.type.match("image.*")) {
-            //     continue;
-            // }
+            var listContainer = $("#attachments-list");
 
-            attachments.push(f);
+            listContainer.empty();
 
-            // alert("File selected->" + f.name);
+            for (var i = 0; i < attachments.length; i++) {
+                var a = attachments[i];
 
-            var reader = new FileReader();
+                console.info("Attachment " + a.id + "-> Name: " + a.name + " | Type: " + a.type);
 
-            reader.onload = function (file) {
-                // selDiv.append(f.name + " | ");
-                selDiv.append(
-                    "<div id='attachmentBlock'>"
-                    + "<img src='./images/remove1.png' class='attachmentFileRemove' data-file='" + file.name + "' height='12px' width='12px' />"
-                    + "<a class='attachmentFilePreview' data-file='" + file.name + "'>" + file.name + "</a><br/>"
-                    + "</div>")
-            };
-
-            reader.readAsDataURL(f);
+                listContainer.append(
+                    "<div id='attachmentBlock' style='margin: 5px'>"
+                    + "<img src='./images/remove1.png' class='attachmentFileRemove' data-file='" + a.id + "' height='12px' width='12px' />"
+                    + "<a class='attachmentFilePreview' data-file='" + a.id + "'>" + a.name + "</a>"
+                    + "</div>"
+                );
+            }
+        } else {
+            $("#attachment-preview").hide();
+            $("#attachments-not-empty").hide();
+            $("#attachments-empty").show();
         }
 
-        // for (var i = 0, f; f = files[i]; i++) {
-        //     if (!f.type.match('image.*')) {
-        //         continue;
-        //     }
-        //
-        //     var reader = new FileReader();
-        //
-        //     reader.onload = (function(theFile) {
-        //         return function(e) {
-        //             var div = document.createElement('div');
-        //             div.innerHTML =
-        //                 ['<img src="./images/remove1.png" class="attachmentFileRemove" data-file="', + theFile.name + '" height="12px" width="12px" />',
-        //                     '<a class="attachmentFilePreview" data-file="', e.target.result, '" height="12px" width="12px" />' ].join('');
-        //             document.getElementById('attachments-list').insertBefore(div, null);
-        //         };
-        //     })(f);
-        //
-        //     // Read in the image file as a data URL.
-        //     reader.readAsDataURL(f);
-        //
-        // }
-    });
+    }
 
     $("#attachmentVideo").on("change", function (e) {
 
-        attachmentVideo = e.target.files[0];
-        console.info("Video selected ->" + attachmentVideo.name);
+        var video = e.target.files[0];
+        console.info("Video selected ->" + video.name);
 
         var reader = new FileReader();
 
-        reader.onload = (function (video) {
-            var previewVideo = video.target.result;
+        reader.onload = (function (e) {
+            var previewVideo = e.target.result;
             $("#attachment-preview-video").show();
             $("#capture-video-preview").hide();
             $("#uploaded-video-preview").show();
             $("#uploaded-video-preview").attr('src', previewVideo);
             $("#uploaded-video-preview").get(0).play();
+
+            attachmentVideo = new Attachment(video.name, "video", previewVideo );
+
+            console.info("new attachment created->" + attachmentVideo);
         });
-        reader.readAsDataURL(attachmentVideo);
+        reader.readAsDataURL(video);
     });
 
     $("#attachmentAudio").on("change", function (e) {
 
-        attachmentAudio = e.target.files[0];
-        console.info("Audio selected ->" + attachmentAudio.name);
+        var audio = e.target.files[0];
+        console.info("Audio selected ->" + audio.name);
 
         var reader = new FileReader();
 
-        reader.onload = (function (audio) {
-            var previewAudio = audio.target.result;
+        reader.onload = (function (e) {
+            var previewAudio = e.target.result;
             $("#attachment-preview-audio").show();
             $("#capture-audio-preview").hide();
             $("#uploaded-audio-preview").show();
             $("#uploaded-audio-preview").attr('src', previewAudio);
             $("#uploaded-audio-preview").get(0).play();
+
+            attachmentAudio = new Attachment(audio.name, "audio", previewAudio );
         });
-        reader.readAsDataURL(attachmentAudio);
+        reader.readAsDataURL(audio);
     });
 
     $("#attachmentImage").on("change", function (e) {
 
-        attachmentImage = e.target.files[0];
-        console.info("Image selected ->" + attachmentImage.name);
+        var image = e.target.files[0];
+        console.info("Image selected ->" + image.name);
 
         var reader = new FileReader();
         reader.onload = (function (e) {
@@ -379,8 +440,10 @@ $(document).ready(function(){
             $("#capture-image-preview").hide();
             $("#uploaded-image-preview").show();
             $("#uploaded-image-preview").attr('src', previewImage);
+
+            attachmentImage = new Attachment(image.name, "image", previewImage );
         });
-        reader.readAsDataURL(attachmentImage);
+        reader.readAsDataURL(image);
 
         $("#attachment-preview-image").show();
 
@@ -388,8 +451,8 @@ $(document).ready(function(){
 
     $("#attachmentNotes").on("change", function (e) {
 
-        attachmentNotes = e.target.files[0];
-        console.info("Note selected ->" + attachmentNotes.name);
+        var note = e.target.files[0];
+        console.info("Note selected ->" + note.name);
 
         var reader = new FileReader();
 
@@ -400,7 +463,7 @@ $(document).ready(function(){
             // $("#note-preview").attr("disabled", "disabled");
             $("#note-preview").val(previewNote);
         });
-        reader.readAsText(attachmentNotes);
+        reader.readAsText(note);
     });
 
     // Dialog
@@ -428,33 +491,14 @@ $(document).ready(function(){
         }
     });
 
-    function generateAttachmentsList() {
-
-        console.info("Total attachments->" + attachments.length + " files");
-        var selDiv = $("#attachments-list");
-
-        for (var i = 0; i < attachments.length; i++) {
-            var f = attachments[i];
-            if (!f.type.match("image.*") || !f.type.match("audio.*") || !f.type.match("video.*") || !f.type.match("text.*")) {
-                // if(!f.type.match("image.*")) {
-                continue;
-            }
-
-            // alert("File selected->" + f.name);
-
-            var reader = new FileReader();
-
-            reader.onload = function (file) {
-                // selDiv.append(f.name + " | ");
-                selDiv.append(
-                    "<div id='attachmentBlock'>"
-                    + "<img src='./images/remove1.png' class='attachmentFileRemove' data-file='" + file.name + "' height='12px' width='12px' />"
-                    + "<a class='attachmentFilePreview' data-file='" + file.name + "'>" + file.name + "</a>"
-                    + "</div>")
-            };
-
-            reader.readAsDataURL(f);
-        }
+    function getTimeStamp() {
+        var currentDate = new Date();
+        return currentDate.getDate() + "-"
+            + (currentDate.getMonth()+1)  + "-"
+            + currentDate.getFullYear() + "."
+            + currentDate.getHours() + ":"
+            + currentDate.getMinutes() + ":"
+            + currentDate.getSeconds();
     }
 
     // Dialog
@@ -478,16 +522,13 @@ $(document).ready(function(){
         buttons: {
             "Cancel": function () {
                 $(this).dialog("close");
-                // $("#uploaded-video-preview").get(0).pause();
                 videoPlayer.recorder.reset();
                 attachmentVideo = null;
             },
             "Attach": function () {
-                $(this).dialog("close");
+                console.info( "Attaching -> " + attachmentVideo);
                 attachments.push(attachmentVideo);
-                // $("#uploaded-video-preview").get(0).pause();
-                // attachmentVideo = videoPlayer.recordedData;
-                videoPlayer.recorder.reset();
+                $(this).dialog("close");
             }
         },
         height: "auto",
@@ -507,7 +548,7 @@ $(document).ready(function(){
         },
         close: function () {
             console.info("Audio dialog closed");
-            // audioPlayer.recorder.stopDevice();
+            $("#uploaded-audio-preview").get(0).pause();
             audioPlayer.recorder.reset();
             attachmentAudio = null;
         },
@@ -516,13 +557,11 @@ $(document).ready(function(){
         buttons: {
             "Cancel": function () {
                 $(this).dialog("close");
-                audioPlayer.recorder.reset();
-                attachmentVideo = null;
             },
             "Attach": function () {
-                $(this).dialog("close");
-                audioPlayer.recorder.reset();
+                console.info( "Attaching -> " + attachmentAudio);
                 attachments.push(attachmentAudio);
+                $(this).dialog("close");
             }
         },
         height: "auto",
@@ -556,10 +595,10 @@ $(document).ready(function(){
                 attachmentImage = null;
             },
             "Attach": function () {
-                $(this).dialog("close");
-                // $("#uploaded-image-preview").get(0).pause();
+                console.info( "Attaching -> " + attachmentImage);
                 imagePlayer.recorder.reset();
                 attachments.push(attachmentImage);
+                $(this).dialog("close");
             }
         }
     });
@@ -575,9 +614,11 @@ $(document).ready(function(){
             console.info("Notes dialog opened");
             $("#attachment-preview-note").hide();
             $("#note-preview").val("");
+            attachmentNotes = null;
         },
         close: function () {
             console.info("Notes dialog closed");
+            attachmentNotes = null;
         },
         modal: true,
         autoOpen: false,
@@ -586,10 +627,12 @@ $(document).ready(function(){
                 $(this).dialog("close");
             },
             "Attach": function () {
-                $(this).dialog("close");
                 var textToWrite = $("#note-preview").val();
                 var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
-                attachments.push(textFileAsBlob);
+                attachmentNotes = new Attachment(getTimeStamp()+".txt", "note", textFileAsBlob );
+                console.info( "Attaching -> " + attachmentNotes);
+                attachments.push(attachmentNotes);
+                $(this).dialog("close");
             }
         }
     });
@@ -651,6 +694,7 @@ $(document).ready(function(){
                 var newImage = new Image();
                 newImage.src = uploadImage;
                 lc.saveShape(LC.createShape('Image', {x: 10, y: 10, image: newImage}));
+                lc.setTool(select);
             },
             "Cancel": function () {
                 $(this).dialog("close");
@@ -719,9 +763,9 @@ $(document).ready(function(){
 
     // Button
     // Show list of attachments on click
-    // $("#showAttachments").click(function () {
-    //     $("#dialog-attachment").dialog("open");
-    // });
+    $("#showAttachments").click(function () {
+        $("#dialog-attachment").dialog("open");
+    });
 
     $("#clear").click(function () {
         lc.clear();
@@ -771,7 +815,6 @@ $(document).ready(function(){
     });
 
     $("#select").on('click', function () {
-        var select = new LC.tools.SelectShape(lc);
         lc.setTool(select);
     });
 
