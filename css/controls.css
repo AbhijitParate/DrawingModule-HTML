@@ -75,7 +75,10 @@
     width: 128px;
     background-color: darkgray;
     float: right;
+}
 
+.disabled {
+    background-color: #ff625e;
 }
 
 .attachmentContainer{
