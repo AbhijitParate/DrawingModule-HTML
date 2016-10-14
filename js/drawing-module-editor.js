@@ -23,11 +23,13 @@ $(document).ready(function(){
 
     var lc = LC.init(document.getElementsByClassName('drawing-module-canvas')[0], {
         backgroundColor: '#fff',
-        keyboardShortcuts: false
+        keyboardShortcuts: true
     });
 
     // Tools
     var select = new LC.tools.SelectShape(lc);
+
+    lc.setColor('secondary', 'transparent');
 
     $("body").on("click", ".attachmentFileRemove", removeFile);
     $("body").on("click", ".attachmentFilePreview", previewAttachment);
