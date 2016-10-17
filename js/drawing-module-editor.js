@@ -19,6 +19,7 @@ $(document).ready(function(){
     var attachmentVideo;
     var attachmentAudio;
     var attachmentNotes;
+    var attachmentFiles;
     var attachments = [];
 
     var lc = LC.init(document.getElementsByClassName('drawing-module-canvas')[0], {
@@ -79,6 +80,11 @@ $(document).ready(function(){
     // Attachment->Note button click
     $("#attachNote").click(function () {
         $("#dialog-attach-note").dialog("open");
+    });
+
+    // Attachment->Note button click
+    $("#attachFile").click(function () {
+        $("#attachmentFiles").click();
     });
 
     // Attachment Video dialog -> Upload Button
@@ -347,8 +353,17 @@ $(document).ready(function(){
                             );
                         });
                         fileReader.readAsText(attachment.data);
-
                         break;
+                    default:
+                        console.info("File attachment");
+                        preview.empty();
+                        preview.append(
+                            '<div class="previewWindow" title="Preview Text" >' +
+                                '<p style="text-align: center;">' + attachment.name + '</p>' +
+                                '<p style="text-align: center;">No preview available.</p>' +
+                            '</div>');
+                        break;
+
                 }
             }
         }
@@ -466,6 +481,21 @@ $(document).ready(function(){
             $("#note-preview").val(previewNote);
         });
         reader.readAsText(note);
+    });
+
+    $("#attachmentFiles").on("change", function (e) {
+
+        var file = e.target.files[0];
+        console.info("File selected ->" + file.name);
+
+        var reader = new FileReader();
+
+        reader.onload = (function (e) {
+            var previewFile = e.target.result;
+            var attachmentNewFile = new Attachment(file.name, "file", previewFile );
+            attachments.push(attachmentNewFile);
+        });
+        reader.readAsText(file);
     });
 
     // Dialog

@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="css/literallycanvas.css" >
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/skin/blue.monday/css/jplayer.blue.monday.css">
 
     <!--VideoJS CSS-->
     <link href="//vjs.zencdn.net/5.9.2/video-js.min.css" rel="stylesheet">
@@ -43,6 +44,9 @@
     <!--BlobUtil-->
     <script src="//wzrd.in/standalone/blob-util@latest"></script>
 
+    <!--jPlayer-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/jplayer/jquery.jplayer.min.js"></script>
+
     <!--Custom JavaScript for Drawing Module Editor-->
     <script type="text/javascript" src="js/drawing-module-editor.js"></script>
 
@@ -66,14 +70,12 @@
                 <button class="action-small" name="draw" id="text" title="Add text to canvas for annotation">Text</button>
                 <button class="action-small disabled" name="draw" id="test" title="Not available to use">TEST</button>
             </div>
-            <div class="controlGroup groupImage" >
-                <h3>Image</h3>
-                <button class="action-small disabled" id="magnify">Magnify</button>
-                <button class="action-small disabled">Center</button>
-                <button class="action-small disabled">Flip</button>
-                <button class="action-small disabled">Crop</button>
-                <button class="action-small disabled">Fit</button>
-                <button class="action-small disabled">Rotate</button>
+            <div class="controlGroup groupSize" >
+                <h3>Size</h3>
+                <p style="float: right; margin-top: 5%; margin-right: 5%;">30</p>
+                <input type="range" name="size" title="size" id="size" min="1" max="30" step="3" value="5"
+                       style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;">
+                <p style="float: right; margin-top: 100%; margin-right: 5%;">1</p>
             </div>
             <div class="controlGroup groupColor" >
                 <h3>Color</h3>
@@ -83,12 +85,14 @@
                 <button class="action-small" id="blue" >Blue</button>
                 <button class="action-small" id="yellow" >Yellow</button>
             </div>
-            <div class="controlGroup groupSize" >
-                <h3>Size</h3>
-                <p style="float: right; margin-top: 5%; margin-right: 5%;">30</p>
-                <input type="range" name="size" title="size" id="size" min="1" max="30" step="3" value="5"
-                       style="-webkit-appearance: slider-vertical; width: 50%; height: 80% ; float: left;">
-                <p style="float: right; margin-top: 100%; margin-right: 5%;">1</p>
+            <div class="controlGroup groupImage" >
+                <h3>Image</h3>
+                <button class="action-small disabled" id="magnify">Magnify</button>
+                <button class="action-small disabled">Center</button>
+                <button class="action-small disabled">Flip</button>
+                <button class="action-small disabled">Crop</button>
+                <button class="action-small disabled">Fit</button>
+                <button class="action-small disabled">Rotate</button>
             </div>
             <div class="controlGroup groupEdit" >
                 <h3>Edit</h3>
@@ -106,13 +110,10 @@
             <div class="controlGroup groupAttach" >
                 <h3>Attach</h3>
                 <button class="action-small" id="attachVideo" title="Select local video or capture new video and add to attachments.">Video</button>
-
                 <button class="action-small" id="attachAudio" title="Select local audio or capture new audio and add to attachments.">Audio</button>
-                <input id="attachmentAudio" type="file" name="audios[]" accept="audio/*" hidden>
+                <button class="action-small disabled" id="attachFile" title="Select local any file and add to attachments.">File</button>
                 <button class="action-small" id="attachNote" title="Select local image or capture new image and add to attachments.">Note</button>
-                <input id="attachmentNotes" type="file" name="images[]" accept="text/plain"  hidden>
                 <button class="action-small" id="attachImage" title="Select local note/text file or create new note and add to attachments.">Image</button>
-                <input id="attachmentImage" type="file" name="notes[]" accept="image/*" hidden>
             </div>
             <div class="controlGroup groupZoom" >
                 <h3>Zoom</h3>
@@ -203,19 +204,23 @@
             <button id="capture-video" class="uploadCaptureButton" > Capture </button>
         </div>
         <div id="attachment-preview-video" style="display: flex;" >
-            <span style="width: 400px; height: 300px">
+            <!--<span style="width: 400px; height: 300px">-->
                 <!--To capture new video using VideoJS-->
-                <video id="capture-video-preview" class="video-js vjs-default-skin previewWindow"> </video>
+                <!--<video id="capture-video-preview" class="video-js vjs-default-skin previewWindow"> </video>-->
+                <div id="capture-video-preview" class="previewWindow">
+
+                </div>
                 <!--To play selected video using upload button-->
                 <video id="uploaded-video-preview" class="video-js vjs-default-skin previewWindow" controls autoplay>
                     <source id="uploaded-video-source" src="">
                 </video>
-            </span>
+            <!--</span>-->
         </div>
     </div>
 
     <div id="dialog-attach-audio" title="Audio">
         <div id="audio-selection" style="float: left;">
+            <input id="attachmentAudio" type="file" name="audios[]" accept="audio/*" hidden>
             <button id="upload-audio" value="hide" class="uploadCaptureButton" > Upload </button>
             <button id="capture-audio"  value="show" class="uploadCaptureButton" > Capture </button>
         </div>
@@ -233,6 +238,7 @@
 
     <div id="dialog-attach-image" title="Image">
         <div id="image-selection" style="float: left;" >
+            <input id="attachmentImage" type="file" name="images[]" accept="image/*" hidden>
             <button id="upload-image" value="hide" class="uploadCaptureButton" > Upload </button>
             <button id="capture-image"  value="show" class="uploadCaptureButton" > Capture </button>
         </div>
@@ -246,12 +252,19 @@
 
     <div id="dialog-attach-note" title="Notes">
         <div id="note-selection" style="float: left;" >
+            <input id="attachmentNotes" type="file" name="notes[]" accept="text/plain"  hidden>
             <button id="upload-note" value="hide" class="uploadCaptureButton" > Upload </button>
             <button id="capture-note"  value="show" class="uploadCaptureButton" > New Note </button>
         </div>
         <div id="attachment-preview-note" style="display: -webkit-box;" >
             <textarea id="note-preview" class="previewWindow" title="Preview Text"> </textarea>
             <!--todo: Add rich text editor-->
+        </div>
+    </div>
+
+    <div id="dialog-attach-file" title="Files">
+        <div id="file-selection" style="float: left;" >
+            <input id="attachmentFiles" type="file" name="files[]" accept="*/*"  hidden>
         </div>
     </div>
 
@@ -263,6 +276,10 @@
 
     <div class="outerContainer">
         <h2 > Change Log</h2>
+        <h3> Update 9 : October 15</h3>
+            <p> * Fixed fill color for shapes. </p>
+            <p> * Rearranged menu buttons. </p>
+            <p> * Added file upload option. </p>
 
         <h3> Update 8 : September 27</h3>
             <p> * Added Video, Audio, Image and Notes upload as attachment with preview </p>
