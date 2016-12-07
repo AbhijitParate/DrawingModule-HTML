@@ -1,190 +1,590 @@
-/**
- * Created by Abhijit on 6/15/16.
+
+/*
+ * Created by abhijit on 12/7/16.
  */
 
+$(document).ready(function() {
 
+    const ERASE = "erase", DRAW = "draw";
 
+    // let FILL_COLOR, BACK_COLOR, STROKE_COLOR;
+    let DRAW_MODE;
 
-(function($) {
+    var UNDO_STACK = [], REDO_STACK = [], CURRENT_STATE;
 
-    // Invoke function once the document is fully loaded
-    window.addEventListener('load', init, false);
+    const canvas = window._canvas = new fabric.Canvas('canvas', {
+        selection: true,
+        background: 'grey'
+    });
 
-    function init() {
-        var canvas = document.getElementById('canvas');
-        var context = canvas.getContext('2d');
+    canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), 1.0);
 
-        // flag for mouse down or up
-        var down = false;
+    // Draw
+    $("#pencil").click(function () {
+        canvas.isDrawingMode = true;
+        DRAW_MODE = DRAW;
+        canvas.freeDrawingBrush.color = 'black';
+    });
 
-        // flag for maintaining tool in use currently
-        var toolInUse = null;
+    $("#erase").click(function () {
+        canvas.isDrawingMode = true;
+        DRAW_MODE = ERASE;
+        canvas.freeDrawingBrush.color = 'white';
+    });
 
-        context.strokeStyle = 'black';
-        context.strokeStyle = 'round';
+    $("#select").click(function () {
+        canvas.isDrawingMode = false;
+        canvas.selection = true;
+    });
 
-        // onClick listeners
-        // Group DRAW
-        document.querySelector('#pen').onclick = function () {
-            toolInUse = 'pen';
-            // alert(toolInUse);
-        };
-        document.querySelector('#erase').onclick = function () {
-            toolInUse = 'erase';
-        };
+    $("#delete").click(function () {
+        let activeGroup = canvas.getActiveGroup();
+        let activeObject = canvas.getActiveObject();
 
-        // onClick listeners for clear Canvas
-        // Group COLOR
-        document.querySelector('#black').onclick = function () {
-            context.strokeStyle = "black";
-        };
-        document.querySelector('#red').onclick = function () {
-            context.strokeStyle = "red";
-        };
-        document.querySelector('#green').onclick = function () {
-            context.strokeStyle = "green";
-        };
-        document.querySelector('#blue').onclick = function () {
-            context.strokeStyle = "blue";
-        };
-        document.querySelector('#yellow').onclick = function () {
-            context.strokeStyle = "yellow";
-        };
-
-        // onClick listeners
-        // Group EDIT
-
-        document.querySelector('#clear').onclick = function () {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-        };
-        document.querySelector('#hide').onclick = function () {
-
-        };
-        // onClick listeners
-        // Group SIZE
-        document.querySelector('#size').onclick = function () {
-            context.lineWidth = document.getElementById('size').value;
-        };
-
-
-        canvas.addEventListener('mousemove', draw);
-
-        function draw(event) {
-            // x = event.clientX - canvas.getBoundingClientRect().left;
-            // y = event.clientY - canvas.getBoundingClientRect().top;
-            var x = event.clientX - canvas.offsetLeft;
-            var y = event.clientY - canvas.offsetTop;
-
-            if (toolInUse == 'pen') {
-                if (down == true) {
-                    context.lineTo(x, y);
-                    context.stroke();
-                }
-            }
-            if (toolInUse == 'shape') {
-                
-            }
-
-
+        if(activeObject){
+            activeObject.remove();
+        } else if(activeGroup) {
+            let objectsInGroup = activeGroup.getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+                canvas.remove(object);
+            });
         }
+    });
 
-        // function changeToolInUse(tool) {
-        //     toolInUse = tool;
-        //     // alert(toolInUse);
-        // }
-        //
-        // function changeColor(color) {
-        //     context.strokeStyle = color;
-        // }
-
-        // onClick listeners to change color in use
-        canvas.addEventListener('mousedown', function () {
-            down = true;
-            context.beginPath();
-            context.moveTo(x, y);
-            canvas.addEventListener("mousemove", draw);
+    $("#text").click(function () {
+        var text = new fabric.IText('Tap and Type', {
+            fontFamily: 'arial black',
+            left: 100,
+            top: 100 ,
         });
+        canvas.add(text);
+        canvas.renderAll();
+    });
 
-        canvas.addEventListener('mouseup', function () {
-            down = false;
+    // $("#shape").click(function () {
+    //     $("#shape-select").click();
+    // });
+    var shapeSelect = $("#shape-select");
+    shapeSelect.on({
+        change: function (e) {
+            var shape = shapeSelect.val();
+            switch(shape) {
+                case 'line':
+                    let line = new fabric.Line([100, 100, 200, 200], {
+                        left: 100,
+                        top: 100,
+                        fill: 'rgba(0,0,0,0)',
+                        stroke: 'rgba(0,0,0,1)',
+                        strokeWidth: 1
+                    });
+                    canvas.add(line);
+                    canvas.renderAll();
+                    break;
+                case 'arrow':
+                    addArrowToCanvas();
+                    break;
+                case 'circle':
+                    let circle=new fabric.Circle({
+                        left:100,
+                        top:100,
+                        radius:100,
+                        fill: 'rgba(0,0,0,0)',
+                        stroke: 'rgba(0,0,0,1)',
+                        strokeWidth: 1
+                    });
+                    canvas.add(circle);
+                    canvas.renderAll();
+                    break;
+                case 'triangle':
+                    let tri = new fabric.Triangle({
+                        width: 100,
+                        height: 100,
+                        top: 100,
+                        left: 100,
+                        fill: 'rgba(0,0,0,0)',
+                        stroke: 'rgba(0,0,0,1)',
+                        strokeWidth: 1
+                    });
+                    canvas.add(tri);
+                    canvas.renderAll();
+                    break;
+                case 'rectangle':
+                    let rect = new fabric.Rect({
+                        width: 100,
+                        height: 100,
+                        top: 100,
+                        left: 100,
+                        fill: 'rgba(0,0,0,0)',
+                        stroke: 'rgba(0,0,0,1)',
+                        strokeWidth: 1
+                    });
+                    canvas.add(rect);
+                    canvas.renderAll();
+                    break;
+                case 'pentagon':
+                    break;
+                case 'polygon':
+                    var pol = new fabric.Polygon([
+                        {x: 200, y: 0},
+                        {x: 250, y: 50},
+                        {x: 250, y: 100},
+                        {x: 150, y: 100},
+                        {x: 150, y: 50} ], {
+                        left: 100,
+                        top: 100,
+                        angle: 0,
+                        fill: 'rgba(0,0,0,0)',
+                        stroke: 'rgba(0,0,0,1)',
+                        strokeWidth: 1
+                    });
+                    canvas.add(pol);
+                    canvas.renderAll();
+                    break;
+                default:
+
+            }
+            $(this).data('change', true);
+        },
+        click: function (e) {
+            if (!$(this).data('change')) {
+                $(this).trigger('change');
+            }
+            $(this).data('change', false);
+        }
+    });
+
+    $("#color-picker").spectrum({
+        showPaletteOnly: true,
+        togglePaletteOnly: true,
+        togglePaletteMoreText: 'more',
+        togglePaletteLessText: 'less',
+        color: 'black',
+        palette: [
+            ["#000", "#444", "#666", "#999", "#ccc", "#eee", "#f3f3f3", "#fff"],
+            ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
+            ["#f4cccc", "#fce5cd", "#fff2cc", "#d9ead3", "#d0e0e3", "#cfe2f3", "#d9d2e9", "#ead1dc"],
+            ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#a2c4c9", "#9fc5e8", "#b4a7d6", "#d5a6bd"],
+            ["#e06666", "#f6b26b", "#ffd966", "#93c47d", "#76a5af", "#6fa8dc", "#8e7cc3", "#c27ba0"],
+            ["#c00", "#e69138", "#f1c232", "#6aa84f", "#45818e", "#3d85c6", "#674ea7", "#a64d79"],
+            ["#900", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+            ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
+        ],
+        change: function (color) {
+            canvas.freeDrawingBrush.color = color;
+        }
+    });
+
+    // Slider
+    var handle = $( "#custom-handle" );
+    $("#size").slider({
+        min: 1,
+        max: 99,
+        step: 1,
+        create: function() {
+            handle.text(
+                $(this).slider("value")
+            );
+        },
+        slide: function( event, ui ) {
+            handle.text( ui.value );
+        },
+        change: function (event, ui) {
+            canvas.freeDrawingBrush.width = parseInt(ui.value, 10) || 1;
+        }
+    });
+
+    // Edit
+    $("#redo").click(function () {
+        replay(UNDO_STACK, REDO_STACK, '#redo', this);
+    });
+
+    $("#undo").click(function () {
+        replay(REDO_STACK, UNDO_STACK, '#undo', this);
+    });
+
+    canvas.on('object:modified', function() {
+        save();
+    });
+
+    function replay(playStack, saveStack, buttonsOn, buttonsOff) {
+        saveStack.push(CURRENT_STATE);
+        CURRENT_STATE = playStack.pop();
+        var on = $(buttonsOn);
+        var off = $(buttonsOff);
+        // turn both buttons off for the moment to prevent rapid clicking
+        on.prop('disabled', true);
+        off.prop('disabled', true);
+        canvas.clear();
+        canvas.loadFromJSON(CURRENT_STATE, function() {
+            canvas.renderAll();
+            // now turn the buttons back on if applicable
+            on.prop('disabled', false);
+            if (playStack.length) {
+                off.prop('disabled', false);
+            }
         });
-
-        // var history = {
-        //     redo_list: [],
-        //     undo_list: [],
-        //     saveState: function(canvas, list, keep_redo) {
-        //         keep_redo = keep_redo || false;
-        //         if(!keep_redo) {
-        //             this.redo_list = [];
-        //         }
-        //
-        //         (list || this.undo_list).push(canvas.toDataURL());
-        //     },
-        //     undo: function(canvas, ctx) {
-        //         this.restoreState(canvas, ctx, this.undo_list, this.redo_list);
-        //     },
-        //     redo: function(canvas, ctx) {
-        //         this.restoreState(canvas, ctx, this.redo_list, this.undo_list);
-        //     },
-        //     restoreState: function(canvas, ctx,  pop, push) {
-        //         if(pop.length) {
-        //             this.saveState(canvas, push, true);
-        //             var restore_state = pop.pop();
-        //             var img = new Element('img', {'src':restore_state});
-        //             img.onload = function() {
-        //                 ctx.clearRect(0, 0, 600, 400);
-        //                 ctx.drawImage(img, 0, 0, 600, 400, 0, 0, 600, 400);
-        //             }
-        //         }
-        //     }
-        // }
-
-        // function setMousePosition(e) {
-        //     var ev = e || window.event; //Moz || IE
-        //     if (ev.pageX) { //Moz
-        //         mouse.x = ev.pageX + window.pageXOffset;
-        //         mouse.y = ev.pageY + window.pageYOffset;
-        //     } else if (ev.clientX) { //IE
-        //         mouse.x = ev.clientX + document.body.scrollLeft;
-        //         mouse.y = ev.clientY + document.body.scrollTop;
-        //     }
-        // }
-        //
-        // var mouse = {
-        //     x: 0,
-        //     y: 0,
-        //     startX: 0,
-        //     startY: 0
-        // };
-        // var element = null;
-        //
-        // canvas.onmousemove = function (e) {
-        //     setMousePosition(e);
-        //     if (element !== null) {
-        //         element.style.width = Math.abs(mouse.x - mouse.startX) + 'px';
-        //         element.style.height = Math.abs(mouse.y - mouse.startY) + 'px';
-        //         element.style.left = (mouse.x - mouse.startX < 0) ? mouse.x + 'px' : mouse.startX + 'px';
-        //         element.style.top = (mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px';
-        //     }
-        // };
-        //
-        // canvas.onclick = function (e) {
-        //     if (element !== null) {
-        //         element = null;
-        //         canvas.style.cursor = "default";
-        //         console.log("finished.");
-        //     } else {
-        //         console.log("begun.");
-        //         mouse.startX = mouse.x;
-        //         mouse.startY = mouse.y;
-        //         element = document.createElement('div');
-        //         element.className = 'rectangle';
-        //         element.style.left = mouse.x + 'px';
-        //         element.style.top = mouse.y + 'px';
-        //         canvas.appendChild(element);
-        //     }
-        // };
     }
 
-}); // Self invoking function
+    function save() {
+        // clear the redo stack
+        REDO_STACK = [];
+        $('#redo').prop('disabled', true);
+        // initial call won't have a state
+        if (CURRENT_STATE) {
+            UNDO_STACK.push(CURRENT_STATE);
+            $('#undo').prop('disabled', false);
+        }
+        CURRENT_STATE = JSON.stringify(canvas);
+    }
 
+    $("#clear").click(function () {
+        canvas.clear();
+    });
+
+    //Position
+    $("#pos-top-left").click(function () {
+        let activeGroup = canvas.getActiveGroup();
+        let activeObject = canvas.getActiveObject();
+
+        if(activeObject){
+            activeObject.setLeft(canvas.width/4);
+            activeObject.setLeft(canvas.height/4);
+            canvas.renderAll();
+        } else if(activeGroup) {
+            let objectsInGroup = activeGroup.getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+                canvas.remove(object);
+            });
+        }
+    });
+
+    //Edit
+
+
+    //Import
+    let uploadImage, imagePath;
+    let dialogUpload = $("#dialog-upload");
+    // Template
+    dialogUpload.dialog({
+        resizable: false,
+        height: "auto",
+        width: "auto",
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            "Use selected image": function () {
+                $(this).dialog("close");
+                fabric.Image.fromURL(
+                    imagePath,
+                    function(oImg) {
+                        oImg.scale(1);
+                        oImg.set({
+                            'top': 100, 'left': 100, width:200, height:200
+                        });
+                        canvas.centerObject(oImg);
+                        canvas.add(oImg);
+                    }
+                );
+            },
+            "Cancel": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    $("#template-select").change(function () {
+        imagePath = "./images/templates/" + $(this).val() + ".jpg";
+        console.info(imagePath);
+        $("#preview-image").attr('src', imagePath);
+
+        var blob = null;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", imagePath);
+        xhr.responseType = "blob";
+        xhr.onload = function () {
+            blob = xhr.response;
+            uploadImage = URL.createObjectURL(this.response);
+        };
+        xhr.send();
+    });
+    $("#import-template").click(function () {
+        dialogUpload.dialog("open");
+    });
+
+    // WebCam
+    let dialogWebcam = $("#dialog-webcam") , reset = false;
+    dialogWebcam.dialog({
+        resizable: false,
+        height: "auto",
+        width: "auto",
+        open: function () {
+            Webcam.attach("#front-cam");
+            $(".ui-dialog-buttonpane button:contains('Use')").button("disable");
+        },
+        close: function () {
+            Webcam.reset();
+            $(".ui-dialog-buttonpane button:contains('Reset')").text('Capture');
+        },
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            "Capture": function () {
+                if (reset === true) {
+                    Webcam.attach("#front-cam");
+                    $(".ui-dialog-buttonpane button:contains('Reset')").text('Capture');
+                    $(".ui-dialog-buttonpane button:contains('Use')").button("disable");
+                    reset = false;
+                } else {
+                    Webcam.snap(function (data_uri) {
+                        document.getElementById('front-cam').innerHTML = '<img src="' + data_uri + '"/>';
+                        imagePath = data_uri;
+                    });
+                    $(".ui-dialog-buttonpane button:contains('Capture')").text('Reset');
+                    $(".ui-dialog-buttonpane button:contains('Use')").button("enable");
+                    reset = true;
+                }
+            },
+            "Use"  : function () {
+                $(this).dialog("close");
+                Webcam.reset();
+                fabric.Image.fromURL(
+                    imagePath,
+                    function (oImg) {
+                        oImg.scale(1);
+                        oImg.set({
+                            'top': 100, 'left': 100, width:200, height:200
+                        });
+                        canvas.centerObject(oImg);
+                        canvas.add(oImg);
+                    });
+                },
+            "Cancel": function () {
+                    $(this).dialog("close");
+                    Webcam.reset();
+                }
+            }
+    });
+    $("#import-camera").click(function () {
+        dialogWebcam.dialog('open');
+    });
+
+    // Upload
+    let fileUploadInput = $("#import-upload-input");
+    fileUploadInput.change(function () {
+
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                // $('#blah').attr('src', e.target.result);
+                // uploadImage = new Image();
+                uploadImage = e.target.result;
+                // console.error("e" + e);
+                // console.error("Upload image" + uploadImage);
+                fabric.Image.fromURL(
+                    uploadImage,
+                    function (oImg) {
+                        oImg.scale(1);
+                        oImg.set({
+                            'top': 100, 'left': 100, width:200, height:200
+                        });
+                        canvas.centerObject(oImg);
+                        canvas.add(oImg);
+                    });
+            };
+
+            reader.readAsDataURL(this.files[0]);
+
+        }
+    });
+
+    $("#import-upload").click(function () {
+        fileUploadInput.click();
+    });
+
+
+    //Zoom
+    $("#zoom-in").click(function () {
+        if(canvas.getZoom() < 2.0) {
+            canvas.setZoom(canvas.getZoom() + 0.1);
+        }
+    });
+    $("#zoom-out").click(function () {
+        if(canvas.getZoom() > 1.0) {
+            canvas.setZoom(canvas.getZoom() - 0.1);
+        }
+    });
+    $("#zoom-reset").click(function () {
+        canvas.setZoom(1.0);
+    });
+
+    // Panning
+    var panX=0, panY=0;
+    $("#pan-left").click(function () {
+        var units = 10 ;
+        var delta = new fabric.Point(-units,0);
+        canvas.relativePan(delta);
+        panX += units;
+    });
+    $("#pan-up").click(function () {
+        var units = 10 ;
+        var delta = new fabric.Point(0,-units);
+        canvas.relativePan(delta);
+        panY += units;
+    });
+    $("#pan-center").click(function () {
+        var delta = new fabric.Point(panX,panY);
+        canvas.relativePan(delta);
+        panX=0; panY=0;
+    });
+    $("#pan-right").click(function () {
+        var units = 10 ;
+        var delta = new fabric.Point(units,0);
+        canvas.relativePan(delta);
+        panX -= units;
+    });
+    $("#pan-down").click(function () {
+        var units = 10 ;
+        var delta = new fabric.Point(0,units);
+        canvas.relativePan(delta);
+        panY -= units;
+    });
+
+    $("#controls" ).accordion({
+        heightStyle: "content",
+        padding: 0
+    });
+
+    $( "#slider-1" ).slider();
+
+
+    function addArrowToCanvas() {
+    let line, arrow;
+
+    line = new fabric.Line([50, 50, 100, 100], {
+        stroke: '#000',
+        selectable: true,
+        strokeWidth: '2',
+        padding: 5,
+        hasBorders: true,
+        originX: 'center',
+        originY: 'center'
+    });
+
+    let centerX = (line.x1 + line.x2) / 2,
+        centerY = (line.y1 + line.y2) / 2;
+    let deltaX = line.left - centerX;
+    let deltaY = line.top - centerY;
+
+    arrow = new fabric.Triangle({
+        left: line.get('x1') + deltaX,
+        top: line.get('y1') + deltaY,
+        originX: 'center',
+        originY: 'center',
+        hasBorders: false,
+        hasControls: false,
+        pointType: 'arrow_start',
+        angle: -45,
+        width: 20,
+        height: 20,
+        fill: '#000'
+    });
+    arrow.line = line;
+
+    line.customType = arrow.customType = 'arrow';
+    line.arrow =  arrow;
+
+    canvas.add(line, arrow);
+
+    function moveEnd(obj) {
+        let p = obj, x1, y1, x2, y2;
+
+        if (obj.pointType === 'arrow_end') {
+            obj.line.set('x2', obj.get('left'));
+            obj.line.set('y2', obj.get('top'));
+        } else {
+            obj.line.set('x1', obj.get('left'));
+            obj.line.set('y1', obj.get('top'));
+        }
+
+        obj.line._setWidthHeight();
+
+        x1 = obj.line.get('x1');
+        y1 = obj.line.get('y1');
+        x2 = obj.line.get('x2');
+        y2 = obj.line.get('y2');
+
+        let angle = calcArrowAngle(x1, y1, x2, y2);
+
+        if (obj.pointType === 'arrow_end') {
+            obj.arrow.set('angle', angle - 90);
+        } else {
+            obj.set('angle', angle - 90);
+        }
+
+        obj.line.setCoords();
+        canvas.renderAll();
+    }
+
+    function moveLine() {
+        var oldCenterX = (line.x1 + line.x2) / 2,
+            oldCenterY = (line.y1 + line.y2) / 2,
+            deltaX = line.left - oldCenterX,
+            deltaY = line.top - oldCenterY;
+
+        line.arrow.set({
+            'left': line.x1 + deltaX,
+            'top': line.y1 + deltaY
+        }).setCoords();
+
+        line.circle.set({
+            'left': line.x2 + deltaX,
+            'top': line.y2 + deltaY
+        }).setCoords();
+
+        line.set({
+            'x1': line.x1 + deltaX,
+            'y1': line.y1 + deltaY,
+            'x2': line.x2 + deltaX,
+            'y2': line.y2 + deltaY
+        });
+
+        line.set({
+            'left': (line.x1 + line.x2) / 2,
+            'top': (line.y1 + line.y2) / 2
+        });
+    }
+
+    arrow.on('moving', function () {
+        moveEnd(arrow);
+    });
+
+    line.on('moving', function () {
+        moveLine();
+    });
+
+    line.on('removed', function () {
+        arrow.remove();
+        canvas.renderAll();
+    });
+}
+
+    function calcArrowAngle(x1, y1, x2, y2) {
+        let angle = 0,
+            x, y;
+
+        x = (x2 - x1);
+        y = (y2 - y1);
+
+        if (x === 0) {
+            angle = (y === 0) ? 0 : (y > 0) ? Math.PI / 2 : Math.PI * 3 / 2;
+        } else if (y === 0) {
+            angle = (x > 0) ? 0 : Math.PI;
+        } else {
+            angle = (x < 0) ? Math.atan(y / x) + Math.PI : (y < 0) ? Math.atan(y / x) + (2 * Math.PI) : Math.atan(y / x);
+        }
+
+        return (angle * 180 / Math.PI);
+    }
+
+} );

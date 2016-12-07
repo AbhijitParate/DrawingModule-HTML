@@ -1,86 +1,108 @@
 /*Container for the whole page*/
-.outerContainer {
-    width: 1366px;
-    height: 768px;
-    margin: 0 auto;
-}
 
-.controlsContainer {
-    width: 1366px;
-    height: 150px;
-    float: left;
-    background-color: darkgray;
+.outerContainer {
+    width: 1280px;
+    height: 720px;
     }
 
-.observationsContainer{
-    width: 100px;
-    height: 518px;
+.controlsContainer {
     float: left;
-    background-color: cadetblue;
-}
+    width: 16%;
+    height: 97%; margin: 1%;
+    }
 
-.editor{
-    width: 1264px;
-    height: 516px;
+.button-small {
     float: left;
-    border: 1px solid;
-    /*background-color: black;*/
+    width: 30%;
+    height: 64px;
+    margin: 1.2%;
 }
 
-.attachmentContainer{
-    height: 30px;
-    width: 1366px;
-    background-color: royalblue;
-    clear: both;
+#canvas:hover{
+    cursor: crosshair;
 }
 
-.saveContainer{
-    height: 70px;
-    width: 1366px;
-    background-color: darkgray;
-    clear: both;
-}
 
-/*This is to change the cursor while inside the canvas.*/
-.editor:hover{
-cursor: crosshair;
-}
+/*  this is not used anywhere*/
+/*.observationsContainer{*/
+    /*width: 100px;*/
+    /*height: 518px;*/
+    /*float: left;*/
+    /*background-color: cadetblue;*/
+/*}*/
 
-.editor:active{
-cursor: crosshair;
-}
+/*.editor{*/
+    /*width: 1264px;*/
+    /*height: 516px;*/
+    /*float: left;*/
+    /*border: 1px solid;*/
+    /*!*background-color: black;*!*/
+/*}*/
 
-.magnifying-glass {
-    z-index: 100;
-    position: absolute;
-    overflow: hidden;
-}
+/*.attachmentContainer{*/
+    /*height: 30px;*/
+    /*width: 1366px;*/
+    /*background-color: royalblue;*/
+    /*clear: both;*/
+/*}*/
 
-.drawing-module-canvas{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1264px;
-    height: 516px;
-}
+/*.saveContainer{*/
+    /*height: 70px;*/
+    /*width: 1366px;*/
+    /*background-color: darkgray;*/
+    /*clear: both;*/
+/*}*/
 
-.attachmentButton{
-    height: 12px;
-    width: 12px;
-    background: url('../images/remove.png') 10px 10px no-repeat;
-    background-size: 100%;'
-}
+/*!*This is to change the cursor while inside the canvas.*!*/
+/*.editor:hover{*/
+/*cursor: crosshair;*/
+/*}*/
 
-.uploadCaptureButton{
-    width: 150px; height: 40px; margin: 25px; float: left; clear: left;
-}
+/*.editor:active{*/
+/*cursor: crosshair;*/
+/*}*/
 
-.previewWindow {
-    width: 400px;
-    height: 300px;
-}
+/*.magnifying-glass {*/
+    /*z-index: 100;*/
+    /*position: absolute;*/
+    /*overflow: hidden;*/
+/*}*/
 
-.attachmentFilePreview{
-    margin-left: 5px;
-    font-size: medium;
+/*.drawing-module-canvas{*/
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*width: 1264px;*/
+    /*height: 516px;*/
+/*}*/
+
+/*.attachmentButton{*/
+    /*height: 12px;*/
+    /*width: 12px;*/
+    /*background: url('../images/remove.png') 10px 10px no-repeat;*/
+    /*background-size: 100%;'*/
+/*}*/
+
+/*.uploadCaptureButton{*/
+    /*width: 150px; height: 40px; margin: 25px; float: left; clear: left;*/
+/*}*/
+
+/*.previewWindow {*/
+    /*width: 400px;*/
+    /*height: 300px;*/
+/*}*/
+
+/*.attachmentFilePreview{*/
+    /*margin-left: 5px;*/
+    /*font-size: medium;*/
+/*}*/
+#canvasContainer {
+    float: left;
+    border: solid 1px;
+    width: 80%;
+    height: 97%;
+    margin-top: 1%;
+    elevation: above;
+    margin-bottom: 1%;
+    margin-right: 1px;
 }
