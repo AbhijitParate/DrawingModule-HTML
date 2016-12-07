@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Accordion - Default functionality</title>
+    <!--<link rel="stylesheet" type="text/css" href="../Editor1/css/editor.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="../Editor1/css/controls.css">-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $( function() {
+            $("#draw" ).accordion({
+                heightStyle: "content"
+            });
+            $("#section2" ).accordion({
+                heightStyle: "content"
+            });
+        } );
+    </script>
+</head>
+<body>
+    <div  id="mainContainer" style="height: 720px; width: 1280px; border: solid 1px;">
+        <div id="controlsContainer" style="float: left; width: 13%; height: 97%; margin: 1%">
+            <div id="draw">
+                <h3>Draw</h3>
+                <button class="ui-button ui-widget ui-corner-all ui-button-icon-only"  id="pencil" title="pencil tool to draw on below canvas with default color(black).">
+                    <i class="material-icons">face</i>
+                </button>
+                <button class="ui-button ui-widget ui-corner-all ui-button-icon-only"  id="eraser" title="eraser tool to erase contents on below canvas.">Erase</button>
+                <!--<select class="action-small" name="draw" id="shape"  title="Select different shapes to draw on canvas.">-->
+                    <!--<option selected>Shapes</option>-->
+                    <!--<option value="line" >Line</option>-->
+                    <!--<option value="arrow" >Arrow</option>-->
+                    <!--<option value="rectangle">Rectangle</option>-->
+                    <!--<option value="circle">Circle</option>-->
+                    <!--<option value="polygon">Polygon</option>-->
+                <!--</select>-->
+                <button class="ui-button ui-widget ui-corner-all ui-button-icon-only"  id="select" title="Select a shape. Selected shape can be moved across canvas.">Select</button>
+                <button class="ui-button ui-widget ui-corner-all ui-button-icon-only"  id="text" title="Add text to canvas for annotation">Text</button>
+                <button class="ui-button ui-widget ui-corner-all ui-button-icon-only"  id="test" title="Not available to use">TEST</button>
+            </div>
+            <div id="section2">
+                <h3>Section 2</h3>
+                <div>
+                    <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Button with icon only">
+                        <i class="material-icons">face</i>
+                    </button>
+                    <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Button with icon only">
+                        <span class=""><i class="material-icons">create</i></span> Button with icon only
+                    </button>
+                    <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Button with icon only">
+                        <span class="ui-icon ui-icon-gear"></span> Button with icon only
+                    </button>
+                </div>
+                <h3>Section 3</h3>
+                <div>
+                    <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Button with icon only">
+                        <span class="ui-icon ui-icon-gear"></span> Button with icon only
+                    </button>
+                    <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Button with icon only">
+                        <span class="ui-icon ui-icon-gear"></span> Button with icon only
+                    </button>
+                    <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Button with icon only">
+                        <span class="ui-icon ui-icon-gear"></span> Button with icon only
+                    </button>
+                </div>
+                <h3>Section 4</h3>
+                <div>
+                    <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Button with icon only">
+                        <span class="ui-icon ui-icon-gear"></span> Button with icon only
+                    </button>
+                    <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Button with icon only">
+                        <span class="ui-icon ui-icon-gear"></span> Button with icon only
+                    </button>
+                    <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Button with icon only">
+                        <span class="ui-icon ui-icon-gear"></span> Button with icon only
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="canvasContainer" style="float: left; border: solid 1px; width: 84%; height: 97%; margin-top: 1%; elevation: above; margin-bottom: 1%; margin-right: 1px;">
+                <canvas id="canvas" style="height: 100%; width: 100%" ></canvas>
+        </div>
+    </div>
+</body>
+</html>

@@ -67,7 +67,7 @@ cursor: crosshair;
 .attachmentButton{
     height: 12px;
     width: 12px;
-    background: url('./../images/remove.png') 10px 10px no-repeat;
+    background: url('../images/remove.png') 10px 10px no-repeat;
     background-size: 100%;'
 }
 

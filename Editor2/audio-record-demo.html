@@ -2,11 +2,11 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Audio/Video Example - Record Plugin for Video.js</title>
+    <title>Audio-record Example - Record Plugin for Video.js</title>
 
     <link href="//vjs.zencdn.net/5.9.2/video-js.min.css" rel="stylesheet">
-    <link href="Editor1/css/videojs.record.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="Editor1/css/controls.css">
+    <link href="css/videojs.record.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/controls.css">
 
     <!--jQuery-->
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
@@ -14,31 +14,45 @@
 
     <script src="//vjs.zencdn.net/5.9.2/video.min.js"></script>
     <script src="https://cdn.WebRTC-Experiment.com/RecordRTC.js"></script>
+    <script src="jsideojs.record.js"></script>
+    <script src="jsavesurfer.js"> </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.1.2/plugin/wavesurfer.microphone.min.js"></script>
+    <script src="//collab-project.github.io/videojs-wavesurfer/dist/videojs.wavesurfer.min.js"></script>
 
-    <script src="Editor1/js/videojs.record.js"></script>
+    <script src="jsideojs.record.js"></script>
 
     <style>
         /* change player background color */
-        #myVideo {
-            background-color: #E8E884;
+        #myAudio {
+            background-color: #9FD6BA;
         }
     </style>
+
 </head>
 <body>
 
-<video id="myVideo" class="video-js vjs-default-skin"></video>
+<audio id="myAudio" class="video-js vjs-default-skin"></audio>
 
 <script>
-    var player = videojs("myVideo",
+    var player = videojs("myAudio",
             {
                 controls: true,
-                width: 320,
-                height: 240,
+                width: 600,
+                height: 300,
                 plugins: {
+                    wavesurfer: {
+                        src: "live",
+                        waveColor: "black",
+                        progressColor: "#2E732D",
+                        cursorWidth: 1,
+                        msDisplayMax: 20,
+                        hideScrollbar: true
+                    },
                     record: {
                         audio: true,
-                        video: true,
-                        maxLength: 10,
+                        video: false,
+                        maxLength: 20,
                         debug: true
                     }
                 }
@@ -70,22 +84,11 @@
         var preview = $("#output");
 
         preview.empty();
-
-        var reader = new FileReader();
-        reader.onloadend = function (e) {
-            preview.append(
-                    '<video class="video-js vjs-default-skin previewWindow" controls autoplay>'
-//                    + '<source src='+ player.recordedData +'>'
-                    + '<source src='+ e.target.result +'>'
-                    // + '<source src='+ attachment.data +' type="video/mp4">'
-                    +'</video>'
-            );
-        };
-
-        reader.readAsDataURL(player.recordedData.audio);
-
-
-
+        preview.append(
+                '<audio class="video-js vjs-default-skin previewWindow" src="'+ player.recordedData +'" controls autoplay>' +
+//                '<source src='+ player.recordedData +'>' +
+                '</audio>'
+        );
     });
 </script>
 
