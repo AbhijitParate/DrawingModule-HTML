@@ -14,7 +14,8 @@ $(document).ready(function() {
 
     const canvas = window._canvas = new fabric.Canvas('canvas', {
         selection: true,
-        background: 'grey'
+        background: 'grey',
+        preserveObjectStacking: true
     });
 
     canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), 1.0);
@@ -53,7 +54,7 @@ $(document).ready(function() {
     });
 
     $("#text").click(function () {
-        var text = new fabric.IText('Tap and Type', {
+        var text = new fabric.IText('Type here...', {
             fontFamily: 'arial black',
             left: 100,
             top: 100 ,
@@ -194,6 +195,38 @@ $(document).ready(function() {
         }
     });
 
+    // Image
+    $("#flip-vertical").click(function () {
+        if(canvas.getActiveObject().get('flipX'))
+            canvas.getActiveObject().set('flipX', false);
+        else
+            canvas.getActiveObject().set('flipX', true);
+        canvas.renderAll();
+    });
+    $("#flip-horizontal").click(function () {
+        if(canvas.getActiveObject().get('flipY'))
+            canvas.getActiveObject().set('flipY', false);
+        else
+            canvas.getActiveObject().set('flipY', true);
+        canvas.renderAll();
+    });
+    $("#rotate-clock").click(function () {
+        let angle = canvas.getActiveObject().get('angle');
+        canvas.getActiveObject().set("angle", angle + 90);
+        canvas.renderAll();
+    });
+    $("#rotate-anti-clock").click(function () {
+        let angle = canvas.getActiveObject().get('angle');
+        canvas.getActiveObject().set("angle", angle - 90);
+        canvas.renderAll();
+    });
+    $("#crop").click(function () {
+
+    });
+    $("#fit").click(function () {
+
+    });
+
     // Edit
     $("#redo").click(function () {
         replay(UNDO_STACK, REDO_STACK, '#redo', this);
@@ -248,20 +281,41 @@ $(document).ready(function() {
         let activeObject = canvas.getActiveObject();
 
         if(activeObject){
-            activeObject.setLeft(canvas.width/4);
+            activeObject.setTop(canvas.width/4);
             activeObject.setLeft(canvas.height/4);
-            canvas.renderAll();
+            activeObject.setCoords();
         } else if(activeGroup) {
             let objectsInGroup = activeGroup.getObjects();
             canvas.discardActiveGroup();
             objectsInGroup.forEach(function(object) {
-                canvas.remove(object);
+                object.setLeft(canvas.width/4);
+                object.setLeft(canvas.height/4);
+                object.setCoords();
             });
         }
+        canvas.renderAll();
     });
 
-    //Edit
+    $("#pos-center").click(function () {
+        let activeObject = canvas.getActiveObject();
 
+        if(activeObject){
+            activeObject.center();
+            activeObject.setCoords();
+        }
+
+        canvas.renderAll();
+    });
+
+    //Layers
+    $("#layer-up").click(function () {
+        let object = canvas.getActiveObject();
+        canvas.bringForward(object);
+    });
+    $("#layer-down").click(function () {
+        let object = canvas.getActiveObject();
+        canvas.sendBackwards(object);
+    });
 
     //Import
     let uploadImage, imagePath;
@@ -456,6 +510,196 @@ $(document).ready(function() {
     });
 
     $( "#slider-1" ).slider();
+
+    // let keyboardEventHandler = function(event) {
+    //     let key = window.event ? window.event.keyCode : event.keyCode;
+    //     let object = canvas.getActiveObject();
+    //     switch(key) {
+    //         case 173: case 109: // -
+    //             if (event.ctrlKey || event.metaKey) {
+    //                 return object('zoomBy-z', -10);
+    //             }
+    //             return true;
+    //         case 61: case 107: // +
+    //             if (event.ctrlKey || event.metaKey) {
+    //                 return object('zoomBy-z', 10);
+    //             }
+    //             return true;
+    //         case 37: // left
+    //             if (event.shiftKey) {
+    //                 return object('zoomBy-x',-1); return false;
+    //             }
+    //             if (event.ctrlKey || event.metaKey) {
+    //                 return object('angle', -1);
+    //             }
+    //             return object('left', -1);
+    //         case 39: // right
+    //             if (event.shiftKey) {
+    //                 return object('zoomBy-x',1); return false;
+    //             }
+    //             if (event.ctrlKey || event.metaKey) {
+    //                 return object('angle', 1);
+    //             }
+    //             return object('left', 1);
+    //         case 38: // up
+    //             if (event.shiftKey) {
+    //                 return object('zoomBy-y', -1);
+    //             }
+    //             if (!event.ctrlKey && !event.metaKey) {
+    //                 return object('top', -1);
+    //             }
+    //             return true;
+    //         case 40: // down
+    //             if (event.shiftKey) {
+    //                 return object('zoomBy-y', 1);
+    //             }
+    //             if (!event.ctrlKey && !event.metaKey) {
+    //                 return object('top', 1);
+    //             }
+    //             return true;
+    //     }
+    // };
+
+    // let canvasWrapper = $("#canvasWrapper");
+    // canvasWrapper.tabIndex = 1000;
+    // canvasWrapper.addEventListener("keydown", keyboardEventHandler, false);
+
+    createListenersKeyboard();
+
+    function createListenersKeyboard() {
+        document.onkeydown = onKeyDownHandler;
+        //document.onkeyup = onKeyUpHandler;
+    }
+
+    function onKeyDownHandler(event) {
+        //event.preventDefault();
+
+        var key;
+        if (window.event) {
+            key = window.event.keyCode;
+        }
+        else {
+            key = event.keyCode;
+        }
+
+        let object = canvas.getActiveObject();
+        let left = object.getLeft();
+        let top = object.getTop();
+
+        console.warn("keyboard keypress event :" + key );
+        switch (key) {
+            //////////////
+            // Shortcuts
+            //////////////
+            case 46:
+                object.remove();
+                break;
+            case 37: // left
+                // if (event.shiftKey) {
+                //     return object('zoomBy-x',-1); return false;
+                // }
+                // if (event.ctrlKey || event.metaKey) {
+                //     return object('angle', -1);
+                // }
+                object.set('left', left - 1);
+                break;
+            case 39: // right
+                // if (event.shiftKey) {
+                //     return object('zoomBy-x',1); return false;
+                // }
+                // if (event.ctrlKey || event.metaKey) {
+                //     return object('angle', 1);
+                // }
+                object.set('left', left + 1);
+                break;
+            case 38: // up
+                // if (event.shiftKey) {
+                //     return object('zoomBy-y', -1);
+                // }
+                // if (!event.ctrlKey && !event.metaKey) {
+                //     return object('top', -1);
+                // }
+                object.set('top', top-1);
+                break;
+            case 40: // down
+                // if (event.shiftKey) {
+                //     return object('zoomBy-y', 1);
+                // }
+                // if (!event.ctrlKey && !event.metaKey) {
+                //     return object('top', 1);
+                // }
+                object.set('top', top+1);
+                break;
+            // Copy (Ctrl+C)
+            case 67: // Ctrl+C
+                if (ableToShortcut()) {
+                    if (event.ctrlKey) {
+                        event.preventDefault();
+                        copy();
+                    }
+                }
+                break;
+            // Paste (Ctrl+V)
+            case 86: // Ctrl+V
+                if (ableToShortcut()) {
+                    if (event.ctrlKey) {
+                        event.preventDefault();
+                        paste();
+                    }
+                }
+                break;
+
+            default:
+                // TODO
+                break;
+        }
+
+        canvas.renderAll();
+    }
+
+    function ableToShortcut(){
+        /*
+         TODO check all cases for this
+
+         if($("textarea").is(":focus")){
+         return false;
+         }
+         if($(":text").is(":focus")){
+         return false;
+         }
+         */
+        return true;
+    }
+
+    function copy(){
+        if(canvas.getActiveGroup()){
+            for(var i in canvas.getActiveGroup().objects){
+                var object = fabric.util.object.clone(canvas.getActiveGroup().objects[i]);
+                object.set("top", object.top+5);
+                object.set("left", object.left+5);
+                copiedObjects[i] = object;
+            }
+        }
+        else if(canvas.getActiveObject()){
+            var object = fabric.util.object.clone(canvas.getActiveObject());
+            object.set("top", object.top+5);
+            object.set("left", object.left+5);
+            copiedObject = object;
+            copiedObjects = new Array();
+        }
+    }
+
+    function paste(){
+        if(copiedObjects.length > 0){
+            for(var i in copiedObjects){
+                canvas.add(copiedObjects[i]);
+            }
+        }
+        else if(copiedObject){
+            canvas.add(copiedObject);
+        }
+        canvas.renderAll();
+    }
 
 
     function addArrowToCanvas() {

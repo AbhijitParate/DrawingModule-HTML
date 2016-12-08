@@ -3,6 +3,7 @@
 .outerContainer {
     width: 1280px;
     height: 720px;
+    border: solid dimgrey;
     }
 
 .controlsContainer {
@@ -16,6 +17,10 @@
     width: 30%;
     height: 64px;
     margin: 1.2%;
+}
+
+.not-available {
+    background-color: #ff625e;
 }
 
 #canvas:hover{
