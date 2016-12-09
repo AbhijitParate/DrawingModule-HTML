@@ -14,7 +14,7 @@ $(document).ready(function() {
 
     const canvas = window._canvas = new fabric.Canvas('canvas', {
         selection: true,
-        background: 'grey',
+        backgroundColor: '#EAEDED',
         preserveObjectStacking: true
     });
 
@@ -63,9 +63,7 @@ $(document).ready(function() {
         canvas.renderAll();
     });
 
-    // $("#shape").click(function () {
-    //     $("#shape-select").click();
-    // });
+
     var shapeSelect = $("#shape-select");
     shapeSelect.on({
         change: function (e) {
@@ -154,6 +152,9 @@ $(document).ready(function() {
             $(this).data('change', false);
         }
     });
+    $("#shape").click(function () {
+        shapeSelect.click();
+    });
 
     $("#color-picker").spectrum({
         showPaletteOnly: true,
@@ -228,6 +229,24 @@ $(document).ready(function() {
     });
 
     // Edit
+    var canvasHiddenFlag = false;
+    $("#hide").click(function () {
+        if(canvasHiddenFlag === true){
+            canvas.interactive = true;
+            // canvas.getObjects().forEach(function(o) {
+            //     o.selectable = true;
+            // });
+            // $("#canvas").show();
+            canvasHiddenFlag = false;
+        } else {
+            canvas.interactive = false;
+            // canvas.getObjects().forEach(function(o) {
+            //     o.selectable = false;
+            // });
+            // $("#canvas").hide();
+            canvasHiddenFlag = true;
+        }
+    });
     $("#redo").click(function () {
         replay(UNDO_STACK, REDO_STACK, '#redo', this);
     });
@@ -277,23 +296,62 @@ $(document).ready(function() {
 
     //Position
     $("#pos-top-left").click(function () {
-        let activeGroup = canvas.getActiveGroup();
         let activeObject = canvas.getActiveObject();
 
+        let objH, objW;
+        objW = activeObject.getWidth() / 2;
+        objH = activeObject.getHeight() / 2;
+
         if(activeObject){
-            activeObject.setTop(canvas.width/4);
-            activeObject.setLeft(canvas.height/4);
+            activeObject.setTop((canvas.height/4) - objH);
+            activeObject.setLeft((canvas.width/4) - objW);
             activeObject.setCoords();
-        } else if(activeGroup) {
-            let objectsInGroup = activeGroup.getObjects();
-            canvas.discardActiveGroup();
-            objectsInGroup.forEach(function(object) {
-                object.setLeft(canvas.width/4);
-                object.setLeft(canvas.height/4);
-                object.setCoords();
-            });
+            canvas.renderAll();
         }
-        canvas.renderAll();
+    });
+
+    $("#pos-top").click(function () {
+        let activeObject = canvas.getActiveObject();
+        let objW, objH;
+        objW = activeObject.getWidth() / 2;
+        objH = activeObject.getHeight() / 2;
+
+        if(activeObject){
+            activeObject.setTop((canvas.height/4) - objH);
+            activeObject.setLeft((canvas.width/2) - objW);
+            activeObject.setCoords();
+            canvas.renderAll();
+        }
+    });
+
+    $("#pos-top-right").click(function () {
+        let activeObject = canvas.getActiveObject();
+
+        let objW, objH;
+        objW = activeObject.getWidth() / 2;
+        objH = activeObject.getHeight() / 2;
+
+        if(activeObject){
+            activeObject.setTop((canvas.height/4) - objH);
+            activeObject.setLeft((3*canvas.width/4) - objW);
+            activeObject.setCoords();
+            canvas.renderAll();
+        }
+    });
+
+    $("#pos-left").click(function () {
+        let activeObject = canvas.getActiveObject();
+
+        let objH, objW;
+        objW = activeObject.getWidth() / 2;
+        objH = activeObject.getHeight() / 2;
+
+        if(activeObject){
+            activeObject.setTop((canvas.height/2) - objH);
+            activeObject.setLeft((canvas.width/4) - objW);
+            activeObject.setCoords();
+            canvas.renderAll();
+        }
     });
 
     $("#pos-center").click(function () {
@@ -305,6 +363,65 @@ $(document).ready(function() {
         }
 
         canvas.renderAll();
+    });
+
+    $("#pos-right").click(function () {
+        let activeObject = canvas.getActiveObject();
+
+        let objH, objW;
+        objW = activeObject.getWidth() / 2;
+        objH = activeObject.getHeight() / 2;
+
+        if(activeObject){
+            activeObject.setTop((canvas.height/2) - objH);
+            activeObject.setLeft((3*canvas.width/4) - objW);
+            activeObject.setCoords();
+            canvas.renderAll();
+        }
+    });
+
+    $("#pos-bottom-left").click(function () {
+        let activeObject = canvas.getActiveObject();
+
+        let objH, objW;
+        objW = activeObject.getWidth() / 2;
+        objH = activeObject.getHeight() / 2;
+
+        if(activeObject){
+            activeObject.setTop((3*canvas.height/4) - objH);
+            activeObject.setLeft((canvas.width/4) - objW);
+            activeObject.setCoords();
+            canvas.renderAll();
+        }
+    });
+
+    $("#pos-bottom").click(function () {
+        let activeObject = canvas.getActiveObject();
+        let objW, objH;
+        objW = activeObject.getWidth() / 2;
+        objH = activeObject.getHeight() / 2;
+
+        if(activeObject){
+            activeObject.setTop((3*canvas.height/4) - objH);
+            activeObject.setLeft((canvas.width/2) - objW);
+            activeObject.setCoords();
+            canvas.renderAll();
+        }
+    });
+
+    $("#pos-bottom-right").click(function () {
+        let activeObject = canvas.getActiveObject();
+
+        let objW, objH;
+        objW = activeObject.getWidth() / 2;
+        objH = activeObject.getHeight() / 2;
+
+        if(activeObject){
+            activeObject.setTop((3*canvas.height/4) - objH);
+            activeObject.setLeft((3*canvas.width/4) - objW);
+            activeObject.setCoords();
+            canvas.renderAll();
+        }
     });
 
     //Layers
@@ -320,6 +437,7 @@ $(document).ready(function() {
     //Import
     let uploadImage, imagePath;
     let dialogUpload = $("#dialog-upload");
+
     // Template
     dialogUpload.dialog({
         resizable: false,
@@ -559,7 +677,6 @@ $(document).ready(function() {
     //             return true;
     //     }
     // };
-
     // let canvasWrapper = $("#canvasWrapper");
     // canvasWrapper.tabIndex = 1000;
     // canvasWrapper.addEventListener("keydown", keyboardEventHandler, false);
