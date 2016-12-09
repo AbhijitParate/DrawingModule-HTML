@@ -54,10 +54,10 @@ $(document).ready(function() {
     });
 
     $("#text").click(function () {
-        var text = new fabric.IText('Type here...', {
+        let text = new fabric.IText('Type here...', {
             fontFamily: 'arial black',
             left: 100,
-            top: 100 ,
+            top: 100,
         });
         canvas.add(text);
         canvas.renderAll();
@@ -152,9 +152,9 @@ $(document).ready(function() {
             $(this).data('change', false);
         }
     });
-    $("#shape").click(function () {
-        shapeSelect.click();
-    });
+    // $("#shape").click(function () {
+    //     shapeSelect.click();
+    // });
 
     $("#color-picker").spectrum({
         showPaletteOnly: true,
@@ -574,6 +574,79 @@ $(document).ready(function() {
         fileUploadInput.click();
     });
 
+    // Export
+    $("#save-pdf").click(function () {
+        let imgData = canvas.toDataURL({
+            format: 'jpeg',
+            quality: 0.8,
+            multiplier: 1
+        });
+        let pdf = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: [canvas.width, canvas.height]
+        });
+
+        pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
+        let date = new Date();
+        let timeStamp = date.toDateString();
+        // pdf.autoPrint();
+        pdf.save(timeStamp + ".pdf");
+    });
+
+    $("#save-jpg").click(function () {
+        let image = canvas.toDataURL({
+            format: 'jpeg',
+            quality: 0.8,
+            multiplier: 1
+        });
+        let link = document.createElement("a");
+        let date = new Date();
+        let timeStamp = date.toDateString();
+        link.download = timeStamp + ".jpg";
+        link.href = image;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+    $("#save-png").click(function () {
+        let image = canvas.toDataURL({
+            format: 'png',
+            quality: 0.8,
+            multiplier: 1
+        });
+        let link = document.createElement("a");
+        let date = new Date();
+        let timeStamp = date.toDateString();
+        link.download = timeStamp + ".png";
+        link.href = image;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    //Print
+    $("#print").click(function () {
+        var dataUrl = canvas.toDataURL({
+            format: 'jpeg',
+            quality: 0.8,
+            multiplier: 0.4
+        });
+        var windowContent = '<!DOCTYPE html>';
+        windowContent += '<html>';
+        windowContent += '<head><title>Print canvas</title></head>';
+        windowContent += '<body>';
+        windowContent += '<img src="' + dataUrl + '">';
+        windowContent += '</body>';
+        windowContent += '</html>';
+        var printWin = window.open('','','width=1024,height=720');
+        printWin.document.open();
+        printWin.document.write(windowContent);
+        printWin.document.close();
+        printWin.focus();
+        printWin.print();
+        printWin.close();
+    });
 
     //Zoom
     $("#zoom-in").click(function () {
@@ -591,7 +664,7 @@ $(document).ready(function() {
     });
 
     // Panning
-    var panX=0, panY=0;
+    let panX = 0, panY = 0;
     $("#pan-left").click(function () {
         var units = 10 ;
         var delta = new fabric.Point(-units,0);
@@ -605,7 +678,7 @@ $(document).ready(function() {
         panY += units;
     });
     $("#pan-center").click(function () {
-        var delta = new fabric.Point(panX,panY);
+        let delta = new fabric.Point(panX, panY);
         canvas.relativePan(delta);
         panX=0; panY=0;
     });
@@ -623,8 +696,7 @@ $(document).ready(function() {
     });
 
     $("#controls" ).accordion({
-        heightStyle: "content",
-        padding: 0
+        heightStyle: "content"
     });
 
     $( "#slider-1" ).slider();
@@ -700,14 +772,19 @@ $(document).ready(function() {
         }
 
         let object = canvas.getActiveObject();
-        let left = object.getLeft();
-        let top = object.getTop();
+        if(object) {
+            let left = object.getLeft();
+            let top = object.getTop();
+        }
 
         console.warn("keyboard keypress event :" + key );
         switch (key) {
             //////////////
             // Shortcuts
             //////////////
+            case 27:
+                canvas.isDrawingMode = false;
+                break;
             case 46:
                 object.remove();
                 break;

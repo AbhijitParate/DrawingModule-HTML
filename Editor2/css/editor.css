@@ -2,15 +2,37 @@
 
 .outerContainer {
     width: 1280px;
-    height: 720px;
+    height: 800px;
     border: solid dimgrey;
     }
 
 .controlsContainer {
     float: left;
-    width: 16%;
-    height: 97%; margin: 1%;
+    width: 17%;
+    height: 90%;
+    margin: 1%;
     }
+
+.canvasContainer {
+    float: left;
+    width: 80%;
+    height: 90%;
+    border: solid 1px;
+    margin-top: 1%;
+    elevation: above;
+    margin-bottom: 1%;
+    margin-right: 1px;
+}
+
+.bottomControlContainer {
+    width: 98%;
+    height: 5%;
+    margin-top: 1%;
+    margin-left: 1%;
+    margin-right: 1%;
+    border: solid 1px;
+    float: left;
+}
 
 .button-small {
     float: left;
@@ -101,13 +123,3 @@
     /*margin-left: 5px;*/
     /*font-size: medium;*/
 /*}*/
-#canvasContainer {
-    float: left;
-    border: solid 1px;
-    width: 80%;
-    height: 97%;
-    margin-top: 1%;
-    elevation: above;
-    margin-bottom: 1%;
-    margin-right: 1px;
-}
