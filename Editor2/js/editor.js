@@ -21,7 +21,16 @@ $(document).ready(function() {
     canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), 1.0);
 
     // Draw
-    $("#pencil").click(function () {
+    let pencil = $("#pencil");
+    pencil.webuiPopover({
+        placement: 'bottom-right',
+        title: 'Line-width',
+        url: '#slider-container',
+        width: 150,
+        trigger: 'hover',
+        dismissible:true,
+    });
+    pencil.click(function () {
         canvas.isDrawingMode = true;
         DRAW_MODE = DRAW;
         canvas.freeDrawingBrush.color = 'black';
@@ -38,7 +47,7 @@ $(document).ready(function() {
         canvas.selection = true;
     });
 
-    $("#delete").click(function () {
+    function deleteObjects() {
         let activeGroup = canvas.getActiveGroup();
         let activeObject = canvas.getActiveObject();
 
@@ -51,6 +60,10 @@ $(document).ready(function() {
                 canvas.remove(object);
             });
         }
+    }
+
+    $("#delete").click(function () {
+        deleteObjects();
     });
 
     $("#text").click(function () {
@@ -152,9 +165,30 @@ $(document).ready(function() {
             $(this).data('change', false);
         }
     });
-    // $("#shape").click(function () {
-    //     shapeSelect.click();
-    // });
+
+
+    let shapeButton = $("#shape");
+    shapeButton.webuiPopover({
+        placement: 'right',
+        title: 'Select shape to import on canvas',
+        url: '#shapes-container',
+        width: 150,
+        closeable: true,
+        trigger: 'click',
+        dismissible:true,
+    });
+
+     $("#shape-line").click(function() {
+        let line = new fabric.Line([100, 100, 200, 200], {
+            left: 100,
+            top: 100,
+            fill: 'rgba(0,0,0,0)',
+            stroke: 'rgba(0,0,0,1)',
+            strokeWidth: 1
+        });
+        canvas.add(line);
+        canvas.renderAll();
+    });
 
     $("#color-picker").spectrum({
         showPaletteOnly: true,
@@ -291,7 +325,11 @@ $(document).ready(function() {
     }
 
     $("#clear").click(function () {
-        canvas.clear();
+        canvas.discardActiveGroup();
+        let objectsInGroup = canvas.getObjects();
+        objectsInGroup.forEach(function(object) {
+            canvas.remove(object);
+        });
     });
 
     //Position
@@ -763,11 +801,10 @@ $(document).ready(function() {
     function onKeyDownHandler(event) {
         //event.preventDefault();
 
-        var key;
+        let key;
         if (window.event) {
             key = window.event.keyCode;
-        }
-        else {
+        } else {
             key = event.keyCode;
         }
 
@@ -777,7 +814,7 @@ $(document).ready(function() {
             let top = object.getTop();
         }
 
-        console.warn("keyboard keypress event :" + key );
+        // console.warn("keyboard keypress event :" + key );
         switch (key) {
             //////////////
             // Shortcuts
@@ -786,7 +823,7 @@ $(document).ready(function() {
                 canvas.isDrawingMode = false;
                 break;
             case 46:
-                object.remove();
+                deleteObjects();
                 break;
             case 37: // left
                 // if (event.shiftKey) {
@@ -865,36 +902,40 @@ $(document).ready(function() {
         return true;
     }
 
+    // Copy Paste
+    let copiedObject;
+    let copiedObjects = [];
     function copy(){
+        let object;
+
         if(canvas.getActiveGroup()){
-            for(var i in canvas.getActiveGroup().objects){
-                var object = fabric.util.object.clone(canvas.getActiveGroup().objects[i]);
-                object.set("top", object.top+5);
-                object.set("left", object.left+5);
+            for(let i = 0; i < canvas.getActiveGroup().objects.length; i++){
+                object = canvas.getActiveGroup().objects[i];
                 copiedObjects[i] = object;
             }
-        }
-        else if(canvas.getActiveObject()){
-            var object = fabric.util.object.clone(canvas.getActiveObject());
-            object.set("top", object.top+5);
-            object.set("left", object.left+5);
+        } else if(canvas.getActiveObject()){
+            object = canvas.getActiveObject();
             copiedObject = object;
-            copiedObjects = new Array();
         }
     }
 
     function paste(){
+        let object;
         if(copiedObjects.length > 0){
-            for(var i in copiedObjects){
+            for(let i in copiedObjects){
+                object = copiedObjects[i];
+                object.set("top", object.top+10);
+                object.set("left", object.left+10);
                 canvas.add(copiedObjects[i]);
             }
-        }
-        else if(copiedObject){
-            canvas.add(copiedObject);
+        } else if(copiedObject){
+            let object = copiedObject;
+            object.set("top", object.top+10);
+            object.set("left", object.left+10);
+            canvas.add(object);
         }
         canvas.renderAll();
     }
-
 
     function addArrowToCanvas() {
     let line, arrow;

@@ -34,11 +34,26 @@
     float: left;
 }
 
-.button-small {
+.button-regular {
     float: left;
-    width: 30%;
+    width: 64px;
     height: 64px;
-    margin: 1.2%;
+    margin: 1.5%;
+}
+
+.button-small {
+    top: 10px;
+    right: 10px;
+    height: 40px;
+    width: 40px;
+}
+
+.float-right{
+    float: right;
+}
+
+.float-left{
+    float: left;
 }
 
 .not-available {

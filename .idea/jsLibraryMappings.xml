@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{RecordRTC, fabric, jquery, jquery-1.11.1, jquery-1.12.4, jquery-3.1.0, jquery-ui, jquery.jplayer, jspdf, spectrum, video, videojs.record, videojs.wavesurfer, wavesurfer, wavesurfer.microphone}" />
+    <file url="PROJECT" libraries="{RecordRTC, fabric, jquery, jquery-1.11.1, jquery-1.12.4, jquery-3.1.0, jquery-ui, jquery.jplayer, jquery.webui-popover, jspdf, spectrum, video, videojs.record, videojs.wavesurfer, wavesurfer, wavesurfer.microphone}" />
     <includedPredefinedLibrary name="ECMAScript 6" />
   </component>
 </project>
