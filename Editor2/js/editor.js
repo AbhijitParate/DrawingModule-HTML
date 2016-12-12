@@ -85,97 +85,6 @@ $(document).ready(function() {
         canvas.renderAll();
     });
 
-
-    var shapeSelect = $("#shape-select");
-    shapeSelect.on({
-        change: function (e) {
-            var shape = shapeSelect.val();
-            switch(shape) {
-                case 'line':
-                    let line = new fabric.Line([100, 100, 200, 200], {
-                        left: 100,
-                        top: 100,
-                        fill: 'rgba(0,0,0,0)',
-                        stroke: 'rgba(0,0,0,1)',
-                        strokeWidth: 1
-                    });
-                    canvas.add(line);
-                    canvas.renderAll();
-                    break;
-                case 'arrow':
-                    addArrowToCanvas();
-                    break;
-                case 'circle':
-                    let circle=new fabric.Circle({
-                        left:100,
-                        top:100,
-                        radius:100,
-                        fill: 'rgba(0,0,0,0)',
-                        stroke: 'rgba(0,0,0,1)',
-                        strokeWidth: 1
-                    });
-                    canvas.add(circle);
-                    canvas.renderAll();
-                    break;
-                case 'triangle':
-                    let tri = new fabric.Triangle({
-                        width: 100,
-                        height: 100,
-                        top: 100,
-                        left: 100,
-                        fill: 'rgba(0,0,0,0)',
-                        stroke: 'rgba(0,0,0,1)',
-                        strokeWidth: 1
-                    });
-                    canvas.add(tri);
-                    canvas.renderAll();
-                    break;
-                case 'rectangle':
-                    let rect = new fabric.Rect({
-                        width: 100,
-                        height: 100,
-                        top: 100,
-                        left: 100,
-                        fill: 'rgba(0,0,0,0)',
-                        stroke: 'rgba(0,0,0,1)',
-                        strokeWidth: 1
-                    });
-                    canvas.add(rect);
-                    canvas.renderAll();
-                    break;
-                case 'pentagon':
-                    break;
-                case 'polygon':
-                    var pol = new fabric.Polygon([
-                        {x: 200, y: 0},
-                        {x: 250, y: 50},
-                        {x: 250, y: 100},
-                        {x: 150, y: 100},
-                        {x: 150, y: 50} ], {
-                        left: 100,
-                        top: 100,
-                        angle: 0,
-                        fill: 'rgba(0,0,0,0)',
-                        stroke: 'rgba(0,0,0,1)',
-                        strokeWidth: 1
-                    });
-                    canvas.add(pol);
-                    canvas.renderAll();
-                    break;
-                default:
-
-            }
-            $(this).data('change', true);
-        },
-        click: function (e) {
-            if (!$(this).data('change')) {
-                $(this).trigger('change');
-            }
-            $(this).data('change', false);
-        }
-    });
-
-
     let shapeButton = $("#shape");
     shapeButton.webuiPopover({
         placement: 'right',
@@ -196,6 +105,69 @@ $(document).ready(function() {
             strokeWidth: 1
         });
         canvas.add(line);
+        canvas.renderAll();
+    });
+
+    $("#shape-arrow").click(function () {
+        addArrowToCanvas();
+    });
+
+    $("#shape-circle").click(function () {
+        let circle=new fabric.Circle({
+            left:100,
+            top:100,
+            radius:100,
+            fill: 'rgba(0,0,0,0)',
+            stroke: 'rgba(0,0,0,1)',
+            strokeWidth: 1
+        });
+        canvas.add(circle);
+        canvas.renderAll();
+    });
+
+    $("#shape-rectangle").click(function () {
+        let rect = new fabric.Rect({
+            width: 100,
+            height: 100,
+            top: 100,
+            left: 100,
+            fill: 'rgba(0,0,0,0)',
+            stroke: 'rgba(0,0,0,1)',
+            strokeWidth: 1
+        });
+        canvas.add(rect);
+        canvas.renderAll();
+    });
+
+    $("#shape-triangle").click(function () {
+        let tri = new fabric.Triangle({
+            width: 100,
+            height: 100,
+            top: 100,
+            left: 100,
+            fill: 'rgba(0,0,0,0)',
+            stroke: 'rgba(0,0,0,1)',
+            strokeWidth: 1
+        });
+        canvas.add(tri);
+        canvas.renderAll();
+    });
+
+    $("#shape-polygon").click(function () {
+        var pol = new fabric.Polygon([
+            {x: 200, y: 0},
+            {x: 250, y: 50},
+            {x: 250, y: 100},
+            {x: 150, y: 100},
+            {x: 150, y: 50} ], {
+            left: 100,
+            top: 100,
+            angle: 0,
+            fill: 'rgba(0,0,0,0)',
+            stroke: 'rgba(0,0,0,1)',
+            strokeWidth: 1
+        });
+        canvas.add(pol);
         canvas.renderAll();
     });
 
