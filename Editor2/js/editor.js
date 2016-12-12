@@ -739,58 +739,6 @@ $(document).ready(function() {
 
     $( "#slider-1" ).slider();
 
-    // let keyboardEventHandler = function(event) {
-    //     let key = window.event ? window.event.keyCode : event.keyCode;
-    //     let object = canvas.getActiveObject();
-    //     switch(key) {
-    //         case 173: case 109: // -
-    //             if (event.ctrlKey || event.metaKey) {
-    //                 return object('zoomBy-z', -10);
-    //             }
-    //             return true;
-    //         case 61: case 107: // +
-    //             if (event.ctrlKey || event.metaKey) {
-    //                 return object('zoomBy-z', 10);
-    //             }
-    //             return true;
-    //         case 37: // left
-    //             if (event.shiftKey) {
-    //                 return object('zoomBy-x',-1); return false;
-    //             }
-    //             if (event.ctrlKey || event.metaKey) {
-    //                 return object('angle', -1);
-    //             }
-    //             return object('left', -1);
-    //         case 39: // right
-    //             if (event.shiftKey) {
-    //                 return object('zoomBy-x',1); return false;
-    //             }
-    //             if (event.ctrlKey || event.metaKey) {
-    //                 return object('angle', 1);
-    //             }
-    //             return object('left', 1);
-    //         case 38: // up
-    //             if (event.shiftKey) {
-    //                 return object('zoomBy-y', -1);
-    //             }
-    //             if (!event.ctrlKey && !event.metaKey) {
-    //                 return object('top', -1);
-    //             }
-    //             return true;
-    //         case 40: // down
-    //             if (event.shiftKey) {
-    //                 return object('zoomBy-y', 1);
-    //             }
-    //             if (!event.ctrlKey && !event.metaKey) {
-    //                 return object('top', 1);
-    //             }
-    //             return true;
-    //     }
-    // };
-    // let canvasWrapper = $("#canvasWrapper");
-    // canvasWrapper.tabIndex = 1000;
-    // canvasWrapper.addEventListener("keydown", keyboardEventHandler, false);
-
     createListenersKeyboard();
 
     function createListenersKeyboard() {
@@ -1065,5 +1013,655 @@ $(document).ready(function() {
 
         return (angle * 180 / Math.PI);
     }
+
+    // var uploadImage = new Image();
+    // var attachedImage = new Image();
+    let attachmentId = 0;
+
+    function Attachment(name, type, data) {
+        this.id = attachmentId++;
+        this.name = name;
+        this.type = type;
+        this.data = data;
+    }
+
+// Attachments related
+    let attachmentImage;
+    let attachmentVideo;
+    let attachmentAudio;
+    let attachmentNotes;
+    let attachmentFiles;
+    let attachments = [];
+
+    const body = $("body");
+    body.on("click", ".icon", removeFile);
+    body.on("click", ".text", previewAttachment);
+
+    $("#capture").click(function () {
+        Webcam.snap(function (data_uri) {
+            document.getElementById('front-cam').innerHTML = '<img src="' + data_uri + '"/>';
+            uploadImage = data_uri;
+        });
+    });
+
+//Attach
+    $("#attachImage").click(function () {
+        // $("#attachmentInput").click();
+        $("#dialog-attach-image").dialog("open");
+    });
+
+// Attachment->Video button click
+    $("#attachVideo").click(function () {
+        // $("#attachmentInput").click();
+        $("#dialog-attach-video").dialog("open");
+    });
+
+// Attachment->Audio button click
+    $("#attachAudio").click(function () {
+        $("#dialog-attach-audio").dialog("open");
+    });
+
+// Attachment->Note button click
+    $("#attachNote").click(function () {
+        $("#dialog-attach-note").dialog("open");
+    });
+
+// Attachment->Note button click
+    $("#attachFile").click(function () {
+        $("#attachmentFiles").click();
+    });
+
+// Attachment Video dialog -> Upload Button
+    $("#upload-video").click(function () {
+        $("#attachment-preview-video").hide();
+        $("#capture-video-preview").show();
+        $("#uploaded-video-preview").hide();
+
+        videoPlayer.recorder.reset();
+
+        $("#attachmentVideo").click();
+    });
+
+// Attachment Audio dialog -> Upload Button
+    $("#upload-audio").click(function () {
+        $("#attachment-preview-audio").hide();
+        $("#capture-audio-preview").show();
+        $("#uploaded-audio-preview").hide();
+
+        audioPlayer.recorder.reset();
+
+        $("#attachmentAudio").click();
+    });
+
+// Attachment Image dialog -> Upload Button
+    $("#upload-image").click(function () {
+        $("#attachment-preview-image").hide();
+        $("#capture-image-preview").show();
+        $("#uploaded-image-preview").hide();
+
+        imagePlayer.recorder.reset();
+        $("#attachmentImage").click();
+    });
+
+// Attachment Image dialog -> Upload Button
+    $("#upload-note").click(function () {
+        $("#attachment-preview-note").hide();
+        $("#note-preview").hide();
+        $("#attachmentNotes").click();
+    });
+
+// Attachment Video dialog -> Capture Button
+    $("#capture-video").click(function () {
+        $("#attachment-preview-video").show();
+        $("#capture-video-preview").show();
+        let preview = $("#uploaded-video-preview");
+        preview.hide();
+        preview.get(0).pause();
+    });
+
+// Attachment Audio dialog -> Capture Button
+    $("#capture-audio").click(function () {
+        $("#attachment-preview-audio").show();
+        $("#capture-audio-preview").show();
+        let preview = $("#uploaded-audio-preview");
+        preview.hide();
+        preview.get(0).pause();
+    });
+
+// Attachment Image dialog -> Capture Button
+    $("#capture-image").click(function () {
+        $("#attachment-preview-image").show();
+        $("#capture-image-preview").show();
+        $("#uploaded-image-preview").hide();
+    });
+
+// Attachment Notes dialog -> New Note Button
+    $("#capture-note").click(function () {
+        $("#attachment-preview-note").show();
+        let preview =  $("#note-preview");
+        preview.show();
+        preview.attr("enable", "enable");
+        preview.val("");
+    });
+
+    let videoPlayer
+        = videojs("capture-video-preview", {
+            controls: true,
+            width: 400,
+            height: 300,
+            plugins: {
+                record: {
+                    audio: true,
+                    video: true,
+                    maxLength: 10,
+                    debug: true
+                }
+            }
+        });
+
+    videoPlayer.on('startRecord', function() {
+        console.log('started recording!');
+    });
+
+    videoPlayer.on('finishRecord', function() {
+        // the blob object contains the image data that
+        // can be downloaded by the user, stored on server etc.
+        console.log('snapshot ready: ', videoPlayer.recordedData);
+        attachmentVideo = new Attachment("video_"+getTimeStamp()+".webm", "video", videoPlayer.recordedData.video );
+    });
+
+    let audioPlayer =
+        videojs("capture-audio-preview",
+            {
+                controls: true,
+                width: 400,
+                height: 300,
+                plugins: {
+                    wavesurfer: {
+                        src: "live",
+                        waveColor: "black",
+                        progressColor: "#2E732D",
+                        cursorWidth: 1,
+                        msDisplayMax: 20,
+                        hideScrollbar: true
+                    },
+                    record: {
+                        audio: true,
+                        video: false,
+                        maxLength: 20,
+                        debug: true
+                    }
+                }
+            });
+
+    audioPlayer.on('startRecord', function() {
+        console.log('started recording!');
+    });
+
+    audioPlayer.on('finishRecord', function() {
+        // the blob object contains the image data that
+        // can be downloaded by the user, stored on server etc.
+        // console.log('snapshot ready: ', audioPlayer.recordedData);
+        attachmentAudio = new Attachment("audio_"+getTimeStamp()+".wav", "audio", audioPlayer.recordedData );
+    });
+
+    let imagePlayer =
+        videojs("capture-image-preview",
+            {
+                controls: true,
+                width: 400,
+                height: 300,
+                controlBar: {
+                    volumeMenuButton: false,
+                    fullscreenToggle: false
+                },
+                plugins: {
+                    record: {
+                        image: true,
+                        debug: true
+                    }
+                }
+            });
+
+    imagePlayer.on('startRecord', function() {
+        console.log('started recording!');
+    });
+
+    imagePlayer.on('finishRecord', function() {
+        // the blob object contains the image data that
+        // can be downloaded by the user, stored on server etc.
+        // console.log('snapshot ready: ', imagePlayer.recordedData);
+        attachmentImage = new Attachment("image_"+getTimeStamp()+".png", "image", imagePlayer.recordedData );
+    });
+
+    let currentPreviewFile;
+
+    function removeFile() {
+        let file = $(this).data("file");
+        console.info(file + " removed.");
+        for (let i = 0; i < attachments.length; i++) {
+            if (attachments[i].id === file) {
+                attachments.splice(i, 1);
+                break;
+            }
+        }
+        $(this).parent().remove();
+
+        if(currentPreviewFile == file){
+            let preview = $("#attachment-preview");
+            preview.empty();
+            preview.append(
+                '<p> Click item for preview </p>'
+            );
+        }
+
+        if(attachments.length == 0){
+            $("#attachment-preview").hide();
+            $("#attachments-not-empty").hide();
+            $("#attachments-empty").show();
+        }
+    }
+
+    function previewAttachment() {
+        let id = $(this).data("file");
+        currentPreviewFile = id;
+        console.info(id + " clicked.");
+
+        var preview = $("#attachment-preview");
+
+        for (var i = 0, attachment; i < attachments.length; i++) {
+            attachment = attachments[i];
+            if (attachment.id === id) {
+                console.info(attachment.type);
+                switch (attachment.type){
+                    case "image":
+                        console.info("Image file");
+                        preview.empty();
+                        preview.append(
+                            '<img class="previewWindow" src='+ attachment.data +'>'
+                        );
+                        break;
+                    case "video":
+                        console.info("Video file");
+                        preview.empty();
+                        if(attachment.data instanceof Blob) {
+                            var videoReader = new FileReader();
+                            videoReader.onloadend = (function (e) {
+                                preview.append(
+                                    '<video class="video-js vjs-default-skin previewWindow" controls autoplay>'
+                                    +   '<source src=' + e.target.result + '>'
+                                    + '</video>');
+                            });
+                            videoReader.readAsDataURL(attachment.data);
+                        } else {
+                            preview.append(
+                                '<video class="video-js vjs-default-skin previewWindow" controls autoplay>'
+                                +   '<source src=' + attachment.data + '>'
+                                + '</video>'
+                            );
+                        }
+
+                        console.info("Video data-> "+attachment.data);
+                        break;
+                    case "audio":
+                        console.info("Audio file");
+                        preview.empty();
+                        if(attachment.data instanceof Blob){
+                            var audioReader = new FileReader();
+                            audioReader.onloadend = (function (e) {
+                                preview.append(
+                                    '<audio class="video-js vjs-default-skin previewWindow" controls autoplay>' +
+                                    '<source src='+ e.target.result +'>' +
+                                    '</audio>'
+                                );
+                            });
+                            audioReader.readAsDataURL(attachment.data);
+                        } else {
+                            preview.append(
+                                '<audio class="video-js vjs-default-skin previewWindow" controls autoplay>' +
+                                '<source src='+ attachment.data +'>' +
+                                '</audio>'
+                            );
+                        }
+
+                        console.info("Audio data-> "+attachment.data);
+                        break;
+                    case "note":
+                        console.info("Text file");
+                        var fileReader = new FileReader();
+                        fileReader.onloadend = (function (e) {
+                            preview.empty();
+                            preview.append(
+                                '<textarea class="previewWindow" title="Preview Text" disabled>' +
+                                e.target.result +
+                                '</textarea>'
+                            );
+                        });
+                        fileReader.readAsText(attachment.data);
+                        break;
+                    default:
+                        console.info("File attachment");
+                        preview.empty();
+                        preview.append(
+                            '<div class="previewWindow" title="Preview Text" >' +
+                            '<p style="text-align: center;">' + attachment.name + '</p>' +
+                            '<p style="text-align: center;">No preview available.</p>' +
+                            '</div>');
+                        break;
+
+                }
+            }
+        }
+    }
+
+    function generateAttachmentsList() {
+
+        console.info("Total attachments->" + attachments.length + " files");
+        console.info("Attachments->" + attachments);
+
+        if(attachments.length != 0){
+            $("#attachments-empty").hide();
+            $("#attachment-preview").show();
+            $("#attachments-not-empty").show();
+
+            var listContainer = $("#attachments-list");
+
+            listContainer.empty();
+
+            for (var i = 0; i < attachments.length; i++) {
+                var a = attachments[i];
+
+                console.info("Attachment " + a.id + "-> Name: " + a.name + " | Type: " + a.type);
+
+                listContainer.append(
+                     "<div id='attachmentBlock' style='margin:5px'>"
+                    + "<svg class='icon' data-file='" + a.id + "' height='12px' width='12px'>"
+                    + "<path fill='#000000' d='M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z'></path>"
+                    + "</svg>"
+                    + "<a class='text' data-file='" + a.id + "'>" + a.name + "</a>"
+                    + "</div>"
+                );
+            }
+        } else {
+            $("#attachment-preview").hide();
+            $("#attachments-not-empty").hide();
+            $("#attachments-empty").show();
+        }
+
+    }
+
+    $("#attachmentVideo").on("change", function (e) {
+
+        var video = e.target.files[0];
+        console.info("Video selected ->" + video.name);
+
+        var reader = new FileReader();
+
+        reader.onload = (function (e) {
+            var previewVideo = e.target.result;
+            $("#attachment-preview-video").show();
+            $("#capture-video-preview").hide();
+            let preview = $("#uploaded-video-preview");
+            preview.show();
+            preview.attr('src', previewVideo);
+            preview.get(0).play();
+
+            attachmentVideo = new Attachment(video.name, "video", previewVideo );
+
+            console.info("new attachment created->" + attachmentVideo);
+        });
+        reader.readAsDataURL(video);
+    });
+
+    $("#attachmentAudio").on("change", function (e) {
+
+        var audio = e.target.files[0];
+        console.info("Audio selected ->" + audio.name);
+
+        var reader = new FileReader();
+
+        reader.onload = (function (e) {
+            var previewAudio = e.target.result;
+            $("#attachment-preview-audio").show();
+            $("#capture-audio-preview").hide();
+            let preview = $("#uploaded-audio-preview");
+            preview.show();
+            preview.attr('src', previewAudio);
+            preview.get(0).play();
+
+            attachmentAudio = new Attachment(audio.name, "audio", previewAudio );
+        });
+        reader.readAsDataURL(audio);
+    });
+
+    $("#attachmentImage").on("change", function (e) {
+
+        var image = e.target.files[0];
+        console.info("Image selected ->" + image.name);
+
+        var reader = new FileReader();
+        reader.onload = (function (e) {
+            var previewImage = e.target.result;
+            $("#attachment-preview-image").show();
+            $("#capture-image-preview").hide();
+            let preview = $("#uploaded-image-preview");
+            preview.show();
+            preview.attr('src', previewImage);
+
+            attachmentImage = new Attachment(image.name, "image", previewImage );
+        });
+        reader.readAsDataURL(image);
+
+        $("#attachment-preview-image").show();
+
+    });
+
+    $("#attachmentNotes").on("change", function (e) {
+
+        var note = e.target.files[0];
+        console.info("Note selected ->" + note.name);
+
+        var reader = new FileReader();
+
+        reader.onload = (function (note) {
+            var previewNote = note.target.result;
+            $("#attachment-preview-note").show();
+            let preview = $("#note-preview");
+            preview.show();
+            preview.val(previewNote);
+        });
+        reader.readAsText(note);
+    });
+
+    $("#attachmentFiles").on("change", function (e) {
+
+        var file = e.target.files[0];
+        console.info("File selected ->" + file.name);
+
+        var reader = new FileReader();
+
+        reader.onload = (function (e) {
+            var previewFile = e.target.result;
+            var attachmentNewFile = new Attachment(file.name, "file", previewFile );
+            attachments.push(attachmentNewFile);
+        });
+        reader.readAsText(file);
+    });
+
+// Dialog
+// Creates dialog to show attachments
+    $("#dialog-attachment").dialog({
+        resizable: false,
+        height: "auto",
+        width: "auto",
+        open: function () {
+            console.info("Notes dialog opened");
+            $("#attachment-preview").hide();
+            generateAttachmentsList();
+        },
+        close: function () {
+        },
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            // "Add more attachments": function() {
+            //     $("#attachmentInput").click();
+            // },
+            "OK": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function getTimeStamp() {
+        var currentDate = new Date();
+        return currentDate.getDate() + "-"
+            + (currentDate.getMonth()+1)  + "-"
+            + currentDate.getFullYear() + "."
+            + currentDate.getHours() + ":"
+            + currentDate.getMinutes() + ":"
+            + currentDate.getSeconds();
+    }
+
+// Dialog
+// Creates dialog to attach video
+    $("#dialog-attach-video").dialog({
+        resizable: true,
+        position: {my: 'top', at: 'top+200'},
+        open: function () {
+            console.info("Video dialog opened");
+            $("#attachment-preview-video").hide();
+            attachmentVideo = null;
+        },
+        close: function () {
+            console.info("Video dialog closed");
+            $("#uploaded-video-preview").get(0).pause();
+            videoPlayer.recorder.reset();
+            attachmentVideo = null;
+        },
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            "Cancel": function () {
+                $(this).dialog("close");
+                videoPlayer.recorder.reset();
+                attachmentVideo = null;
+            },
+            "Attach": function () {
+                console.info( "Attaching -> " + attachmentVideo);
+                attachments.push(attachmentVideo);
+                $(this).dialog("close");
+            }
+        },
+        height: "auto",
+        width: "auto"
+    });
+
+// Dialog
+// Creates dialog to attach audio
+    $("#dialog-attach-audio").dialog({
+        resizable: false,
+        position: {my: 'top', at: 'top+200'},
+        open: function () {
+            console.info("Audio dialog opened");
+            $("#attachment-preview-audio").hide();
+            audioPlayer.recorder.reset();
+            attachmentAudio = null;
+        },
+        close: function () {
+            console.info("Audio dialog closed");
+            $("#uploaded-audio-preview").get(0).pause();
+            audioPlayer.recorder.reset();
+            attachmentAudio = null;
+        },
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            "Cancel": function () {
+                $(this).dialog("close");
+            },
+            "Attach": function () {
+                console.info( "Attaching -> " + attachmentAudio);
+                attachments.push(attachmentAudio);
+                $(this).dialog("close");
+            }
+        },
+        height: "auto",
+        width: "auto"
+    });
+
+// Dialog
+// Creates dialog to attach image
+    $("#dialog-attach-image").dialog({
+        resizable: false,
+        height: "auto",
+        width: "auto",
+        position: {my: 'top', at: 'top+200'},
+        open: function () {
+            console.info("Image dialog opened");
+            $("#attachment-preview-image").hide();
+            imagePlayer.recorder.reset();
+            attachmentImage = null;
+        },
+        close: function () {
+            console.info("Image dialog closed");
+            imagePlayer.recorder.reset();
+            attachmentImage = null;
+        },
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            "Cancel": function () {
+                $(this).dialog("close");
+                imagePlayer.recorder.reset();
+                attachmentImage = null;
+            },
+            "Attach": function () {
+                console.info( "Attaching -> " + attachmentImage);
+                imagePlayer.recorder.reset();
+                attachments.push(attachmentImage);
+                $(this).dialog("close");
+            }
+        }
+    });
+
+// Dialog
+// Creates dialog to attach notes
+    $("#dialog-attach-note").dialog({
+        resizable: false,
+        height: "auto",
+        width: "auto",
+        position: {my: 'top', at: 'top+200'},
+        open: function () {
+            console.info("Notes dialog opened");
+            $("#attachment-preview-note").hide();
+            $("#note-preview").val("");
+            attachmentNotes = null;
+        },
+        close: function () {
+            console.info("Notes dialog closed");
+            attachmentNotes = null;
+        },
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            "Cancel": function () {
+                $(this).dialog("close");
+            },
+            "Attach": function () {
+                var textToWrite = $("#note-preview").val();
+                var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+                attachmentNotes = new Attachment(getTimeStamp()+".txt", "note", textFileAsBlob );
+                console.info( "Attaching -> " + attachmentNotes);
+                attachments.push(attachmentNotes);
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    // Show list of attachments on click
+    $("#view-attachments").click(function () {
+        $("#dialog-attachment").dialog("open");
+    });
 
 } );

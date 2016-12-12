@@ -64,77 +64,33 @@
     cursor: crosshair;
 }
 
+.attachmentFilePreview{
+    margin-left: 5px;
+    font-size: medium;
+}
 
-/*  this is not used anywhere*/
-/*.observationsContainer{*/
-    /*width: 100px;*/
-    /*height: 518px;*/
-    /*float: left;*/
-    /*background-color: cadetblue;*/
-/*}*/
+.previewWindow {
+    width: 400px;
+    height: 300px;
+}
 
-/*.editor{*/
-    /*width: 1264px;*/
-    /*height: 516px;*/
-    /*float: left;*/
-    /*border: 1px solid;*/
-    /*!*background-color: black;*!*/
-/*}*/
+.listItemDiv {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
 
-/*.attachmentContainer{*/
-    /*height: 30px;*/
-    /*width: 1366px;*/
-    /*background-color: royalblue;*/
-    /*clear: both;*/
-/*}*/
-
-/*.saveContainer{*/
-    /*height: 70px;*/
-    /*width: 1366px;*/
-    /*background-color: darkgray;*/
-    /*clear: both;*/
-/*}*/
-
-/*!*This is to change the cursor while inside the canvas.*!*/
-/*.editor:hover{*/
-/*cursor: crosshair;*/
-/*}*/
-
-/*.editor:active{*/
-/*cursor: crosshair;*/
-/*}*/
-
-/*.magnifying-glass {*/
-    /*z-index: 100;*/
-    /*position: absolute;*/
-    /*overflow: hidden;*/
-/*}*/
-
-/*.drawing-module-canvas{*/
-    /*position: absolute;*/
-    /*top: 0;*/
-    /*left: 0;*/
-    /*width: 1264px;*/
-    /*height: 516px;*/
-/*}*/
-
-/*.attachmentButton{*/
-    /*height: 12px;*/
-    /*width: 12px;*/
-    /*background: url('../images/remove.png') 10px 10px no-repeat;*/
-    /*background-size: 100%;'*/
-/*}*/
-
-/*.uploadCaptureButton{*/
-    /*width: 150px; height: 40px; margin: 25px; float: left; clear: left;*/
-/*}*/
-
-/*.previewWindow {*/
-    /*width: 400px;*/
-    /*height: 300px;*/
-/*}*/
-
-/*.attachmentFilePreview{*/
-    /*margin-left: 5px;*/
-    /*font-size: medium;*/
-/*}*/
+.icon {
+    margin: 2px;
+    width:24px;
+    height:24px;
+    vertical-align: middle;
+}
+.text {
+    vertical-align: middle;
+    font-size: large;
+    display: inline-block;
+    width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
