@@ -10,15 +10,24 @@ $(document).ready(function() {
     // let FILL_COLOR, BACK_COLOR, STROKE_COLOR;
     let DRAW_MODE;
 
-    var UNDO_STACK = [], REDO_STACK = [], CURRENT_STATE;
+    let UNDO_STACK = [], REDO_STACK = [], CURRENT_STATE;
 
-    const canvas = window._canvas = new fabric.Canvas('canvas', {
+    let canvas = window._canvas = new fabric.Canvas('canvas', {
         selection: true,
-        backgroundColor: '#EAEDED',
+        // backgroundColor: '#EAEDED',
         preserveObjectStacking: true
     });
 
     canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), 1.0);
+
+    function clearCanvas() {
+        canvas.clear();
+    }
+
+    //Status
+    $("#status-clear").click(function () {
+        clearCanvas();
+    });
 
     // Draw
     let pencil = $("#pencil");
@@ -231,6 +240,57 @@ $(document).ready(function() {
     });
 
     // Image
+    fabric.Object.prototype.setOriginToCenter = function () {
+        this._originalOriginX = this.originX;
+        this._originalOriginY = this.originY;
+
+        var center = this.getCenterPoint();
+
+        this.set({
+            originX: 'center',
+            originY: 'center',
+            left: center.x,
+            top: center.y
+        });
+    };
+
+    fabric.Object.prototype.setCenterToOrigin = function () {
+        var originPoint = this.translateToOriginPoint(
+            this.getCenterPoint(),
+            this._originalOriginX,
+            this._originalOriginY);
+
+        this.set({
+            originX: this._originalOriginX,
+            originY: this._originalOriginY,
+            left: originPoint.x,
+            top: originPoint.y
+        });
+    };
+
+    function rotateObject(angleOffset) {
+        var obj = canvas.getActiveObject(),
+            resetOrigin = false;
+
+        if (!obj) return;
+
+        var angle = obj.getAngle() + angleOffset;
+
+        if ((obj.originX !== 'center' || obj.originY !== 'center') && obj.centeredRotation) {
+            obj.setOriginToCenter && obj.setOriginToCenter();
+            resetOrigin = true;
+        }
+
+        angle = angle > 360 ? 90 : angle < 0 ? 270 : angle;
+
+        obj.setAngle(angle).setCoords();
+
+        if (resetOrigin) {
+            obj.setCenterToOrigin && obj.setCenterToOrigin();
+        }
+
+        canvas.renderAll();
+    }
     $("#flip-vertical").click(function () {
         if(canvas.getActiveObject().get('flipX'))
             canvas.getActiveObject().set('flipX', false);
@@ -246,14 +306,10 @@ $(document).ready(function() {
         canvas.renderAll();
     });
     $("#rotate-clock").click(function () {
-        let angle = canvas.getActiveObject().get('angle');
-        canvas.getActiveObject().set("angle", angle + 90);
-        canvas.renderAll();
+        rotateObject(90);
     });
     $("#rotate-anti-clock").click(function () {
-        let angle = canvas.getActiveObject().get('angle');
-        canvas.getActiveObject().set("angle", angle - 90);
-        canvas.renderAll();
+        rotateObject(-90);
     });
     $("#crop").click(function () {
 
@@ -265,6 +321,7 @@ $(document).ready(function() {
     // Edit
     var canvasHiddenFlag = false;
     $("#hide").click(function () {
+
         if(canvasHiddenFlag === true){
             canvas.interactive = true;
             // canvas.getObjects().forEach(function(o) {
@@ -325,11 +382,7 @@ $(document).ready(function() {
     }
 
     $("#clear").click(function () {
-        canvas.discardActiveGroup();
-        let objectsInGroup = canvas.getObjects();
-        objectsInGroup.forEach(function(object) {
-            canvas.remove(object);
-        });
+        clearCanvas();
     });
 
     //Position
@@ -1660,7 +1713,7 @@ $(document).ready(function() {
     });
 
     // Show list of attachments on click
-    $("#view-attachments").click(function () {
+    $("#status-view-attachments").click(function () {
         $("#dialog-attachment").dialog("open");
     });
 
