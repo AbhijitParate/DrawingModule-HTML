@@ -29,6 +29,45 @@ $(document).ready(function() {
         clearCanvas();
     });
 
+    $(function() {
+
+        $(document).contextmenu({
+            delegate: "canvas",
+            autoFocus: true,
+            preventContextMenuForPopup: true,
+            preventSelect: true,
+            taphold: true,
+            menu: [{
+                title: "Link external file",
+                cmd: "link"
+            }],
+            // Handle menu selection to implement a fake-clipboard
+            select: function (event, ui) {
+                var $target = ui.target;
+                switch (ui.cmd) {
+                    case "link":
+                        // code to on click of link
+                        break;
+                }
+                // Optionally return false, to prevent closing the menu now
+            },
+            // Implement the beforeOpen callback to dynamically change the entries
+            beforeOpen: function (event, ui) {
+
+                // TODO: Check if rightclick on object, then pass object id and on click of menu add external file as button
+                var $menu = ui.menu,
+                    $target = ui.target,
+                    extraData = ui.extraData; // passed when menu was opened by call to open()
+
+                $(document)
+                    .contextmenu("setEntry", "link", "Link external file")
+                    .contextmenu("enableEntry", "paste","");
+
+                // Optionally return false, to prevent opening the menu now
+            }
+        });
+    });
+
     // Draw
     let pencil = $("#pencil");
     pencil.webuiPopover({
@@ -588,7 +627,7 @@ $(document).ready(function() {
                     function (oImg) {
                         oImg.scale(1);
                         oImg.set({
-                            'top': 100, 'left': 100, width:200, height:200
+                            'top': 100, 'left': 100
                         });
                         canvas.centerObject(oImg);
                         canvas.add(oImg);

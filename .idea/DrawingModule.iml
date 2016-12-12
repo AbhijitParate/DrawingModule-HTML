@@ -23,5 +23,8 @@
     <orderEntry type="library" name="jquery-1.12.4" level="application" />
     <orderEntry type="library" name="jquery.webui-popover" level="application" />
     <orderEntry type="library" name="videojs-ie8" level="application" />
+    <orderEntry type="library" name="jquery.ui-contextmenu" level="application" />
+    <orderEntry type="library" name="jquery.contextMenu" level="application" />
+    <orderEntry type="library" name="jquery.ui.position" level="application" />
   </component>
 </module>
