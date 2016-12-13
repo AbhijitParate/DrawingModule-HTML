@@ -3,6 +3,10 @@
  * Created by abhijit on 12/7/16.
  */
 
+// Fabric.js Canvas object
+var canvas;
+
+
 $(document).ready(function() {
 
     const ERASE = "erase", DRAW = "draw";
@@ -349,48 +353,57 @@ $(document).ready(function() {
             canvasHiddenFlag = true;
         }
     });
+
+    canvas.counter = 0;
+    var newleft = 0;
+
+    let canvasState = [];
+    let mods = 0;
+    canvas.on('object:modified', function () {
+        updateModifications(true);
+        });
+    canvas.on('object:added', function () {
+        updateModifications(true);
+    });
+    function updateModifications(savehistory) {
+        if (savehistory === true) {
+            let myjson = JSON.stringify(canvas.toDatalessJSON());
+            canvasState.push(myjson);
+            mods++;
+        }
+    }
+
+    function undo() {
+        if (mods < canvasState.length) {
+            canvas.clear().renderAll();
+            canvas.loadFromJSON(canvasState[canvasState.length - 1 - mods - 1], canvas.renderAll.bind(canvas), null);
+            canvas.renderAll();
+            //console.log("geladen " + (state.length-1-mods-1));
+            //console.log("state " + state.length);
+            mods += 1;
+            //console.log("mods " + mods);
+        }
+    }
+
+    function redo() {
+        if (mods > 0) {
+            canvas.clear().renderAll();
+            canvas.loadFromJSON(canvasState[canvasState.length - 1 - mods + 1], canvas.renderAll.bind(canvas), null);
+            canvas.renderAll();
+            //console.log("geladen " + (state.length-1-mods+1));
+            mods -= 1;
+            //console.log("state " + state.length);
+            //console.log("mods " + mods);
+        }
+    }
+
     $("#redo").click(function () {
-        replay(UNDO_STACK, REDO_STACK, '#redo', this);
+        redo();
     });
 
     $("#undo").click(function () {
-        replay(REDO_STACK, UNDO_STACK, '#undo', this);
+        undo();
     });
-
-    canvas.on('object:modified', function() {
-        save();
-    });
-
-    function replay(playStack, saveStack, buttonsOn, buttonsOff) {
-        saveStack.push(CURRENT_STATE);
-        CURRENT_STATE = playStack.pop();
-        var on = $(buttonsOn);
-        var off = $(buttonsOff);
-        // turn both buttons off for the moment to prevent rapid clicking
-        on.prop('disabled', true);
-        off.prop('disabled', true);
-        canvas.clear();
-        canvas.loadFromJSON(CURRENT_STATE, function() {
-            canvas.renderAll();
-            // now turn the buttons back on if applicable
-            on.prop('disabled', false);
-            if (playStack.length) {
-                off.prop('disabled', false);
-            }
-        });
-    }
-
-    function save() {
-        // clear the redo stack
-        REDO_STACK = [];
-        $('#redo').prop('disabled', true);
-        // initial call won't have a state
-        if (CURRENT_STATE) {
-            UNDO_STACK.push(CURRENT_STATE);
-            $('#undo').prop('disabled', false);
-        }
-        CURRENT_STATE = JSON.stringify(canvas);
-    }
 
     $("#clear").click(function () {
         clearCanvas();
