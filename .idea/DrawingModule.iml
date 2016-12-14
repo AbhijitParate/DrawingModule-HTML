@@ -26,5 +26,6 @@
     <orderEntry type="library" name="jquery.ui-contextmenu" level="application" />
     <orderEntry type="library" name="jquery.contextMenu" level="application" />
     <orderEntry type="library" name="jquery.ui.position" level="application" />
+    <orderEntry type="library" name="webcam" level="application" />
   </component>
 </module>
