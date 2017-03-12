@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+        $(function() {
+            $("#request").on("click", function () {
+
+                //Wrap the getUserMedia function from the different browsers
+                navigator.getUserMedia = navigator.getUserMedia ||
+                    navigator.webkitGetUserMedia ||
+                    navigator.mozGetUserMedia;
+
+                //Call our method to request the media object - this will trigger the browser to prompt a request.
+                navigator.getUserMedia({ video: true, audio: true },
+                function success(mediaObj) {
+                    console.info("Success");
+                    if(mediaObj.getVideoTracks().length > 0 && mediaObj.getAudioTracks().length > 0){
+                        //code for when none of the devices are available
+                        console.info("Video devices : " + mediaObj.getVideoTracks().length);
+                        console.info("Audio devices : " + mediaObj.getAudioTracks().length);
+                        $("#video").src = URL.createObjectURL(mediaObj);
+                    }else{
+                        // code for when both devices are available
+                    }
+                },
+                function failure(errorObj) {
+                    console.info("Failure");
+                    console.info(errorObj);
+                });
+            })
+        });
+    </script>
+</head>
+<body>
+<button id="request">Request</button>
+<button id="release">Release</button>
+<br>
+<video id="video" autoplay="true" width="500" height="500" style="background: gray">
+
+</video>
+</body>
+</html>
