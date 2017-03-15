@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{RecordRTC, fabric.require, jquery-ui, jquery.ui-contextmenu, jquery.webui-popover, jspdf, lightcase, spectrum, video, videojs.record, videojs.wavesurfer, wavesurfer, wavesurfer.microphone}" />
+    <file url="PROJECT" libraries="{FileSaver.min.js, RecordRTC, fabric.require, jquery-3.1.1, jquery-ui, jquery.ui-contextmenu, jquery.webui-popover, jspdf, lightcase, spectrum, video, videojs.record, videojs.record.lamejs, videojs.wavesurfer, wavesurfer, wavesurfer.microphone}" />
   </component>
 </project>

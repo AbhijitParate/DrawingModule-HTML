@@ -8,6 +8,11 @@ $(document).ready(function() {
     let dialogTemplate = $("#dialog-upload");
     dialogTemplate.dialog({
         resizable: false,
+        position: {
+            of: "#canvasWrapper",
+            at: "center center",
+            my: "center center"
+        },
         height: "auto",
         width: "auto",
         modal: true,
@@ -19,9 +24,7 @@ $(document).ready(function() {
                     imagePath,
                     function(oImg) {
                         oImg.scale(1);
-                        oImg.set({
-                            'top': 100, 'left': 100, width:200, height:200
-                        });
+                        oImg.set({'top': 100, 'left': 100});
                         canvas.centerObject(oImg);
                         canvas.add(oImg);
                     }
@@ -63,6 +66,8 @@ $(document).ready(function() {
                 Webcam.set({
                     width: 1280,
                     height: 720,
+                    dest_width: 1280,
+                    dest_height: 720,
                 });
                 break;
         }
@@ -134,9 +139,7 @@ $(document).ready(function() {
                     imagePath,
                     function (oImg) {
                         oImg.scale(1);
-                        oImg.set({
-                            'top': 100, 'left': 100
-                        });
+                        oImg.set({'top': 100, 'left': 100});
                         canvas.centerObject(oImg);
                         canvas.add(oImg);
                     });
@@ -167,9 +170,7 @@ $(document).ready(function() {
                     uploadImage,
                     function (oImg) {
                         oImg.scale(1);
-                        oImg.set({
-                            'top': 100, 'left': 100, width:200, height:200
-                        });
+                        oImg.set({'top': 100, 'left': 100});
                         canvas.centerObject(oImg);
                         canvas.add(oImg);
                     });

@@ -76,15 +76,103 @@ $(document).ready(function () {
                 closeText: "hide"
             }).dialog( "open" );
         } else {
-            $("#dialog-attachment").dialog("open");
+            // $("#dialog-attachment").dialog("open");
+            createAttachmentDialog();
         }
     });
 
+    function removeAttachment(id) {
+        for (let i = 0; i < attachments.length; i++) {
+            if (attachments[i].id === id) {
+                attachments.splice(i, 1);
+                break;
+            }
+        }
+        console.info("file removed");
+    }
+
+    function createLocalAttachmentItem(attachment) {
+        let listItem = $("<li/>").css({"list-style":"none"});
+        let div = $("<div />").appendTo(listItem);
+        div.css({display:"inline-flex", margin:"5px"});
+        let span = $("<span />");
+        span.css({
+            color:"red",
+            "font-size":"20px",
+            "margin-right":"15px"
+        });
+
+        let icon = $("<i/>");
+        icon.addClass("icon-remove");
+        icon.attr("data-file", attachment.id);
+        icon.click(function (){
+            removeAttachment(attachment.id);
+            listItem.remove();
+        });
+        icon.appendTo(span);
+
+        span.appendTo(div);
+
+        let a_view = $("<a/>")
+            .addClass("attachments-list-item")
+            .attr("href","#")
+            .attr("data-url", attachment.data)
+            .attr("title", attachment.name)
+            .text(attachment.name)
+            .css({ display: "block", "font-size":"20px" })
+            .lightcase();
+        a_view.appendTo(div);
+        return listItem;
+    }
+
+    function recreateLocalAttachments() {
+        console.debug(attachments);
+        var attachmentDiv = $("<div/>");
+        var list = $("<ul/>").addClass("attachments-list")
+            .css({"margin":"5px"});
+
+        attachments.forEach(function (attachment) {
+            list.append(createLocalAttachmentItem(attachment));
+        });
+        attachmentDiv.append(list);
+        return attachmentDiv;
+    }
+
+    function createAttachmentDialog() {
+        let dialog = $("<div/>");
+        let attachmentDiv = recreateLocalAttachments();
+        attachmentDiv.appendTo(dialog);
+        dialog.attr("title", "Attachments");
+        dialog.dialog({
+            modal:true,
+            resizable: true,
+            position: {
+                of: "#canvasWrapper",
+                at: "center center",
+                my: "center center"
+            },
+            height: "auto",
+            width: "auto",
+            open: function () {
+                console.info("Attachments dialog opened");
+            },
+            close: function () {
+                console.info("Attachments dialog closed");
+                $(this).dialog("destroy");
+            },
+            autoOpen: false,
+            buttons: {
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        dialog.dialog("open");
+    }
+
     // Show list of attachments on click
     $("#status-save").click(function () {
-        // uploadDialog.dialog("open");
-        // $("<p/>").append("Uploading");
-        // $("#drawing-and-attachments").hide();
         $(this).prop('disabled', true);
         $("#status-cancel").prop('disabled', true);
         $("#status-view-attachments").prop('disabled', true);

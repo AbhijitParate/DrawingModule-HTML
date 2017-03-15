@@ -31,5 +31,8 @@
     <orderEntry type="library" name="videojs.wavesurfer" level="application" />
     <orderEntry type="library" name="RecordRTC" level="application" />
     <orderEntry type="library" name="lightcase" level="application" />
+    <orderEntry type="library" name="videojs.record.lamejs" level="application" />
+    <orderEntry type="library" name="jquery-3.1.1" level="application" />
+    <orderEntry type="library" name="FileSaver.min.js" level="application" />
   </component>
 </module>

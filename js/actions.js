@@ -417,61 +417,53 @@ $(document).ready(function() {
 //8.Print
     $("#print").click(function () {
         let dataUrl = canvas.toDataURL({
-            format: 'jpeg',
+            format: 'png',
             quality: 0.8,
-            multiplier: 0.4
+            multiplier: 1
         });
-        let windowContent = '<!DOCTYPE html>';
-        windowContent += '<html>';
-        windowContent += '<head><title>Print canvas</title></head>';
-        windowContent += '<body>';
-        windowContent += '<img src="' + dataUrl + '">';
-        windowContent += '</body>';
-        windowContent += '</html>';
-        let printWin = window.open('','','width=1024,height=720');
+        let windowContent = "";// = '<!DOCTYPE html>';
+        windowContent += "<html>";
+        windowContent += "<head><title>Print canvas</title></head>";
+        windowContent += "<body>";
+        windowContent += "<img src='" + dataUrl + "' width='800' height='800' />";
+        windowContent += "</body>";
+        windowContent += "</html>";
+
+        let printWin = window.open();
         printWin.document.open();
         printWin.document.write(windowContent);
         printWin.document.close();
         printWin.focus();
         printWin.print();
-        printWin.close();
+        // printWin.close();
     });
 
 //9.Export
     $("#save-pdf").click(function () {
-        let imgData = canvas.toDataURL({
-            format: 'jpeg',
+        // canvas.setBackgroundColor('rgba(255, 255, 255, 1)', canvas.renderAll.bind(canvas));
+        let image = canvas.toDataURL({
+            format: 'png',
             quality: 0.8,
             multiplier: 1
         });
         //noinspection JSUnresolvedFunction
         let pdf = new jsPDF({
-            orientation: 'landscape',
+            orientation: 'p',
             unit: 'mm',
-            format: [canvas.width, canvas.height]
+            format: 'a4'
         });
 
-        pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
-        let date = new Date();
-        let timeStamp = date.toDateString();
-        // pdf.autoPrint();
-        pdf.save(timeStamp + ".pdf");
+        pdf.addImage(image, 'PNG', 10, 10, 580, 580);
+        pdf.save(getTimeStamp() + ".pdf");
     });
 
     $("#save-jpg").click(function () {
-        let image = canvas.toDataURL({
-            format: 'jpeg',
-            quality: 0.8,
-            multiplier: 1
-        });
-        let link = document.createElement("a");
-        let date = new Date();
-        let timeStamp = date.toDateString();
-        link.download = timeStamp + ".jpg";
-        link.href = image;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        canvas.setBackgroundColor('rgba(255, 255, 255, 1)', canvas.renderAll.bind(canvas));
+        let image = canvas.toDataURL({format: 'jpeg'});
+        canvas.setBackgroundColor('rgba(0, 0, 0, 0)', canvas.renderAll.bind(canvas));
+        let imageBlob = dataURItoBlob(image);
+        console.info(imageBlob);
+        saveAs(imageBlob, getTimeStamp() + ".jpg", "image/jpeg");
     });
 
     $("#save-png").click(function () {
@@ -480,13 +472,27 @@ $(document).ready(function() {
             quality: 0.8,
             multiplier: 1
         });
-        let link = document.createElement("a");
-        let date = new Date();
-        let timeStamp = date.toDateString();
-        link.download = timeStamp + ".png";
-        link.href = image;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+
+        let imageBlob = dataURItoBlob(image);
+        console.info(imageBlob);
+
+        saveAs(imageBlob, getTimeStamp() + ".png", "image/png");
     });
+
+    function dataURItoBlob(dataURI) {
+        // convert base64 to raw binary data held in a string
+        // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+        var byteString = atob(dataURI.split(',')[1]);
+
+        // separate out the mime component
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        // write the bytes of the string to an ArrayBuffer
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], {type: mimeString});
+    }
 });
