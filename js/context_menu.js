@@ -10,6 +10,16 @@ $(document).ready(function() {
         }
     });
 
+    canvas.on("mouse:up", function (event) {
+        console.log(event);
+        console.log('canvas:mouse:up - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
+    });
+
+    canvas.on("mouse:down", function (event) {
+        console.log(event);
+        console.log('canvas:mouse:down - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
+    });
+
     $(document).contextmenu({
         delegate: ".upper-canvas",
         autoFocus: true,
@@ -233,7 +243,7 @@ function getPreviewDialog(data, mimeType) {
 
         case "video":
             div.attr("title", "Video clip").appendTo(div);
-            let video = $("<video />").attr("autoplay", true).attr("controls", true).css({width: "100%", height: "100%" }).appendTo(div);
+            let video = $("<video />").attr("autoplay", true).attr("controls", true).css({width: "100%", height: "90%" }).appendTo(div);
             $("<source />").attr("src", data).attr("type", mimeType).appendTo(video);
             div.dialog({
                 width: 500,

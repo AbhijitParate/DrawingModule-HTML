@@ -48,14 +48,9 @@ function State(data) {
 }
 
 function updateStack() {
-    // if(CANVAS_CURRENT === ""){
-    //     console.log('current updated');
-    //     CANVAS_CURRENT = JSON.stringify(canvas);
-    // } else {
-        console.log('stack updated');
-        UNDO_STACK.push(new State(CANVAS_CURRENT));
-        CANVAS_CURRENT = JSON.stringify(canvas);
-    // }
+    console.log('stack updated');
+    UNDO_STACK.push(new State(CANVAS_CURRENT));
+    CANVAS_CURRENT = JSON.stringify(canvas);
 }
 
 const ERASE = "erase", DRAW = "draw";
@@ -67,18 +62,17 @@ function undo() {
     if(UNDO_STACK.length > 0) {
         console.log("undone");
         updateFlag = false;
-        // if (stackCounter < state.length) {
+
         canvas.clear().renderAll();
-        // if(isFisrt){
+
         REDO_STACK.push(new State(CANVAS_CURRENT));
-        // isFisrt = false;
-        // }
+
         CANVAS_CURRENT = UNDO_STACK.pop().data;
 
         canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
             canvas.renderAll();
         });
-        // }
+
         updateFlag = true;
     } else {
         console.log("not undone");
@@ -88,14 +82,10 @@ function undo() {
 function redo() {
     if(REDO_STACK.length > 0) {
         console.log("redone");
-        // updateStack();
+        updateStack();
         updateFlag = false;
-        // if (mods > 0) {
         canvas.clear().renderAll();
-        // if(isFisrt){
-        //     REDO_STACK.pop();
-        //     isFisrt = false;
-        // }
+
         UNDO_STACK.push(new State(CANVAS_CURRENT));
 
         CANVAS_CURRENT = REDO_STACK.pop().data;
@@ -103,11 +93,6 @@ function redo() {
         canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
             canvas.renderAll();
         });
-        //console.log("geladen " + (state.length-1-mods+1));
-        // mods -= 1;
-        //console.log("state " + state.length);
-        //console.log("mods " + mods);
-        // }
         updateFlag = true;
     } else {
         console.log("not redone");

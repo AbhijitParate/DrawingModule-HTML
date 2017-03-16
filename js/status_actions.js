@@ -216,7 +216,7 @@ $(document).ready(function () {
                         console.log(obj);
                         // for our implementation
                         let data = obj.get('preserveAspectRatio');
-                        if (data.substring(0,4) === "data") {
+                        if (data && data.substring(0,4) === "data") {
                             let newObj = new Media(data,                                {
                                     top: obj.transformMatrix[5],
                                     left: obj.transformMatrix[4],
