@@ -34,5 +34,7 @@
     <orderEntry type="library" name="videojs.record.lamejs" level="application" />
     <orderEntry type="library" name="jquery-3.1.1" level="application" />
     <orderEntry type="library" name="FileSaver.min.js" level="application" />
+    <orderEntry type="library" name="blob-util" level="application" />
+    <orderEntry type="library" name="fabric" level="application" />
   </component>
 </module>

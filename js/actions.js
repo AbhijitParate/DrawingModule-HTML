@@ -347,24 +347,9 @@ $(document).ready(function() {
     $("#clear").click(function () {
         clearCanvas();
     });
-    let canvasHiddenFlag = false;
-    $("#hide").click(function () {
 
-        if(canvasHiddenFlag === true){
-            canvas.interactive = true;
-            // canvas.getObjects().forEach(function(o) {
-            //     o.selectable = true;
-            // });
-            // $("#canvas").show();
-            canvasHiddenFlag = false;
-        } else {
-            canvas.interactive = false;
-            // canvas.getObjects().forEach(function(o) {
-            //     o.selectable = false;
-            // });
-            // $("#canvas").hide();
-            canvasHiddenFlag = true;
-        }
+    $("#hide").click(function () {
+        $("#canvasWrapper").toggle("display");
     });
 
 //Zoom
@@ -477,6 +462,25 @@ $(document).ready(function() {
         console.info(imageBlob);
 
         saveAs(imageBlob, getTimeStamp() + ".png", "image/png");
+    });
+
+    $("#save-json").click(function () {
+        let json = JSON.stringify(canvas);
+        let jsonBlob = new Blob([json], {type: 'text/json'});
+        saveAs(jsonBlob, getTimeStamp() + ".json", "text/json");
+    });
+
+    $("#save-svg").click(function () {
+        let svg = canvas.toSVG({
+            viewBox: {
+                x: 0,
+                y: 0,
+                width: 800,
+                height: 800
+            }
+        });
+        let svgBlob = new Blob([svg], {type: 'image/svg+xml'});
+        saveAs(svgBlob, getTimeStamp() + ".svg", "image/svg+xml");
     });
 
     function dataURItoBlob(dataURI) {

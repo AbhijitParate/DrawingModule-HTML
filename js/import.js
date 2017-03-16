@@ -20,15 +20,18 @@ $(document).ready(function() {
         buttons: {
             "Use selected image": function () {
                 $(this).dialog("close");
-                fabric.Image.fromURL(
-                    imagePath,
-                    function(oImg) {
-                        oImg.scale(1);
-                        oImg.set({'top': 100, 'left': 100});
-                        canvas.centerObject(oImg);
-                        canvas.add(oImg);
-                    }
-                );
+                blobUtil.imgSrcToDataURL(imagePath, 'image/jpeg').then(function (dataUrl) {
+                    // success
+                    fabric.Image.fromURL(
+                        dataUrl,
+                        function(oImg) {
+                            oImg.scale(1);
+                            oImg.set({'top': 100, 'left': 100});
+                            canvas.centerObject(oImg);
+                            canvas.add(oImg);
+                        }
+                    );
+                });
             },
             "Cancel": function () {
                 $(this).dialog("close");
@@ -135,14 +138,18 @@ $(document).ready(function() {
             "Use"  : function () {
                 $(this).dialog("close");
                 Webcam.reset();
-                fabric.Image.fromURL(
-                    imagePath,
-                    function (oImg) {
-                        oImg.scale(1);
-                        oImg.set({'top': 100, 'left': 100});
-                        canvas.centerObject(oImg);
-                        canvas.add(oImg);
-                    });
+                blobUtil.imgSrcToDataURL(imagePath, 'image/jpeg').then(function (dataUrl) {
+                    // success
+                    fabric.Image.fromURL(
+                        dataUrl,
+                        function(oImg) {
+                            oImg.scale(1);
+                            oImg.set({'top': 100, 'left': 100});
+                            canvas.centerObject(oImg);
+                            canvas.add(oImg);
+                        }
+                    );
+                });
             },
             "Cancel": function () {
                 $(this).dialog("close");

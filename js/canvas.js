@@ -5,6 +5,13 @@
 // Fabric.js Canvas object
 let canvas;
 
+let CANVAS_CURRENT;
+let UNDO_STACK = [];
+let REDO_STACK = [];
+
+let updateFlag = true;
+let isFisrt = true;
+
 $(document).ready(function() {
     canvas = window._canvas = new fabric.Canvas('canvas', {
         selection: true,
@@ -12,14 +19,100 @@ $(document).ready(function() {
         preserveObjectStacking: true
     });
     canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), 1.0);
+
+    canvas.on("object:added", function (e) {
+        if(updateFlag) {
+            var object = e.target;
+            console.log('object:added');
+            // isFisrt = true;
+            updateStack();
+        }
+    });
+
+    canvas.on("object:modified", function (e) {
+        if(updateFlag) {
+            var object = e.target;
+            console.log('object:modified');
+            // isFisrt = true;
+            updateStack();
+        }
+    });
+
+    CANVAS_CURRENT = JSON.stringify(canvas);
+    // UNDO_STACK.push();
+    // REDO_STACK.push();
 });
+
+function State(data) {
+    this.data = data;
+}
+
+function updateStack() {
+    // if(CANVAS_CURRENT === ""){
+    //     console.log('current updated');
+    //     CANVAS_CURRENT = JSON.stringify(canvas);
+    // } else {
+        console.log('stack updated');
+        UNDO_STACK.push(new State(CANVAS_CURRENT));
+        CANVAS_CURRENT = JSON.stringify(canvas);
+    // }
+}
 
 const ERASE = "erase", DRAW = "draw";
 
 // let FILL_COLOR, BACK_COLOR, STROKE_COLOR;
 let DRAW_MODE = DRAW;
 
-let UNDO_STACK = [], REDO_STACK = [], CURRENT_STATE;
+function undo() {
+    if(UNDO_STACK.length > 0) {
+        console.log("undone");
+        updateFlag = false;
+        // if (stackCounter < state.length) {
+        canvas.clear().renderAll();
+        // if(isFisrt){
+        REDO_STACK.push(new State(CANVAS_CURRENT));
+        // isFisrt = false;
+        // }
+        CANVAS_CURRENT = UNDO_STACK.pop().data;
+
+        canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
+            canvas.renderAll();
+        });
+        // }
+        updateFlag = true;
+    } else {
+        console.log("not undone");
+    }
+}
+
+function redo() {
+    if(REDO_STACK.length > 0) {
+        console.log("redone");
+        // updateStack();
+        updateFlag = false;
+        // if (mods > 0) {
+        canvas.clear().renderAll();
+        // if(isFisrt){
+        //     REDO_STACK.pop();
+        //     isFisrt = false;
+        // }
+        UNDO_STACK.push(new State(CANVAS_CURRENT));
+
+        CANVAS_CURRENT = REDO_STACK.pop().data;
+
+        canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
+            canvas.renderAll();
+        });
+        //console.log("geladen " + (state.length-1-mods+1));
+        // mods -= 1;
+        //console.log("state " + state.length);
+        //console.log("mods " + mods);
+        // }
+        updateFlag = true;
+    } else {
+        console.log("not redone");
+    }
+}
 
 function clearCanvas() {
     canvas.clear();
