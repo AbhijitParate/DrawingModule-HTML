@@ -25,7 +25,12 @@ $(document).ready(function() {
                     fabric.Image.fromURL(
                         dataUrl,
                         function(oImg) {
-                            oImg.scale(1);
+                            if(oImg.width > 600){
+                                oImg.setWidth(600);
+                            }
+                            if(oImg.height > 600){
+                                oImg.setHeight(600);
+                            }
                             oImg.set({'top': 100, 'left': 100});
                             canvas.centerObject(oImg);
                             canvas.add(oImg);
@@ -143,7 +148,13 @@ $(document).ready(function() {
                     fabric.Image.fromURL(
                         dataUrl,
                         function(oImg) {
-                            oImg.scale(1);
+                            if(oImg.width > 600){
+                                oImg.setWidth(600);
+                            }
+                            if(oImg.height > 600){
+                                oImg.setHeight(600);
+                            }
+                            // oImg.scale(1);
                             oImg.set({'top': 100, 'left': 100});
                             canvas.centerObject(oImg);
                             canvas.add(oImg);
@@ -176,7 +187,12 @@ $(document).ready(function() {
                 fabric.Image.fromURL(
                     uploadImage,
                     function (oImg) {
-                        oImg.scale(1);
+                        if(oImg.width > 600){
+                            oImg.setWidth(600);
+                        }
+                        if(oImg.height > 600){
+                            oImg.setHeight(600);
+                        }
                         oImg.set({'top': 100, 'left': 100});
                         canvas.centerObject(oImg);
                         canvas.add(oImg);
