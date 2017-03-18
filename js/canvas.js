@@ -5,6 +5,10 @@
 // Fabric.js Canvas object
 let canvas;
 
+const ERASE = "erase", DRAW = "draw", FILL = 'fill';
+
+let EDITOR_MODE = DRAW;
+
 let CANVAS_CURRENT;
 let UNDO_STACK = [];
 let REDO_STACK = [];
@@ -52,8 +56,13 @@ $(document).ready(function() {
     });
 
     canvas.on("object:selected", function (event) {
-        console.log('1 object:selected');
+        console.log('object:selected');
         var object = event.target;
+        console.info(object.type);
+        if( EDITOR_MODE === FILL && (object.type === 'rect' || object.type === 'circle' || object.type === 'triangle' || object.type === 'polygon')) {
+            object.set('fill' , fillColor);
+            updateStack();
+        }
     });
 
     canvas.on("mouse:up", function (event) {
@@ -61,11 +70,11 @@ $(document).ready(function() {
             if(selectState.isFirstClick === true){
                 // console.log(selectState.object);
                 if(canvas.getActiveObject())
-                if(selectState.object.tag === "media" && isEventWithinObject(event.e, selectState.object)) {
-                    console.log('object:double-clicked');
-                    selectState.object.show();
-                    selectState.isFirstClick = false;
-                }
+                    if(selectState.object.tag === "media" && isEventWithinObject(event.e, selectState.object)) {
+                        console.log('object:double-clicked');
+                        selectState.object.show();
+                        selectState.isFirstClick = false;
+                    }
             } else {
                 selectState = new SelectState(true, canvas.getActiveObject());
                 setTimeout(function(){
@@ -100,11 +109,6 @@ function updateStack() {
     UNDO_STACK.push(new State(CANVAS_CURRENT));
     CANVAS_CURRENT = JSON.stringify(canvas);
 }
-
-const ERASE = "erase", DRAW = "draw";
-
-// let FILL_COLOR, BACK_COLOR, STROKE_COLOR;
-let DRAW_MODE = DRAW;
 
 function undo() {
     if(UNDO_STACK.length > 0) {

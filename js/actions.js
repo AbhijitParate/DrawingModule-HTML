@@ -1,6 +1,8 @@
 /**
  * Created by abhij on 3/7/2017.
  */
+let fillColor;
+
 $(document).ready(function() {
 
     canvas.freeDrawingBrush.color = 'black';
@@ -8,18 +10,20 @@ $(document).ready(function() {
     function enableSelect() {
         canvas.isDrawingMode = false;
         canvas.selection = true;
+        canvas.hoverCursor = 'move';
     }
 
     function enablePencil() {
         canvas.isDrawingMode = true;
         canvas.selection = false;
+        canvas.hoverCursor = 'crosshair';
     }
 
 //1.Draw
     // 1.Pencil
     $("#pencil").click(function () {
         enablePencil();
-        DRAW_MODE = DRAW;
+        EDITOR_MODE = DRAW;
     });
     // 1a.Slider
     let handle = $("#custom-handle");
@@ -44,7 +48,7 @@ $(document).ready(function() {
     // 2.Erase
     $("#erase").click(function () {
         enablePencil();
-        DRAW_MODE = ERASE;
+        EDITOR_MODE = ERASE;
         canvas.freeDrawingBrush.color = 'white';
     });
 
@@ -210,7 +214,7 @@ $(document).ready(function() {
     });
 
     // 6.Color Picker
-    $("#color-picker").spectrum({
+    $("#draw-color-picker").spectrum({
         showPaletteOnly: true,
         togglePaletteOnly: true,
         togglePaletteMoreText: 'more',
@@ -227,7 +231,32 @@ $(document).ready(function() {
             ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
         ],
         change: function (color) {
-            canvas.freeDrawingBrush.color = color;
+            canvas.freeDrawingBrush.color = color.toHexString(true);
+        }
+    });
+
+    // 6.Color Picker
+    $("#fill-color-picker").spectrum({
+        showPaletteOnly: true,
+        togglePaletteOnly: true,
+        togglePaletteMoreText: 'more',
+        togglePaletteLessText: 'less',
+        color: 'black',
+        palette: [
+            ["#000", "#444", "#666", "#999", "#ccc", "#eee", "#f3f3f3", "#fff"],
+            ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
+            ["#f4cccc", "#fce5cd", "#fff2cc", "#d9ead3", "#d0e0e3", "#cfe2f3", "#d9d2e9", "#ead1dc"],
+            ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#a2c4c9", "#9fc5e8", "#b4a7d6", "#d5a6bd"],
+            ["#e06666", "#f6b26b", "#ffd966", "#93c47d", "#76a5af", "#6fa8dc", "#8e7cc3", "#c27ba0"],
+            ["#c00", "#e69138", "#f1c232", "#6aa84f", "#45818e", "#3d85c6", "#674ea7", "#a64d79"],
+            ["#900", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+            ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
+        ],
+        change: function (color) {
+            fillColor = color.toHexString(true);
+            canvas.deactivateAllWithDispatch().renderAll();
+            canvas.hoverCursor = 'pointer';
+            EDITOR_MODE = FILL;
         }
     });
 
