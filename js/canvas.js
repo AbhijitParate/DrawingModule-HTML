@@ -10,7 +10,6 @@ let UNDO_STACK = [];
 let REDO_STACK = [];
 
 let updateFlag = true;
-let isFisrt = true;
 
 $(document).ready(function() {
     canvas = window._canvas = new fabric.Canvas('canvas', {
@@ -18,25 +17,74 @@ $(document).ready(function() {
         // backgroundColor: '#EAEDED',
         preserveObjectStacking: true
     });
+
     canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), 1.0);
+
+    let selectState = new SelectState(false, null);
+
+    function SelectState(isSelected, object) {
+        this.isFirstClick = isSelected;
+        this.object = object;
+    }
 
     canvas.on("object:added", function (e) {
         if(updateFlag) {
             var object = e.target;
             console.log('object:added');
-            // isFisrt = true;
             updateStack();
         }
     });
 
-    canvas.on("object:modified", function (e) {
+    canvas.on("object:removed", function (e) {
         if(updateFlag) {
             var object = e.target;
-            console.log('object:modified');
-            // isFisrt = true;
+            console.log('object:removed');
             updateStack();
         }
     });
+
+    canvas.on("object:modified", function (event) {
+        console.log('object:modified');
+        var object = event.target;
+        if(updateFlag) {
+            updateStack();
+        }
+    });
+
+    canvas.on("object:selected", function (event) {
+        console.log('1 object:selected');
+        var object = event.target;
+    });
+
+    canvas.on("mouse:up", function (event) {
+        // console.log('3 event:mouse:up - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
+            if(selectState.isFirstClick === true){
+                // console.log(selectState.object);
+                if(canvas.getActiveObject())
+                if(selectState.object.tag === "media" && isEventWithinObject(event.e, selectState.object)) {
+                    console.log('object:double-clicked');
+                    selectState.object.show();
+                    selectState.isFirstClick = false;
+                }
+            } else {
+                selectState = new SelectState(true, canvas.getActiveObject());
+                setTimeout(function(){
+                    selectState.isFirstClick = false;
+                }, 500);
+            }
+    });
+    
+    canvas.on("mouse:down", function (event) {
+        // console.log(event);
+        console.log('2 object:mouse:down - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
+    });
+
+    function isEventWithinObject(touchEvent, object) {
+        console.log("Touch X:" + touchEvent.offsetX + " Y:" + touchEvent.offsetY );
+        console.log(object);
+        return touchEvent.offsetX >= object.aCoords.tl.x && touchEvent.offsetX <= object.aCoords.br.x
+            && touchEvent.offsetY >= object.aCoords.tl.y && touchEvent.offsetY <= object.aCoords.br.y;
+    }
 
     CANVAS_CURRENT = JSON.stringify(canvas);
     // UNDO_STACK.push();
@@ -60,40 +108,57 @@ let DRAW_MODE = DRAW;
 
 function undo() {
     if(UNDO_STACK.length > 0) {
-        console.log("undone");
         updateFlag = false;
+        disableUndoRedo();
 
         canvas.clear().renderAll();
 
         REDO_STACK.push(new State(CANVAS_CURRENT));
 
-        CANVAS_CURRENT = UNDO_STACK.pop().data;
+        let state = UNDO_STACK.pop();
+
+        CANVAS_CURRENT = state.data;
 
         canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
             canvas.renderAll();
+            updateFlag = true;
+            enableUndoRedo();
         });
 
-        updateFlag = true;
     } else {
         console.log("not undone");
     }
 }
 
+function disableUndoRedo() {
+    $("#undo").attr("disabled", true);
+    $("#redo").attr("disabled", true);
+}
+
+function enableUndoRedo() {
+    $("#undo").attr("disabled", false);
+    $("#redo").attr("disabled", false);
+}
+
 function redo() {
     if(REDO_STACK.length > 0) {
-        console.log("redone");
-        updateStack();
         updateFlag = false;
+        disableUndoRedo();
+        console.log("redone");
+        // updateStack();
         canvas.clear().renderAll();
 
         UNDO_STACK.push(new State(CANVAS_CURRENT));
 
-        CANVAS_CURRENT = REDO_STACK.pop().data;
+        let state = REDO_STACK.pop();
+
+        CANVAS_CURRENT = state.data;
 
         canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
             canvas.renderAll();
+            updateFlag = true;
+            enableUndoRedo();
         });
-        updateFlag = true;
     } else {
         console.log("not redone");
     }
@@ -153,62 +218,7 @@ function deleteObjects() {
     }
 }
 // todo: check if more anc be added to this.. https://jsfiddle.net/d29u79vn/
-function drawArrow(fromx, fromy, tox, toy) {
 
-    var angle = Math.atan2(toy - fromy, tox - fromx);
-
-    var headlen = 10;  // arrow head size
-
-    // bring the line end back some to account for arrow head.
-    tox = tox - (headlen) * Math.cos(angle);
-    toy = toy - (headlen) * Math.sin(angle);
-
-    // calculate the points.
-    var points = [
-        {
-            x: fromx,  // start point
-            y: fromy
-        }, {
-            x: fromx - (headlen / 4) * Math.cos(angle - Math.PI / 2),
-            y: fromy - (headlen / 4) * Math.sin(angle - Math.PI / 2)
-        },{
-            x: tox - (headlen / 4) * Math.cos(angle - Math.PI / 2),
-            y: toy - (headlen / 4) * Math.sin(angle - Math.PI / 2)
-        }, {
-            x: tox - (headlen) * Math.cos(angle - Math.PI / 2),
-            y: toy - (headlen) * Math.sin(angle - Math.PI / 2)
-        },{
-            x: tox + (headlen) * Math.cos(angle),  // tip
-            y: toy + (headlen) * Math.sin(angle)
-        }, {
-            x: tox - (headlen) * Math.cos(angle + Math.PI / 2),
-            y: toy - (headlen) * Math.sin(angle + Math.PI / 2)
-        }, {
-            x: tox - (headlen / 4) * Math.cos(angle + Math.PI / 2),
-            y: toy - (headlen / 4) * Math.sin(angle + Math.PI / 2)
-        }, {
-            x: fromx - (headlen / 4) * Math.cos(angle + Math.PI / 2),
-            y: fromy - (headlen / 4) * Math.sin(angle + Math.PI / 2)
-        },{
-            x: fromx,
-            y: fromy
-        }
-    ];
-
-    var arrow = new fabric.Polyline(points, {
-        fill: 'white',
-        stroke: 'black',
-        opacity: 1,
-        strokeWidth: 2,
-        originX: 'left',
-        originY: 'top',
-        selectable: true
-    });
-
-    canvas.add(arrow);
-
-    canvas.renderAll();
-}
 
 function rotateObject(angleOffset) {
     let obj = canvas.getActiveObject(),

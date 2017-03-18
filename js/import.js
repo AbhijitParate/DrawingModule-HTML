@@ -192,4 +192,83 @@ $(document).ready(function() {
         fileUploadInput.click();
     });
 
+    $("#import-svg").on('click', function () {
+        let input = $("<input />").attr("type", "file").attr("accept","image/svg+xml");
+        input.change(function (e) {
+            let div = $("<div />");
+            $("<img src='images/loading.gif' />").appendTo(div);
+            div.dialog({
+                title: 'Loading...',
+                resizable: false,
+                position: {
+                    of: "#canvasWrapper",
+                    at: "center center",
+                    my: "center center"
+                },
+                height: "180",
+                width: "100",
+            });
+            let image = e.target.files[0];
+            let reader = new FileReader();
+            reader.onload = (function (e) {
+                let img = e.target.result;
+                fabric.loadSVGFromURL(img, function(objects, options) {
+                    // var obj = fabric.util.groupSVGElements(objects, options);
+                    // canvas.add(obj).renderAll();
+                    console.log(objects);
+                    // objects.forEach(function(obj) {
+                    let mediaobjs = [];
+                    for(let i = 0; i < objects.length; i++) {
+                        // console.log("Type : " + obj.get("stroke"));
+                        let obj = objects[i];
+                        console.log(obj);
+                        // for our implementation
+                        let data = obj.get('preserveAspectRatio');
+                        if (data && data.substring(0,4) === "data") {
+                            let newObj = new Media(data,                                {
+                                top: obj.transformMatrix[5],
+                                left: obj.transformMatrix[4],
+                            });
+                            mediaobjs.push(newObj);
+                            canvas.add(newObj);
+                            newObj.on('image:loaded', function () {
+                                canvas.renderAll.bind(canvas);
+                                canvas.moveTo(newObj, 999);
+                            });
+                        } else if (obj.type === "image") {
+                            fabric.Image.fromURL(obj.get("xlink:href"),
+                                function (imgObj) {
+                                    canvas.add(imgObj)
+                                }, {
+                                    top: (canvas.height / 2) + obj.top,
+                                    left: (canvas.height / 2) + obj.left,
+                                    width: obj.get('width'),
+                                    height: obj.get('height')
+                                }
+                            );
+                        } else {
+                            canvas.add(obj);
+                        }
+                    }
+
+                    // console.info(mediaobjs);
+
+                    // });
+                    canvas.renderAll();
+                    div.dialog('destroy');
+                    // console.info("1st for complete");
+                    // console.log(canvas.getObjects());
+                    //
+                    // for(let i = 0; i < mediaobjs.length; i++) {
+                    //     canvas.moveTo(mediaobjs[i], canvas.getObjects().length-1);
+                    // }
+
+                });
+            });
+            reader.readAsDataURL(image);
+
+        });
+        input.click();
+    });
+
 });

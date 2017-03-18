@@ -3,12 +3,23 @@
  */
 $(document).ready(function() {
 
+    canvas.freeDrawingBrush.color = 'black';
+
+    function enableSelect() {
+        canvas.isDrawingMode = false;
+        canvas.selection = true;
+    }
+
+    function enablePencil() {
+        canvas.isDrawingMode = true;
+        canvas.selection = false;
+    }
+
 //1.Draw
     // 1.Pencil
     $("#pencil").click(function () {
-        canvas.isDrawingMode = true;
+        enablePencil();
         DRAW_MODE = DRAW;
-        canvas.freeDrawingBrush.color = 'black';
     });
     // 1a.Slider
     let handle = $("#custom-handle");
@@ -27,11 +38,12 @@ $(document).ready(function() {
         },
         change: function (event, ui) {
             canvas.freeDrawingBrush.width = parseInt(ui.value, 10) || 1;
+            enablePencil();
         }
     });
     // 2.Erase
     $("#erase").click(function () {
-        canvas.isDrawingMode = true;
+        enablePencil();
         DRAW_MODE = ERASE;
         canvas.freeDrawingBrush.color = 'white';
     });
@@ -39,11 +51,12 @@ $(document).ready(function() {
     // 3.Shapes
     // 3a.Line
     $("#shape-line").click(function() {
+        enableSelect();
         let line = new fabric.Line([100, 100, 200, 200], {
             left: 100,
             top: 100,
             fill: 'rgba(0,0,0,0)',
-            stroke: 'rgba(0,0,0,1)',
+            stroke: canvas.freeDrawingBrush.color,
             strokeWidth: 1
         });
         canvas.add(line);
@@ -52,17 +65,76 @@ $(document).ready(function() {
 
     // 3b.Arrow
     $("#shape-arrow").click(function () {
+        enableSelect();
         drawArrow(400,400,200,200);
     });
 
+    function drawArrow(fromx, fromy, tox, toy) {
+
+        var angle = Math.atan2(toy - fromy, tox - fromx);
+
+        var headlen = 10;  // arrow head size
+
+        // bring the line end back some to account for arrow head.
+        tox = tox - (headlen) * Math.cos(angle);
+        toy = toy - (headlen) * Math.sin(angle);
+
+        // calculate the points.
+        var points = [
+            {
+                x: fromx,  // start point
+                y: fromy
+            }, {
+                x: fromx - (headlen / 4) * Math.cos(angle - Math.PI / 2),
+                y: fromy - (headlen / 4) * Math.sin(angle - Math.PI / 2)
+            },{
+                x: tox - (headlen / 4) * Math.cos(angle - Math.PI / 2),
+                y: toy - (headlen / 4) * Math.sin(angle - Math.PI / 2)
+            }, {
+                x: tox - (headlen) * Math.cos(angle - Math.PI / 2),
+                y: toy - (headlen) * Math.sin(angle - Math.PI / 2)
+            },{
+                x: tox + (headlen) * Math.cos(angle),  // tip
+                y: toy + (headlen) * Math.sin(angle)
+            }, {
+                x: tox - (headlen) * Math.cos(angle + Math.PI / 2),
+                y: toy - (headlen) * Math.sin(angle + Math.PI / 2)
+            }, {
+                x: tox - (headlen / 4) * Math.cos(angle + Math.PI / 2),
+                y: toy - (headlen / 4) * Math.sin(angle + Math.PI / 2)
+            }, {
+                x: fromx - (headlen / 4) * Math.cos(angle + Math.PI / 2),
+                y: fromy - (headlen / 4) * Math.sin(angle + Math.PI / 2)
+            },{
+                x: fromx,
+                y: fromy
+            }
+        ];
+
+        var arrow = new fabric.Polyline(points, {
+            fill: 'rgba(0,0,0,0)',
+            stroke: canvas.freeDrawingBrush.color,
+            opacity: 1,
+            strokeWidth: 1,
+            originX: 'left',
+            originY: 'top',
+            selectable: true
+        });
+
+        canvas.add(arrow);
+
+        canvas.renderAll();
+    }
+
     // 3c. Circle
     $("#shape-circle").click(function () {
+        enableSelect();
         let circle=new fabric.Circle({
             left:100,
             top:100,
             radius:100,
             fill: 'rgba(0,0,0,0)',
-            stroke: 'rgba(0,0,0,1)',
+            stroke: canvas.freeDrawingBrush.color,
             strokeWidth: 1
         });
         canvas.add(circle);
@@ -70,13 +142,14 @@ $(document).ready(function() {
     });
     // 3d. Rectangle
     $("#shape-rectangle").click(function () {
+        enableSelect();
         let rect = new fabric.Rect({
             width: 100,
             height: 100,
             top: 100,
             left: 100,
             fill: 'rgba(0,0,0,0)',
-            stroke: 'rgba(0,0,0,1)',
+            stroke: canvas.freeDrawingBrush.color,
             strokeWidth: 1
         });
         canvas.add(rect);
@@ -85,13 +158,14 @@ $(document).ready(function() {
 
     // 3e. Triangle
     $("#shape-triangle").click(function () {
+        enableSelect();
         let tri = new fabric.Triangle({
             width: 100,
             height: 100,
             top: 100,
             left: 100,
             fill: 'rgba(0,0,0,0)',
-            stroke: 'rgba(0,0,0,1)',
+            stroke: canvas.freeDrawingBrush.color,
             strokeWidth: 1
         });
         canvas.add(tri);
@@ -100,6 +174,7 @@ $(document).ready(function() {
 
     // 3f. Polygon
     $("#shape-polygon").click(function () {
+        enableSelect();
         let pol = new fabric.Polygon([
             {x: 200, y: 0},
             {x: 250, y: 50},
@@ -110,7 +185,7 @@ $(document).ready(function() {
             top: 100,
             angle: 0,
             fill: 'rgba(0,0,0,0)',
-            stroke: 'rgba(0,0,0,1)',
+            stroke: canvas.freeDrawingBrush.color,
             strokeWidth: 1
         });
         canvas.add(pol);
@@ -124,6 +199,7 @@ $(document).ready(function() {
 
     // 5.Text
     $("#text").click(function () {
+        enableSelect();
         let text = new fabric.IText('Double click to type here...', {
             fontFamily: 'arial black',
             left: 100,
@@ -157,8 +233,7 @@ $(document).ready(function() {
 
     // 7.Select
     $("#select").click(function () {
-        canvas.isDrawingMode = false;
-        canvas.selection = true;
+        enableSelect();
     });
 
 // 2.Transform

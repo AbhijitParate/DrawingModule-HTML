@@ -148,7 +148,7 @@ $(document).ready(function($) {
         });
         input.appendTo(dialog);
 
-        let selectDiv = $("<div/>").css("height", "25px").appendTo(dialog);
+        let selectDiv = $("<div/>").css("height", "35px").appendTo(dialog);
         let select = $("<select/>").css("float","right").appendTo(selectDiv);
         // $("<option/>").attr("value", "1").text("320×240").appendTo(select);
         $("<option/>").attr("value", "2").text("640×480").appendTo(select);
@@ -159,7 +159,7 @@ $(document).ready(function($) {
         label.appendTo(selectDiv);
         let imageDiv = $("<div/>").appendTo(dialog);
         let video = $("<video/>").addClass("video-js vjs-default-skin");
-        video.attr("id","myVideo");
+        video.attr("id","myCamera");
         video.appendTo(imageDiv);
         let attachmentImage;
         let player;
@@ -176,7 +176,7 @@ $(document).ready(function($) {
             width: "auto",
             open: function () {
                 console.info("Webcam dialog opened");
-                player = videojs("myVideo", {
+                player = videojs("myCamera", {
                     controls: true,
                     width: 640,
                     height: 480,
@@ -271,8 +271,8 @@ $(document).ready(function($) {
                     player.recorder.destroy();
                     newVideo = $("<video/>").addClass("video-js vjs-default-skin");
                     newVideo.appendTo(imageDiv);
-                    newVideo.attr("id", "myVideo");
-                    player = videojs("myVideo", {
+                    newVideo.attr("id", "myCamera");
+                    player = videojs("myCamera", {
                         controls: true,
                         loop: false,
                         // dimensions of video.js player
@@ -295,8 +295,8 @@ $(document).ready(function($) {
                     player.recorder.destroy();
                     newVideo = $("<video/>").addClass("video-js vjs-default-skin");
                     newVideo.appendTo(imageDiv);
-                    newVideo.attr("id", "myVideo");
-                    player = videojs("myVideo", {
+                    newVideo.attr("id", "myCamera");
+                    player = videojs("myCamera", {
                         controls: true,
                         loop: false,
                         // dimensions of video.js player
@@ -319,8 +319,8 @@ $(document).ready(function($) {
                     player.recorder.destroy();
                     newVideo = $("<video/>").addClass("video-js vjs-default-skin");
                     newVideo.appendTo(imageDiv);
-                    newVideo.attr("id", "myVideo");
-                    player = videojs("myVideo", {
+                    newVideo.attr("id", "myCamera");
+                    player = videojs("myCamera", {
                         controls: true,
                         loop: false,
                         // dimensions of video.js player
@@ -343,8 +343,8 @@ $(document).ready(function($) {
                     player.recorder.destroy();
                     newVideo = $("<video/>").addClass("video-js vjs-default-skin");
                     newVideo.appendTo(imageDiv);
-                    newVideo.attr("id", "myVideo");
-                    player = videojs("myVideo", {
+                    newVideo.attr("id", "myCamera");
+                    player = videojs("myCamera", {
                         controls: true,
                         loop: false,
                         // dimensions of video.js player
@@ -364,6 +364,19 @@ $(document).ready(function($) {
                     player.reset();
                     break;
             }
+            // snapshot is available
+            player.on('finishRecord', function() {
+                // the blob object contains the image data that
+                // can be downloaded by the user, stored on server etc.
+                // console.log('snapshot ready: ', player.recordedData);
+                // attachBtn.text('Capture');
+                let data = player.recordedData;
+                attachmentImage = new Attachment("image_"+getTimeStamp()+".png", "image", data);
+                attachBtn.button("enable");
+                retryBtn.button("enable")
+            });
+            attachBtn.button("disable");
+            retryBtn.button("disable");
             $(".vjs-device-button.vjs-control.vjs-icon-device-perm").click();
         });
         $(".vjs-device-button.vjs-control.vjs-icon-device-perm").click();

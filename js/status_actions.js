@@ -197,57 +197,6 @@ $(document).ready(function () {
         return false;
     });
 
-    $("#status-load-svg").click(function () {
-
-        let input = $("<input />").attr("type", "file").attr("accept","image/svg+xml");
-        input.on("change", function (e) {
-            let image = e.target.files[0];
-            let reader = new FileReader();
-            reader.onload = (function (e) {
-                let img = e.target.result;
-                fabric.loadSVGFromURL(img, function(objects, options) {
-                    // var obj = fabric.util.groupSVGElements(objects, options);
-                    // canvas.add(obj).renderAll();
-                    console.log(objects);
-                    // objects.forEach(function(obj) {
-                    for(let i = 0; i < objects.length; i++) {
-                        // console.log("Type : " + obj.get("stroke"));
-                        let obj = objects[i];
-                        console.log(obj);
-                        // for our implementation
-                        let data = obj.get('preserveAspectRatio');
-                        if (data && data.substring(0,4) === "data") {
-                            let newObj = new Media(data,                                {
-                                    top: obj.transformMatrix[5],
-                                    left: obj.transformMatrix[4],
-                                });
-                            canvas.add(newObj);
-                            newObj.on('image:loaded', canvas.renderAll.bind(canvas));
-                        } else if (obj.type === "image") {
-                            fabric.Image.fromURL(obj.get("xlink:href"),
-                                function (imgObj) {
-                                    canvas.add(imgObj)
-                                }, {
-                                    top: (canvas.height / 2) + obj.top,
-                                    left: (canvas.height / 2) + obj.left,
-                                    width: obj.get('width'),
-                                    height: obj.get('height')
-                                }
-                            );
-                        } else {
-                            canvas.add(obj);
-                        }
-                    }
-                    // });
-                    canvas.renderAll();
-                });
-            });
-            reader.readAsDataURL(image);
-
-        });
-        input.click();
-    });
-
     var formData = new FormData();
 
     function saveData() {
