@@ -68,7 +68,6 @@ $(document).ready(function() {
     canvas.on("mouse:up", function (event) {
         // console.log('3 event:mouse:up - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
             if(selectState.isFirstClick === true){
-                // console.log(selectState.object);
                 if(canvas.getActiveObject())
                     if(selectState.object.tag === "media" && isEventWithinObject(event.e, selectState.object)) {
                         console.log('object:double-clicked');
@@ -84,20 +83,17 @@ $(document).ready(function() {
     });
     
     canvas.on("mouse:down", function (event) {
-        // console.log(event);
         console.log('2 object:mouse:down - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
     });
 
     function isEventWithinObject(touchEvent, object) {
         console.log("Touch X:" + touchEvent.offsetX + " Y:" + touchEvent.offsetY );
-        console.log(object);
         return touchEvent.offsetX >= object.aCoords.tl.x && touchEvent.offsetX <= object.aCoords.br.x
             && touchEvent.offsetY >= object.aCoords.tl.y && touchEvent.offsetY <= object.aCoords.br.y;
     }
 
     CANVAS_CURRENT = JSON.stringify(canvas);
-    // UNDO_STACK.push();
-    // REDO_STACK.push();
+
 });
 
 function State(data) {
@@ -112,17 +108,13 @@ function updateStack() {
 
 function undo() {
     if(UNDO_STACK.length > 0) {
+        console.log("undo");
         updateFlag = false;
         disableUndoRedo();
-
         canvas.clear().renderAll();
-
         REDO_STACK.push(new State(CANVAS_CURRENT));
-
         let state = UNDO_STACK.pop();
-
         CANVAS_CURRENT = state.data;
-
         canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
             canvas.renderAll();
             updateFlag = true;
@@ -146,18 +138,13 @@ function enableUndoRedo() {
 
 function redo() {
     if(REDO_STACK.length > 0) {
+        console.log("redo");
         updateFlag = false;
         disableUndoRedo();
-        console.log("redone");
-        // updateStack();
         canvas.clear().renderAll();
-
         UNDO_STACK.push(new State(CANVAS_CURRENT));
-
         let state = REDO_STACK.pop();
-
         CANVAS_CURRENT = state.data;
-
         canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
             canvas.renderAll();
             updateFlag = true;
