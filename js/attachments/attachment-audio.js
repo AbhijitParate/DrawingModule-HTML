@@ -6,7 +6,6 @@ $(document).ready(function($) {
 
     //Attach -> image
     $("#attachAudio").click(function () {
-        // $("#attachmentInput").click();
         createDialog();
 
     });

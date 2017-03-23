@@ -39,7 +39,7 @@
     <script src="https://collab-project.github.io/videojs-record/dist/videojs.record.min.js"></script>
     <script src="https://collab-project.github.io/videojs-record/dist/videojs.record.lamejs.min.js"></script>
 
-    <script src="//wzrd.in/standalone/blob-util@latest"></script>
+    <script src="js/libs/blobUtils.js"></script>
 
     <script type="text/javascript" src="js/libs/FileSaver.min.js"></script>
     <script src="js/libs/jspdf.min.js"></script>
@@ -265,7 +265,7 @@
                             </svg>
                         </button>
                         <input  id="import-upload-input" type="file" accept="image/*" hidden>
-                        <button type="button" id="import-svg" class="button-regular ui-button ui-widget ui-corner-all" title="Import canvas from svg">
+                        <button type="button" id="import-svg" class="button-regular ui-button ui-widget ui-corner-all" title="Import canvas from svg file">
                             SVG
                         </button>
                     </div>
@@ -318,10 +318,10 @@
                         <button type="button" id="save-png" class="button-regular ui-button ui-widget ui-corner-all" title="Save as PNG">
                             png
                         </button>
-                        <button type="button" id="save-json" class="button-regular ui-widget ui-corner-all" title="Save as JSON">
+                        <button type="button" id="save-json" class="button-regular ui-button ui-widget ui-corner-all" title="Save as JSON">
                             json
                         </button>
-                        <button type="button" id="save-svg" class="button-regular ui-widget ui-corner-all" title="Save as SVG">
+                        <button type="button" id="save-svg" class="button-regular ui-button ui-widget ui-corner-all" title="Save as SVG">
                             svg
                         </button>
                     </div>

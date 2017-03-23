@@ -25,6 +25,7 @@ $(document).ready(function() {
         enablePencil();
         EDITOR_MODE = DRAW;
     });
+
     // 1a.Slider
     let handle = $("#custom-handle");
     $("#size").slider({
@@ -45,6 +46,7 @@ $(document).ready(function() {
             enablePencil();
         }
     });
+
     // 2.Erase
     $("#erase").click(function () {
         enablePencil();
@@ -296,7 +298,16 @@ $(document).ready(function() {
     });
     // 6. Fit
     $("#fit").click(function () {
+        console.info("Fit to size");
+        let object  = canvas.getActiveObject();
+        if( object &&  object.type === 'image') {
+            object.setWidth(700);
+            object.setHeight(700);
+            object.setTop(50);
+            object.setLeft(50);
 
+            canvas.renderAll();
+        }
     });
 
 // 3. Position

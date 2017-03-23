@@ -116,25 +116,111 @@ $(document).ready(function () {
         let a_view = $("<a/>")
             .addClass("attachments-list-item")
             .attr("href","#")
-            .attr("data-url", attachment.data)
+            .attr("data-id", attachment.id)
             .attr("title", attachment.name)
             .text(attachment.name)
-            .css({ display: "block", "font-size":"20px" })
-            .lightcase();
+            .css({ display: "block",
+                "font-size":"20px" ,
+                'width': '200px',
+                'white-space': 'nowrap',
+                'text-overflow': 'ellipsis',
+                'overflow': 'hidden',
+            });
+        a_view.click(function () {
+            console.info("Attachment ID: " + $(this).attr("data-id"));
+            $("#attachmentPreview").empty();
+            $("#attachmentPreview").append(getPreviewAttachment($(this).attr("data-id")));
+        });
         a_view.appendTo(div);
         return listItem;
+    }
+
+    // For reference
+    function getPreviewAttachment(id) {
+
+        console.info(id + " clicked.");
+
+        for (let i = 0; i < attachments.length; i++) {
+            let attachment = attachments[i];
+            console.info("before if " + attachment.id);
+            console.info(attachment.id === id);
+            if (""+attachment.id === id+"") {
+                console.info(attachment.type);
+                switch (attachment.type) {
+                    case "image":
+                        console.info("Image file");
+                        return $('<img class="previewWindow" src=' + attachment.data + '>');
+                    case "video":
+                        console.info("Video file");
+                        if (attachment.data instanceof Blob) {
+                            let videoReader = new FileReader();
+                            videoReader.onloadend = (function (e) {
+                                let video = $('<video class="video-js vjs-default-skin previewWindow" controls autoplay>');
+                                $('<source src=' + e.target.result + '>').appendTo(video);
+                                return video;
+                            });
+                            videoReader.readAsDataURL(attachment.data);
+                        } else {
+                            let video = $('<video class="video-js vjs-default-skin previewWindow" controls autoplay>');
+                            $('<source src=' + attachment.data + '>').appendTo(video);
+                            return video;
+                        }
+
+                        console.info("Video data-> " + attachment.data);
+                        break;
+                    case "audio":
+                        console.info("Audio file");
+                        if (attachment.data instanceof Blob) {
+                            let audioReader = new FileReader();
+                            audioReader.onloadend = (function (e) {
+                                let audio = $('<audio class="video-js vjs-default-skin previewWindow" controls autoplay>');
+                                $('<source src=' + e.target.result + '>').appendTo(audio);
+                                return audio;
+                            });
+                            audioReader.readAsDataURL(attachment.data);
+                        } else {
+                            let audio = $('<audio class="video-js vjs-default-skin previewWindow" controls autoplay>');
+                            $('<source src=' + attachment.data + '>').appendTo(audio);
+                            return audio;
+                        }
+
+                        console.info("Audio data-> " + attachment.data);
+                        break;
+                    case "note":
+                        console.info("Text file");
+                        return $('<textarea class="previewWindow" title="Preview Text" disabled>')
+                        .text(atob(attachment.data.replace("data:text/plain;base64,", "")));
+                    default:
+                        console.info("File attachment");
+                        return $('<img class="previewWindow" src="images/no-preview.jpg">');
+                }
+            }
+        }
     }
 
     function recreateLocalAttachments() {
         console.debug(attachments);
         var attachmentDiv = $("<div/>");
-        var list = $("<ul/>").addClass("attachments-list")
-            .css({"margin":"5px"});
+        if(attachments.length > 0) {
+            var list = $("<ul/>").addClass("attachments-list")
+                .css({'float':'left', "margin":"5px"});
 
-        attachments.forEach(function (attachment) {
-            list.append(createLocalAttachmentItem(attachment));
-        });
-        attachmentDiv.append(list);
+            attachments.forEach(function (attachment) {
+                list.append(createLocalAttachmentItem(attachment));
+            });
+            attachmentDiv.append(list);
+
+            let previewDiv = $("<div />")
+                .attr("id","attachmentPreview")
+                .css({
+                'float': 'right',
+                'height': '300px',
+                'width': '400px'
+            }).appendTo(attachmentDiv);
+            $("<img src='images/no-preview.jpg' width='400' height='300' />").appendTo(previewDiv);
+        } else {
+            $("<p />").css("text-align", "center").text("No attachments").appendTo(attachmentDiv);
+        }
         return attachmentDiv;
     }
 
@@ -144,6 +230,8 @@ $(document).ready(function () {
         attachmentDiv.appendTo(dialog);
         dialog.attr("title", "Attachments");
         dialog.dialog({
+            width: 700,
+            height: 450,
             modal:true,
             resizable: true,
             position: {
@@ -151,8 +239,6 @@ $(document).ready(function () {
                 at: "center center",
                 my: "center center"
             },
-            height: "auto",
-            width: "auto",
             open: function () {
                 console.info("Attachments dialog opened");
             },
