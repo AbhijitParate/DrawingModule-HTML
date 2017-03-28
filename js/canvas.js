@@ -163,35 +163,44 @@ function clearCanvas() {
 let copiedObject;
 let copiedObjects = [];
 function copy(){
-    let object;
-
     if(canvas.getActiveGroup()){
-        for(let i = 0; i < canvas.getActiveGroup().objects.length; i++){
-            object = canvas.getActiveGroup().objects[i];
+        for(var i in canvas.getActiveGroup().objects){
+            var object = fabric.util.object.clone(canvas.getActiveGroup().objects[i]);
+            object.set("top", object.top+5);
+            object.set("left", object.left+5);
             copiedObjects[i] = object;
         }
-    } else if(canvas.getActiveObject()){
-        object = canvas.getActiveObject();
+    }
+    else if(canvas.getActiveObject()){
+        var object = fabric.util.object.clone(canvas.getActiveObject());
+        object.set("top", object.top+5);
+        object.set("left", object.left+5);
         copiedObject = object;
+        copiedObjects = [];
     }
 }
 
 function paste(){
-    let object;
     if(copiedObjects.length > 0){
-        for(let i in copiedObjects){
-            object = copiedObjects[i];
-            object.set("top", object.top+10);
-            object.set("left", object.left+10);
+        for(var i in copiedObjects){
             canvas.add(copiedObjects[i]);
         }
-    } else if(copiedObject){
-        let object = copiedObject;
-        object.set("top", object.top+10);
-        object.set("left", object.left+10);
-        canvas.add(object);
+    }
+    else if(copiedObject){
+        var object = fabric.util.object.clone(copiedObject);
+        object.set("top", object.top+5);
+        object.set("left", object.left+5);
+        var copiedObject1 = object;
+        canvas.add(copiedObject1);
     }
     canvas.renderAll();
+}
+
+function clone(obj) {
+    var object = fabric.util.object.clone(obj);
+    object.set("top", obj.top+10);
+    object.set("left", obj.left+10);
+    canvas.add(obj);
 }
 
 function deleteObjects() {
