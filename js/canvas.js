@@ -120,7 +120,6 @@ function undo() {
             updateFlag = true;
             enableUndoRedo();
         });
-
     } else {
         console.log("not undone");
     }

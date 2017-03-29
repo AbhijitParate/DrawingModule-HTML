@@ -187,7 +187,7 @@ $(document).ready(function($) {
                         record: {
                             maxLength: 60,
                             image: false,
-                            audio: false,
+                            audio: true,
                             video: {
                                 // video constraints: set resolution of camera
                                 mandatory: {
@@ -298,7 +298,7 @@ $(document).ready(function($) {
                             record: {
                                 maxLength: 60,
                                 image: false,
-                                audio: false,
+                                audio: true,
                                 video: {
                                     // video constraints: set resolution of camera
                                     mandatory: {
@@ -330,7 +330,7 @@ $(document).ready(function($) {
                             record: {
                                 maxLength: 60,
                                 image: false,
-                                audio: false,
+                                audio: true,
                                 video: {
                                     // video constraints: set resolution of camera
                                     mandatory: {
@@ -362,7 +362,7 @@ $(document).ready(function($) {
                             record: {
                                 maxLength: 60,
                                 image: false,
-                                audio: false,
+                                audio: true,
                                 video: {
                                     // video constraints: set resolution of camera
                                     mandatory: {
@@ -394,7 +394,7 @@ $(document).ready(function($) {
                             record: {
                                 maxLength: 60,
                                 image: false,
-                                audio: false,
+                                audio: true,
                                 video: {
                                     // video constraints: set resolution of camera
                                     mandatory: {

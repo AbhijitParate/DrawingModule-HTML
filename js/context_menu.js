@@ -41,40 +41,10 @@ $(document).ready(function() {
                     break;
                 case "add-audio":
                     console.log("add-audio : " + clickPoint);
-                    // input = $("<input />").attr("type", "file").attr("accept","audio/*");
-                    // input.on("change", function (e) {
-                    //     let image = e.target.files[0];
-                    //     let reader = new FileReader();
-                    //     reader.onload = (function (e) {
-                    //         let imageData = e.target.result;
-                    //         let media = new Media(imageData, options);
-                    //         console.log("here");
-                    //         canvas.add(media);
-                    //         console.log("here");
-                    //         media.on('image:loaded', canvas.renderAll.bind(canvas));
-                    //     });
-                    //     reader.readAsDataURL(image);
-                    // });
-                    // input.click();
                     createAudioDialog();
                     break;
                 case "add-video":
                     console.log("add-video : " + clickPoint);
-                    // input = $("<input />").attr("type", "file").attr("accept","video/*");
-                    // input.on("change", function (e) {
-                    //     let image = e.target.files[0];
-                    //     let reader = new FileReader();
-                    //     reader.onload = (function (e) {
-                    //         let imageData = e.target.result;
-                    //         let media = new Media(imageData, options);
-                    //         console.log("here");
-                    //         canvas.add(media);
-                    //         console.log("here");
-                    //         media.on('image:loaded', canvas.renderAll.bind(canvas));
-                    //     });
-                    //     reader.readAsDataURL(image);
-                    // });
-                    // input.click();
                     createVideoDialog();
                     break;
             }
@@ -95,7 +65,7 @@ $(document).ready(function() {
             let reader = new FileReader();
             reader.onload = (function (e) {
                 let imageData = e.target.result;
-                let media = new Media(imageData, options);
+                let media = new fabric.Media(imageData, options);
                 canvas.add(media);
                 media.on('image:loaded', canvas.renderAll.bind(canvas));
             });
@@ -152,7 +122,7 @@ $(document).ready(function() {
             let reader = new FileReader();
             reader.onload = (function (e) {
                 let imageData = e.target.result;
-                let media = new Media(imageData, options);
+                let media = new fabric.Media(imageData, options);
                 canvas.add(media);
                 media.on('image:loaded', canvas.renderAll.bind(canvas));
             });
@@ -271,7 +241,7 @@ $(document).ready(function() {
         function saveAttachment() {
             console.info("Save attachment code here");
             let options = {top: clickPoint.y, left: clickPoint.x};
-            let media = new Media(attachmentImage.data, options);
+            let media = new fabric.Media(attachmentImage.data, options);
             media.on('image:loaded', canvas.renderAll.bind(canvas));
             canvas.add(media);
         }
@@ -412,7 +382,7 @@ $(document).ready(function() {
             let reader = new FileReader();
             reader.onload = (function (e) {
                 let data = e.target.result;
-                let media = new Media(data, options);
+                let media = new fabric.Media(data, options);
                 console.log("here");
                 canvas.add(media);
                 console.log("here");
@@ -472,7 +442,7 @@ $(document).ready(function() {
             reader.onload = (function (e) {
                 let imageData = e.target.result;
                 let options = {top: clickPoint.y, left: clickPoint.x};
-                let media = new Media(imageData, options);
+                let media = new fabric.Media(imageData, options);
                 console.log("here");
                 canvas.add(media);
                 console.log("here");
@@ -610,7 +580,7 @@ $(document).ready(function() {
         function saveAttachment() {
             console.info("Save attachment code here");
             let options = {top: clickPoint.y, left: clickPoint.x};
-            let media = new Media(attachmentAudio.data, options);
+            let media = new fabric.Media(attachmentAudio.data, options);
             media.on('image:loaded', canvas.renderAll.bind(canvas));
             canvas.add(media);
         }
@@ -632,7 +602,7 @@ $(document).ready(function() {
             reader.onload = (function (e) {
                 let imageData = e.target.result;
                 let options = {top: clickPoint.y, left: clickPoint.x};
-                let media = new Media(imageData, options);
+                let media = new fabric.Media(imageData, options);
                 canvas.add(media);
                 media.on('image:loaded', canvas.renderAll.bind(canvas));
             });
@@ -689,7 +659,7 @@ $(document).ready(function() {
             reader.onload = (function (e) {
                 let imageData = e.target.result;
                 let options = {top: clickPoint.y, left: clickPoint.x};
-                let media = new Media(imageData, options);
+                let media = new fabric.Media(imageData, options);
                 canvas.add(media);
                 media.on('image:loaded', canvas.renderAll.bind(canvas));
             });
@@ -741,7 +711,7 @@ $(document).ready(function() {
                         record: {
                             maxLength: 60,
                             image: false,
-                            audio: false,
+                            audio: true,
                             video: {
                                 // video constraints: set resolution of camera
                                 mandatory: {
@@ -828,7 +798,7 @@ $(document).ready(function() {
         function saveAttachment() {
             console.info("Save attachment code here");
             let options = {top: clickPoint.y, left: clickPoint.x};
-            let media = new Media(attachmentVideo.data, options);
+            let media = new fabric.Media(attachmentVideo.data, options);
             canvas.add(media);
             media.on('image:loaded', canvas.renderAll.bind(canvas));
         }
@@ -855,7 +825,7 @@ $(document).ready(function() {
                             record: {
                                 maxLength: 60,
                                 image: false,
-                                audio: false,
+                                audio: true,
                                 video: {
                                     // video constraints: set resolution of camera
                                     mandatory: {
@@ -887,7 +857,7 @@ $(document).ready(function() {
                             record: {
                                 maxLength: 60,
                                 image: false,
-                                audio: false,
+                                audio: true,
                                 video: {
                                     // video constraints: set resolution of camera
                                     mandatory: {
@@ -919,7 +889,7 @@ $(document).ready(function() {
                             record: {
                                 maxLength: 60,
                                 image: false,
-                                audio: false,
+                                audio: true,
                                 video: {
                                     // video constraints: set resolution of camera
                                     mandatory: {
@@ -951,7 +921,7 @@ $(document).ready(function() {
                             record: {
                                 maxLength: 60,
                                 image: false,
-                                audio: false,
+                                audio: true,
                                 video: {
                                     // video constraints: set resolution of camera
                                     mandatory: {
@@ -1001,10 +971,9 @@ let imageIcon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04
 let videoIcon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAOSAAADkgHKEu2wAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAchQTFRF////4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4E9f4FBg4FFh4FJi4VJi4VNj4VVk4VVl4Vdm4Vdn4llo4lpp4ltq42Bu42Bv42Jw5GRy5GZ05Gh25Wp35Wx55W165W575nJ+5nJ/5nOA5nSA53SB53aC53aD6HqG6HqH6H6K6YGM6YGN6oaR6omU64yX642X65Ca7JGb7JOc7JWf7Zqj7Zyl7p6n7qCp76Kq76Or76Wt8Kev8Kiw8Kmx8a618bC38rO68rW88re987nA873D9MLI9cbL9cfM9srP9svP9svQ9s3R9s7S99HV99HW99LW99TX+NXZ+Nba+dzf+d7h+d/i+uLl+uXn++bo++jq++rs/Ozu/O/x/PDx/fHy/fT1/fX2/vf3/vj5/vn5/vr7/vv7/vz8//z8//7+////fKYoMwAAADd0Uk5TAAEDBAYLDA4VHB4fNDg8PUJDR0pbc3yCg4SGiImVlqWnq661uLq/wsPFy9DT2d7m6+zt8/n6/uYUS2MAAAQFSURBVHjazZvnXxNBEIaHLhKkSJFmAqEcJbTAvVHErth774oFe8XesGEDsZD8u37ASi7H7e7s7b1fuR/zwN3uzrw7QySjglBFdThqdXb3Dgz0dnda0XB1RaiAfFFeeX1rDxzV01pfnqc1eG5pTfsgXDXYvqw0V1P44oZ+eFJ/QzF/9KKqGAQUqypiDR9qsiEouynEFr6kGVJqLmEJX9YGabWVKYcvbISSGguVwudUxqGoeGWOfPwlXWBQ1xLJ8Nm1Nlhk12ZLvX0LbLIkvoSlfWBU31LB8Fl1Nlhl12UJnToRsCsicEblt0CDWvK9xl/UAS3qWOQt/uIYNCm22NPfry0+EPPwP8jvgEZ1LPgd5LZAq1oWWAtZEWhWxH0/qIN21bnuv7Z+ANtlVy7sgw/qy3gyZVvwRVam07kWPqk2Q/5j+wVgO+ZIOV3wTV1OeWIlfFSlwwqI+wkQT18JjfBVjWn1D3zW/JqpzW+Atnn1J3zX/5Vrs/8Azf/V/w4P7L7x6DGTHt3Y7RDgX/+gKf3HJ2ZTjJo9kR6h6R//JX0THp5KsWpqOH1D/uviVKXj7Usxa196jKo/AA558BG3XzbzThzgiEOO/Md/gxjAlSGM3GEAwG83r0EM4BkA4OAbdYDlvzLxfjGAsbknhi7OqAL0z+XopRADGP39zMh9RQCUEhFRjSwAcOy9GkANERG1ywNgzbUfKgDtRER5gwoAwI4XCgCDeURUDiUAJE5/lgZAORHVKwIAG24nZQHqiahVGQA48FoSoJWIehgAsPL8FymAHqICcAAAm+/JAKDAMReRAQCOTkoAhKiCDQDDV78LA1RQNR8AsO2pKEA1hTkBgJMfxQDCFOUFwLqbSRGAKFnMAMCeCQEAizrZAZA4N+0ZoJO6+QGAjeNeAbqpVwcAEuMeAXppQAsADnkEGNAFsMszgJ5XgGueX4GWjzBxwftHqGEZYu+EwDLk34jW30qKbETcWzFOfRLbipkPo+3PRQ8j1uPYpUzIeBwzJiSuhVLGhIQvJdvyUCol40pKV419lUtKedJyHH4rm5azFCab7ioUJuql2YrRaZXSTLU4xf5XasWpYnnuqTJ1Lc+VDIrEGU+1uatBoWLR7HzJYdFIm1Rrrwv4yS4mlahNd+nXI8c/MNl0okblAwDA1sdsRqWoVZs8C6y+/I3RqhU2qyefzKRS6gCx4Nj1xi8sjF/ZmL+0Mn5tZ/7i0vjVrfnLa+PX9+YbGIy3cJhvYjHexmO+kcl8K5fxZjbz7XzmGxrNt3Qab2o139ZrvrHZfGu3+eZ28+395gcczI94mB9yCcCYj/lBJ/OjXgEYdjM/7heAgccAjHwGYOg1AGO/ARh8DsLodwCG33WM//8EJjep8juCtmQAAAAASUVORK5CYII=";
 let audioIcon = "data:image/png;base64,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";
 
-var Media = fabric.util.createClass(
-    fabric.Object,
-    {
-        type: 'image',
+fabric.Media = fabric.util.createClass(
+    fabric.Object, {
+        type: 'media',
         tag: 'media',
         H_PADDING: 1,
         V_PADDING: 1,
@@ -1016,13 +985,14 @@ var Media = fabric.util.createClass(
          * @param mimeType
          * @param options
          */
-        initialize: function (data, options) {
+        initialize: function (data, options, callback) {
+            options || (options = {});
             this.callSuper('initialize', options);
-            this.set("data",data);
-            let mimeType = data.substring(data.indexOf(':')+1, data.indexOf(';'));
-            this.set("mime",mimeType);
+            this.set("data", data);
+            let mimeType = data.substring(data.indexOf(':') + 1, data.indexOf(';'));
+            this.set("mime", mimeType);
             this.image = new Image();
-            switch(mimeType.substring(0,5)){
+            switch (mimeType.substring(0, 5)) {
                 case "image":
                     this.image.src = imageIcon;
                     break;
@@ -1036,7 +1006,7 @@ var Media = fabric.util.createClass(
                     this.image.src = defaultIcon;
                     break;
             }
-            this.image.onload = (function() {
+            this.image.onload = (function () {
                 // this.image.scaleToWidth(48);
                 // this.image.scaleToHeight(48);
                 this.width = 50 + this.H_PADDING * 2;
@@ -1063,7 +1033,7 @@ var Media = fabric.util.createClass(
             getPreviewDialog(this.data, this.mime)
         },
 
-        toObject: function(propertiesToInclude) {
+        toObject: function (propertiesToInclude) {
 
             return fabric.util.object.extend(
                 this.callSuper(
@@ -1075,17 +1045,15 @@ var Media = fabric.util.createClass(
                 });
         },
 
-        toSVG: function(reviver) {
+        toSVG: function (reviver) {
             let markup = this._createBaseSVGMarkup();
             let preserveAspectRatio = 'none';
             // let x = left, y = top;
 
             markup.push(
                 '<g transform="', this.getSvgTransform(), this.getSvgTransformMatrix(), '">\n',
-                '<image ', this.getSvgId(), 'xlink:href="', this.image.src,
+                '<image type="media" ', this.getSvgId(), 'xlink:href="', this.image.src,
                 '" x="', this.x, '" y="', this.y,
-                // '" meetOrSlice="', "media",
-                // '" style="', this.getSvgStyles(),
                 // we're essentially moving origin of transformation from top/left corner to the center of the shape
                 // by wrapping it in container <g> element with actual transformation, then offsetting object to the top/left
                 // so that object's center aligns with container's left/top
@@ -1102,30 +1070,44 @@ var Media = fabric.util.createClass(
             return reviver ? reviver(markup.join('')) : markup.join('');
         },
 
-        toString: function() {
-            return '#<fabric.Image: { src: "' + this.image.src + '", data:"' + this.data +'"}>';
+        toString: function () {
+            return '#<fabric.Image: { src: "' + this.image.src + '", data:"' + this.data + '"}>';
         },
     }
 );
 
-function scalePreserveAspectRatio(image){
-    return(Math.min((48/image.width),(48/image.height)));
-}
+/**
+ * Creates an instance of fabric.Image from its object representation
+ * @static
+ * @param {Object} object Object to create an instance from
+ * @param {Function} callback Callback to invoke when an image instance is created
+ */
+fabric.Media.fromObject = function (object, callback) {
+    console.info("recreating object");
+    console.info(object);
+    var obj =  new fabric.Media(object.data, {
+        top: object.top,
+        left: object.left
+    });
+    canvas.add(obj);
+    obj.on('image:loaded', canvas.renderAll.bind(canvas));
+    callback(obj);
+};
 
 function getPreviewDialog(data, mimeType) {
     let type = mimeType.substring(0, mimeType.indexOf('/'));
 
     let div = $("<div />");
 
-    switch (type){
+    switch (type) {
         case "image":
             div.attr("title", "Image").appendTo(div);
             let source = $("<img width='500' height='450' />");
-            source.attr("src", data).css({width: "100%", height: "100%" }).appendTo(div);
+            source.attr("src", data).css({width: "100%", height: "100%"}).appendTo(div);
             div.dialog({
                 width: 500,
                 height: 520,
-                close : function () {
+                close: function () {
                     $(this).dialog('destroy');
                 }
             });
@@ -1133,12 +1115,15 @@ function getPreviewDialog(data, mimeType) {
 
         case "audio":
             div.attr("title", "Audio clip").appendTo(div);
-            let audio = $("<audio />").attr("autoplay", true).attr("controls", true).css({width: "100%", height: "50px" }).appendTo(div);
+            let audio = $("<audio />").attr("autoplay", true).attr("controls", true).css({
+                width: "100%",
+                height: "50px"
+            }).appendTo(div);
             $("<source />").attr("src", data).appendTo(audio);
             div.dialog({
                 width: 500,
                 height: 120,
-                close : function () {
+                close: function () {
                     $(this).dialog('destroy');
                 }
             });
@@ -1146,12 +1131,15 @@ function getPreviewDialog(data, mimeType) {
 
         case "video":
             div.attr("title", "Video clip").appendTo(div);
-            let video = $("<video />").attr("autoplay", true).attr("controls", true).css({width: "100%", height: "90%" }).appendTo(div);
+            let video = $("<video />").attr("autoplay", true).attr("controls", true).css({
+                width: "100%",
+                height: "90%"
+            }).appendTo(div);
             $("<source />").attr("src", data).attr("type", mimeType).appendTo(video);
             div.dialog({
                 width: 500,
                 height: 500,
-                close : function () {
+                close: function () {
                     $(this).dialog('destroy');
                 }
             });

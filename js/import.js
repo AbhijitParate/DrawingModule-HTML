@@ -237,11 +237,11 @@ $(document).ready(function() {
                     for(let i = 0; i < objects.length; i++) {
                         // console.log("Type : " + obj.get("stroke"));
                         let obj = objects[i];
-                        console.log(obj);
+                        console.log(obj.type);
                         // for our implementation
                         let data = obj.get('preserveAspectRatio');
                         if (data && data.substring(0,4) === "data") {
-                            let newObj = new Media(data,                                {
+                            let newObj = new fabric.Media(data,                                {
                                 top: obj.transformMatrix[5],
                                 left: obj.transformMatrix[4],
                             });
