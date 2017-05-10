@@ -5,7 +5,7 @@ let fillColor;
 
 $(document).ready(function() {
 
-    canvas.freeDrawingBrush.color = 'black';
+    let DRAW_COLOR = 'BLACK';
 
     function enableSelect() {
         canvas.isDrawingMode = false;
@@ -17,29 +17,30 @@ $(document).ready(function() {
         canvas.isDrawingMode = true;
         canvas.selection = false;
         canvas.hoverCursor = 'crosshair';
+        canvas.freeDrawingBrush.color = DRAW_COLOR;
+        EDITOR_MODE = DRAW;
     }
 
 //1.Draw
     // 1.Pencil
     $("#pencil").click(function () {
         enablePencil();
-        EDITOR_MODE = DRAW;
     });
 
     // 1a.Slider
-    let handle = $("#custom-handle");
-    $("#size").slider({
+    let pencil_handle = $("#pencil-handle");
+    $("#pencil-size").slider({
         value: 10,
         min: 1,
         max: 99,
         step: 1,
         create: function() {
-            handle.text(
+            pencil_handle.text(
                 $(this).slider("value")
             );
         },
         slide: function( event, ui ) {
-            handle.text( ui.value );
+            pencil_handle.text( ui.value );
         },
         change: function (event, ui) {
             canvas.freeDrawingBrush.width = parseInt(ui.value, 10) || 1;
@@ -49,9 +50,33 @@ $(document).ready(function() {
 
     // 2.Erase
     $("#erase").click(function () {
+        enableEraser();
+    });
+
+    function enableEraser() {
         enablePencil();
         EDITOR_MODE = ERASE;
         canvas.freeDrawingBrush.color = 'white';
+    }
+
+    let eraser_handle = $("#eraser-handle");
+    $("#eraser-size").slider({
+        value: 10,
+        min: 1,
+        max: 99,
+        step: 1,
+        create: function() {
+            eraser_handle.text(
+                $(this).slider("value")
+            );
+        },
+        slide: function( event, ui ) {
+            eraser_handle.text( ui.value );
+        },
+        change: function (event, ui) {
+            canvas.freeDrawingBrush.width = parseInt(ui.value, 10) || 1;
+            enableEraser();
+        }
     });
 
     // 3.Shapes
@@ -233,7 +258,8 @@ $(document).ready(function() {
             ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
         ],
         change: function (color) {
-            canvas.freeDrawingBrush.color = color.toHexString(true);
+            DRAW_COLOR = color.toHexString(true);
+            canvas.freeDrawingBrush.color = DRAW_COLOR;
         }
     });
 

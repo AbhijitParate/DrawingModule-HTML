@@ -204,15 +204,15 @@ $(document).ready(function() {
             },
             autoOpen: false,
             buttons: {
-                upload :{
-                    text : "Upload from system",
-                    click : function () {
-                        console.info("Upload clicked");
-                        input.click();
-                        $(this).dialog("destroy");
-                        destroyCam();
-                    }
-                },
+                // upload :{
+                //     text : "Upload from system",
+                //     click : function () {
+                //         console.info("Upload clicked");
+                //         input.click();
+                //         $(this).dialog("destroy");
+                //         destroyCam();
+                //     }
+                // },
                 "Retry": function () {
                     console.info("Retry clicked");
                     $(".vjs-icon-photo-retry").click();
@@ -550,10 +550,10 @@ $(document).ready(function() {
             },
             autoOpen: false,
             buttons: {
-                "Upload from system" : function() {
-                    console.info("Upload clicked");
-                    inputTag.click();
-                },
+                // "Upload from system" : function() {
+                //     console.info("Upload clicked");
+                //     inputTag.click();
+                // },
                 "Retry": function () {
                     console.info("Retry clicked");
                     $(this).dialog("destroy");
@@ -618,6 +618,7 @@ $(document).ready(function() {
             createCamcorderDialog();
             dialog.dialog("destroy");
         }).appendTo(dialog);
+        $("<p />").text("Supported formats: MP4, Webm or 3GP ").appendTo(dialog);
         dialog.dialog({
             modal:true,
             resizable: true,
@@ -761,15 +762,15 @@ $(document).ready(function() {
             },
             autoOpen: false,
             buttons: {
-                upload :{
-                    text : "Upload from system",
-                    click : function () {
-                        console.info("Upload clicked");
-                        input.click();
-                        $(this).dialog("destroy");
-                        destroyCam();
-                    }
-                },
+                // upload :{
+                //     text : "Upload from system",
+                //     click : function () {
+                //         console.info("Upload clicked");
+                //         input.click();
+                //         $(this).dialog("destroy");
+                //         destroyCam();
+                //     }
+                // },
                 "Retry": function () {
                     console.info("Retry clicked");
                     $(".vjs-icon-photo-retry").click();
@@ -1106,7 +1107,7 @@ function getPreviewDialog(data, mimeType) {
             source.attr("src", data).css({width: "100%", height: "100%"}).appendTo(div);
             div.dialog({
                 width: 500,
-                height: 520,
+                // height: 520,
                 close: function () {
                     $(this).dialog('destroy');
                 }
