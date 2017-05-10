@@ -29,6 +29,7 @@ $(document).ready(function() {
             case 27:
                 canvas.isDrawingMode = false;
                 break;
+            case 8:
             case 46:
                 deleteObjects();
                 break;
