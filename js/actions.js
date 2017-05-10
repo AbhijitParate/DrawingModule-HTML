@@ -5,20 +5,36 @@ let fillColor;
 
 $(document).ready(function() {
 
-    let DRAW_COLOR = 'BLACK';
+    var DRAW_COLOR = 'BLACK';
 
-    function enableSelect() {
+    var PENCIL_SIZE = 10, ERASE_SIZE = 10;
+
+    canvas.freeDrawingBrush.width = 10;
+
+    function enableSelect(){
         canvas.isDrawingMode = false;
         canvas.selection = true;
         canvas.hoverCursor = 'move';
     }
 
     function enablePencil() {
+        console.debug(PENCIL_SIZE);
+        canvas.freeDrawingBrush.width = PENCIL_SIZE;
+        canvas.freeDrawingBrush.color = DRAW_COLOR;
         canvas.isDrawingMode = true;
         canvas.selection = false;
         canvas.hoverCursor = 'crosshair';
-        canvas.freeDrawingBrush.color = DRAW_COLOR;
         EDITOR_MODE = DRAW;
+    }
+
+    function enableEraser() {
+        console.debug(ERASE_SIZE);
+        canvas.freeDrawingBrush.width = ERASE_SIZE;
+        canvas.freeDrawingBrush.color = 'white';
+        canvas.isDrawingMode = true;
+        canvas.selection = false;
+        canvas.hoverCursor = 'crosshair';
+        EDITOR_MODE = ERASE;
     }
 
 //1.Draw
@@ -43,7 +59,8 @@ $(document).ready(function() {
             pencil_handle.text( ui.value );
         },
         change: function (event, ui) {
-            canvas.freeDrawingBrush.width = parseInt(ui.value, 10) || 1;
+            PENCIL_SIZE =  parseInt(ui.value, 10) || 1;
+            canvas.freeDrawingBrush.width = PENCIL_SIZE;
             enablePencil();
         }
     });
@@ -52,12 +69,6 @@ $(document).ready(function() {
     $("#erase").click(function () {
         enableEraser();
     });
-
-    function enableEraser() {
-        enablePencil();
-        EDITOR_MODE = ERASE;
-        canvas.freeDrawingBrush.color = 'white';
-    }
 
     let eraser_handle = $("#eraser-handle");
     $("#eraser-size").slider({
@@ -74,7 +85,8 @@ $(document).ready(function() {
             eraser_handle.text( ui.value );
         },
         change: function (event, ui) {
-            canvas.freeDrawingBrush.width = parseInt(ui.value, 10) || 1;
+            ERASE_SIZE = parseInt(ui.value, 10) || 1;
+            canvas.freeDrawingBrush.width = ERASE_SIZE;
             enableEraser();
         }
     });

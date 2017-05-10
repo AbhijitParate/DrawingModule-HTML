@@ -21,7 +21,7 @@ $(document).ready(function() {
             let top = object.getTop();
         }
 
-        // console.warn("keyboard keypress event :" + key );
+        console.warn("keyboard keypress event :" + key );
         switch (key) {
             //////////////
             // Shortcuts
@@ -33,39 +33,15 @@ $(document).ready(function() {
                 deleteObjects();
                 break;
             case 37: // left
-                // if (event.shiftKey) {
-                //     return object('zoomBy-x',-1); return false;
-                // }
-                // if (event.ctrlKey || event.metaKey) {
-                //     return object('angle', -1);
-                // }
                 object.set('left', left - 1);
                 break;
             case 39: // right
-                // if (event.shiftKey) {
-                //     return object('zoomBy-x',1); return false;
-                // }
-                // if (event.ctrlKey || event.metaKey) {
-                //     return object('angle', 1);
-                // }
                 object.set('left', left + 1);
                 break;
             case 38: // up
-                // if (event.shiftKey) {
-                //     return object('zoomBy-y', -1);
-                // }
-                // if (!event.ctrlKey && !event.metaKey) {
-                //     return object('top', -1);
-                // }
                 object.set('top', top-1);
                 break;
             case 40: // down
-                // if (event.shiftKey) {
-                //     return object('zoomBy-y', 1);
-                // }
-                // if (!event.ctrlKey && !event.metaKey) {
-                //     return object('top', 1);
-                // }
                 object.set('top', top+1);
                 break;
             // Copy (Ctrl+C)
