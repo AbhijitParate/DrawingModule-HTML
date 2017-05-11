@@ -217,7 +217,7 @@ $(document).ready(function($) {
                     // console.log('snapshot ready: ', player.recordedData);
                     // attachBtn.text('Capture');
                     console.info("finished recording");
-                    let data = player.recordedData;
+                    let data = player.recordedData.video;
 
                     let fr = new FileReader();
                     fr.onload = function(e) {

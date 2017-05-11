@@ -572,7 +572,7 @@ $(document).ready(function() {
         });
 
         function destroyCam() {
-            player.recorder.destroy();
+            // player.recorder.destroy();
             player = null;
             wrapperDiv.remove();
         }
@@ -764,15 +764,6 @@ $(document).ready(function() {
             },
             autoOpen: false,
             buttons: {
-                // upload :{
-                //     text : "Upload from system",
-                //     click : function () {
-                //         console.info("Upload clicked");
-                //         input.click();
-                //         $(this).dialog("destroy");
-                //         destroyCam();
-                //     }
-                // },
                 "Retry": function () {
                     console.info("Retry clicked");
                     $(".vjs-icon-photo-retry").click();

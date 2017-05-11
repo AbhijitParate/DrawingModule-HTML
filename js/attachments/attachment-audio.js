@@ -254,7 +254,7 @@ $(document).ready(function($) {
         });
 
         function destroyCam() {
-            player.recorder.destroy();
+            // player.recorder.destroy();
             player = null;
             wrapperDiv.remove();
         }
