@@ -1,24 +1,28 @@
 /**
  * Created by abhij on 3/7/2017.
+ *
  */
+// import {saveAs} from "./libs/FileSaver.min";
 let fillColor;
 
 $(document).ready(function() {
 
-    var DRAW_COLOR = 'BLACK';
+    // var FileSaver = require('file-saver');
+
+    let DRAW_COLOR = 'BLACK';
 
     var PENCIL_SIZE = 10, ERASE_SIZE = 10;
 
-    canvas.freeDrawingBrush.width = 10;
-
-    function enableSelect(){
+    function enableSelect() {
         canvas.isDrawingMode = false;
         canvas.selection = true;
         canvas.hoverCursor = 'move';
+        canvas.renderAll();
+        EDITOR_MODE = SELECT;
     }
 
     function enablePencil() {
-        console.debug(PENCIL_SIZE);
+        // console.debug(PENCIL_SIZE);
         canvas.freeDrawingBrush.width = PENCIL_SIZE;
         canvas.freeDrawingBrush.color = DRAW_COLOR;
         canvas.isDrawingMode = true;
@@ -40,7 +44,14 @@ $(document).ready(function() {
 //1.Draw
     // 1.Pencil
     $("#pencil").click(function () {
-        enablePencil();
+        // console.log(EDITOR_MODE);
+        if (EDITOR_MODE !== DRAW) {
+            this.classList.add("selected");
+            enablePencil();
+        } else {
+            this.classList.remove("selected");
+            enableSelect();
+        }
     });
 
     // 1a.Slider
@@ -99,7 +110,7 @@ $(document).ready(function() {
             left: 100,
             top: 100,
             fill: 'rgba(0,0,0,0)',
-            stroke: canvas.freeDrawingBrush.color,
+            stroke: DRAW_COLOR,
             strokeWidth: 1
         });
         canvas.add(line);
@@ -156,7 +167,7 @@ $(document).ready(function() {
 
         var arrow = new fabric.Polyline(points, {
             fill: 'rgba(0,0,0,0)',
-            stroke: canvas.freeDrawingBrush.color,
+            stroke: DRAW_COLOR,
             opacity: 1,
             strokeWidth: 1,
             originX: 'left',
@@ -177,7 +188,7 @@ $(document).ready(function() {
             top:100,
             radius:100,
             fill: 'rgba(0,0,0,0)',
-            stroke: canvas.freeDrawingBrush.color,
+            stroke: DRAW_COLOR,
             strokeWidth: 1
         });
         canvas.add(circle);
@@ -192,7 +203,7 @@ $(document).ready(function() {
             top: 100,
             left: 100,
             fill: 'rgba(0,0,0,0)',
-            stroke: canvas.freeDrawingBrush.color,
+            stroke: DRAW_COLOR,
             strokeWidth: 1
         });
         canvas.add(rect);
@@ -208,7 +219,7 @@ $(document).ready(function() {
             top: 100,
             left: 100,
             fill: 'rgba(0,0,0,0)',
-            stroke: canvas.freeDrawingBrush.color,
+            stroke: DRAW_COLOR,
             strokeWidth: 1
         });
         canvas.add(tri);
@@ -228,7 +239,7 @@ $(document).ready(function() {
             top: 100,
             angle: 0,
             fill: 'rgba(0,0,0,0)',
-            stroke: canvas.freeDrawingBrush.color,
+            stroke: DRAW_COLOR,
             strokeWidth: 1
         });
         canvas.add(pol);
@@ -243,13 +254,7 @@ $(document).ready(function() {
     // 5.Text
     $("#text").click(function () {
         enableSelect();
-        let text = new fabric.IText('Double click to type here...', {
-            fontFamily: 'arial black',
-            left: 100,
-            top: 100,
-        });
-        canvas.add(text);
-        canvas.renderAll();
+        createDialogForText();
     });
 
     // 6.Color Picker
@@ -332,7 +337,19 @@ $(document).ready(function() {
     });
     // 5. Crop
     $("#crop").click(function () {
-
+        // todo: Add crop feature
+        // console.log(canvas.getActiveObject());
+        // console.log(canvas.getActiveGroup());
+        if (canvas.getActiveObject() || canvas.getActiveGroup()) {
+            let objects = canvas.getObjects();
+            for (let i = 0; i < objects.length; i++) {
+                if (!objects[i].active) {
+                    objects[i].remove();
+                    i--;
+                }
+            }
+            canvas.renderAll();
+        }
     });
     // 6. Fit
     $("#fit").click(function () {
@@ -341,9 +358,10 @@ $(document).ready(function() {
         if( object &&  object.type === 'image') {
             object.setWidth(700);
             object.setHeight(700);
+            object.scaleToWidth(700);
+            object.scaleToWidth(700);
             object.setTop(50);
             object.setLeft(50);
-
             canvas.renderAll();
         }
     });
@@ -499,6 +517,8 @@ $(document).ready(function() {
 
     $("#clear").click(function () {
         clearCanvas();
+        attachments = [];
+        previousAttachments = [];
     });
 
     $("#hide").click(function () {
@@ -559,7 +579,7 @@ $(document).ready(function() {
             quality: 0.8,
             multiplier: 1
         });
-        let windowContent = "";// = '<!DOCTYPE html>';
+        let windowContent = "<!DOCTYPE html>";
         windowContent += "<html>";
         windowContent += "<head><title>Print canvas</title></head>";
         windowContent += "<body>";
@@ -572,17 +592,18 @@ $(document).ready(function() {
         printWin.document.write(windowContent);
         printWin.document.close();
         printWin.focus();
-        printWin.print();
+        printWin.onload = function(){
+            printWin.print();
+        };
         // printWin.close();
     });
 
 //9.Export
     $("#save-pdf").click(function () {
-        // canvas.setBackgroundColor('rgba(255, 255, 255, 1)', canvas.renderAll.bind(canvas));
         let image = canvas.toDataURL({
             format: 'png',
             quality: 0.8,
-            multiplier: 1
+            multiplier: 0.5
         });
         //noinspection JSUnresolvedFunction
         let pdf = new jsPDF({
@@ -591,7 +612,8 @@ $(document).ready(function() {
             format: 'a4'
         });
 
-        pdf.addImage(image, 'PNG', 10, 10, 580, 580);
+        pdf.addImage(image, 'PNG', 25, 25);
+
         pdf.save(getTimeStamp() + ".pdf");
     });
 
@@ -600,7 +622,7 @@ $(document).ready(function() {
         let image = canvas.toDataURL({format: 'jpeg'});
         canvas.setBackgroundColor('rgba(0, 0, 0, 0)', canvas.renderAll.bind(canvas));
         let imageBlob = dataURItoBlob(image);
-        console.info(imageBlob);
+        // console.info(imageBlob);
         saveAs(imageBlob, getTimeStamp() + ".jpg", "image/jpeg");
     });
 
@@ -612,7 +634,7 @@ $(document).ready(function() {
         });
 
         let imageBlob = dataURItoBlob(image);
-        console.info(imageBlob);
+        // console.info(imageBlob);
 
         saveAs(imageBlob, getTimeStamp() + ".png", "image/png");
     });
@@ -639,15 +661,15 @@ $(document).ready(function() {
     function dataURItoBlob(dataURI) {
         // convert base64 to raw binary data held in a string
         // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-        var byteString = atob(dataURI.split(',')[1]);
+        let byteString = atob(dataURI.split(',')[1]);
 
         // separate out the mime component
-        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
 
         // write the bytes of the string to an ArrayBuffer
-        var ab = new ArrayBuffer(byteString.length);
-        var ia = new Uint8Array(ab);
-        for (var i = 0; i < byteString.length; i++) {
+        let ab = new ArrayBuffer(byteString.length);
+        let ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
             ia[i] = byteString.charCodeAt(i);
         }
         return new Blob([ab], {type: mimeString});

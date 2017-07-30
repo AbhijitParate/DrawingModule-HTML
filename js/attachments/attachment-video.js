@@ -1,5 +1,6 @@
 /**
  * Created by abhij on 3/12/2017.
+ *
  */
 
 $(document).ready(function($) {
@@ -8,7 +9,6 @@ $(document).ready(function($) {
     $("#attachVideo").click(function () {
         // $("#attachmentInput").click();
         createDialog();
-
     });
 
     function getInputTag(dialog) {
@@ -19,8 +19,8 @@ $(document).ready(function($) {
         input.attr("accept","video/*");
         input.on("change", function (e) {
             let video = e.target.files[0];
-            console.info("Video selected ->");
-            console.info(video);
+            // console.info("Video selected ->");
+            // console.info(video);
             createUploadVideoDialog(video);
             dialog.dialog("destroy");
         });
@@ -32,29 +32,29 @@ $(document).ready(function($) {
         dialog.attr("title", "Attach Video");
         let input = getInputTag(dialog);
         input.appendTo(dialog);
-        $("<button />").text("Upload from device").button().on("click", function () {
+        $("<button />").css('margin', '10px').text("Upload from device").button().on("click", function () {
             input.click();
         }).appendTo(dialog);
         $("<p />").appendTo(dialog);
-        $("<button />").text("Capture using web-cam").button().on("click", function () {
-            createWebcamDialog();
+        $("<button />").css('margin', '10px').text("Capture using web-cam").button().on("click", function () {
+            createVideoRecordDialog();
             dialog.dialog("destroy");
         }).appendTo(dialog);
         dialog.dialog({
             modal:true,
             resizable: true,
             position: {
-                of: "#canvasWrapper",
+                of: window,
                 at: "center center",
                 my: "center center"
             },
             height: "auto",
             width: "auto",
             open: function () {
-                console.info("Video dialog opened");
+                // console.info("Video dialog opened");
             },
             close: function () {
-                console.info("Video dialog closed");
+                // console.info("Video dialog closed");
             },
             autoOpen: false,
             buttons: {
@@ -71,7 +71,7 @@ $(document).ready(function($) {
         // console.info("createUploadImageDialog ->");
         // console.info(image);
         let dialog = $("<div/>");
-        dialog.attr("title", "Upload video from system");
+        dialog.attr("title", "Upload video from device");
         let input = getInputTag(dialog);
         input.appendTo(dialog);
         let videoTag = $("<video />");
@@ -92,7 +92,7 @@ $(document).ready(function($) {
             modal:true,
             resizable: true,
             position: {
-                of: "#canvasWrapper",
+                of: window,
                 at: "center center",
                 my: "center center"
             },
@@ -103,19 +103,20 @@ $(document).ready(function($) {
             },
             close: function () {
                 console.info("Upload video dialog closed");
+                $(this).dialog("destroy");
             },
             autoOpen: false,
             buttons: {
-                "Web-cam": function () {
-                    createWebcamDialog();
-                    $(this).dialog("destroy");
-                },
+                // "Web-cam": function () {
+                //     createWebcamDialog();
+                //     $(this).dialog("destroy");
+                // },
                 "Reselect": function () {
                     input.click();
                 },
                 "Attach": function () {
-                    console.info("Attach file code here");
-                    let attachmentVideo = new Attachment(video.name, "video", previewVideo );
+                    // console.info("Attach file code here");
+                    let attachmentVideo = new Attachment("video_"+video.name, "video", previewVideo );
                     attachments.push(attachmentVideo);
                     $(this).dialog("destroy");
                 },
@@ -127,7 +128,7 @@ $(document).ready(function($) {
         dialog.dialog("open");
     }
 
-    function createWebcamDialog() {
+    function createVideoRecordDialog() {
         let dialog = $("<div/>");
         dialog.attr("title", "Capture video from camera");
         let input = $("<input/>");
@@ -136,10 +137,10 @@ $(document).ready(function($) {
         input.attr("name","videos[]");
         input.attr("accept","video/*");
         input.on("change", function (e) {
-            let image = e.target.files[0];
+            let video = e.target.files[0];
             console.info("Image selected ->");
-            console.info(image);
-            createUploadVideoDialog(image);
+            console.info(video);
+            createUploadVideoDialog(video);
             dialog.dialog("destroy");
         });
         input.appendTo(dialog);
@@ -151,9 +152,9 @@ $(document).ready(function($) {
         // $("<option/>").attr("value", "3").text("1024×768").appendTo(select);
         $("<option/>").attr("value", "4").text("1280×720").appendTo(select);
         let label = $("<label/>").css("float","right");
-        label.text("Image size : ");
+        label.text("Video size : ");
         label.appendTo(selectDiv);
-        let imageDiv = $("<div/>").appendTo(dialog);
+        let imageDiv = $("<div/>").css('text-align', '-webkit-center').appendTo(dialog);
         let video = $("<video/>").addClass("video-js vjs-default-skin");
         video.attr("id","myVideo");
         video.appendTo(imageDiv);
@@ -164,7 +165,7 @@ $(document).ready(function($) {
             modal:true,
             resizable: true,
             position: {
-                of: "#canvasWrapper",
+                of: window,
                 at: "center center",
                 my: "center center"
             },
@@ -212,10 +213,6 @@ $(document).ready(function($) {
                 });
                 // snapshot is available
                 player.on('finishRecord', function() {
-                    // the blob object contains the image data that
-                    // can be downloaded by the user, stored on server etc.
-                    // console.log('snapshot ready: ', player.recordedData);
-                    // attachBtn.text('Capture');
                     console.info("finished recording");
                     let data = player.recordedData.video;
 
@@ -237,15 +234,15 @@ $(document).ready(function($) {
             },
             autoOpen: false,
             buttons: {
-                upload :{
-                    text : "Upload from system",
-                    click : function () {
-                        console.info("Upload clicked");
-                        input.click();
-                        $(this).dialog("destroy");
-                        destroyCam();
-                    }
-                },
+                // upload :{
+                //     text : "Upload from system",
+                //     click : function () {
+                //         console.info("Upload clicked");
+                //         input.click();
+                //         $(this).dialog("destroy");
+                //         destroyCam();
+                //     }
+                // },
                 "Retry": function () {
                     console.info("Retry clicked");
                     $(".vjs-icon-photo-retry").click();
@@ -313,6 +310,11 @@ $(document).ready(function($) {
                             }
                         }
                     });
+                    player.reset();
+                    dialog.dialog({
+                        width: 477,
+                        height: 240 + 180,
+                    });
                     break;
                 case "2":
                     console.info("2");
@@ -345,6 +347,11 @@ $(document).ready(function($) {
                             }
                         }
                     });
+                    player.reset();
+                    dialog.dialog({
+                        width: 640+33,
+                        height: 480 + 180,
+                    });
                     break;
                 case "3":
                     console.info("3");
@@ -376,6 +383,11 @@ $(document).ready(function($) {
                                 frameHeight: 768
                             }
                         }
+                    });
+                    player.reset();
+                    dialog.dialog({
+                        width: 1024+33,
+                        height: 768 + 180,
                     });
                     break;
                 case "4":
@@ -410,6 +422,10 @@ $(document).ready(function($) {
                         }
                     });
                     player.reset();
+                    dialog.dialog({
+                        width: 1280+33,
+                        height: 720 + 180,
+                    });
                     break;
             }
             // snapshot is available

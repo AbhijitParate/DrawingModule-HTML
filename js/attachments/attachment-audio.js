@@ -7,7 +7,6 @@ $(document).ready(function($) {
     //Attach -> image
     $("#attachAudio").click(function () {
         createDialog();
-
     });
 
     function getInputTag(dialog) {
@@ -31,11 +30,11 @@ $(document).ready(function($) {
         dialog.attr("title", "Attach Audio");
         let inputTag = getInputTag(dialog);
         inputTag.appendTo(dialog);
-        $("<button />").text("Upload from device").button().on("click", function () {
+        $("<button />").css('margin', '10px').text("Upload from device").button().on("click", function () {
             inputTag.click();
         }).appendTo(dialog);
         $("<p />").appendTo(dialog);
-        $("<button />").text("Record using microphone").button().on("click", function () {
+        $("<button />").css('margin', '10px').text("Record using microphone").button().on("click", function () {
             createRecordDialog();
             dialog.dialog("destroy");
         }).appendTo(dialog);
@@ -43,7 +42,7 @@ $(document).ready(function($) {
             modal:true,
             resizable: true,
             position: {
-                of: "#canvasWrapper",
+                of: window,
                 at: "center center",
                 my: "center center"
             },
@@ -67,11 +66,11 @@ $(document).ready(function($) {
         dialog.dialog("open");
     }
 
-    function createUploadAudioDialog(video) {
+    function createUploadAudioDialog(audio) {
         // console.info("createUploadImageDialog ->");
         // console.info(image);
         let dialog = $("<div/>");
-        dialog.attr("title", "Upload audio from system");
+        dialog.attr("title", "Upload audio from device");
         let input = getInputTag(dialog);
         input.appendTo(dialog);
 
@@ -80,20 +79,20 @@ $(document).ready(function($) {
         audioTag.css("max-height","400px");
         audioTag.attr("controls", "");
         audioTag.attr("autoplay", "");
-        let previewVideo;
+        let previewAudio;
         let reader = new FileReader();
         reader.onload = (function (e) {
-            previewVideo = e.target.result;
-            audioTag.attr("src",previewVideo);
+            previewAudio = e.target.result;
+            audioTag.attr("src",previewAudio);
         });
-        reader.readAsDataURL(video);
+        reader.readAsDataURL(audio);
         audioTag.appendTo(dialog);
 
         dialog.dialog({
             modal:true,
             resizable: true,
             position: {
-                of: "#canvasWrapper",
+                of: window,
                 at: "center center",
                 my: "center center"
             },
@@ -108,21 +107,21 @@ $(document).ready(function($) {
             },
             autoOpen: false,
             buttons: {
-                "Mic": function () {
-                    createRecordDialog();
-                    $(this).dialog("close");
-                },
+                // "Mic": function () {
+                //     createRecordDialog();
+                //     $(this).dialog("close");
+                // },
                 "Reselect": function () {
                     input.click();
                 },
                 "Attach": function () {
                     console.info("Attach file code here");
-                    let attachment = new Attachment(video.name, "audio", previewVideo );
+                    let attachment = new Attachment("audio_" + audio.name, "audio", previewAudio );
                     attachments.push(attachment);
-                    $(this).dialog("close");
+                    $(this).dialog("destroy");
                 },
                 "Cancel": function () {
-                    $(this).dialog("close");
+                    $(this).dialog("destroy");
                 },
             }
         });
@@ -145,12 +144,12 @@ $(document).ready(function($) {
             modal:true,
             resizable: true,
             position: {
-                of: "#canvasWrapper",
+                of: window,
                 at: "center center",
                 my: "center center"
             },
-            height: "auto",
-            width: "auto",
+            width: 633,
+            height: 450,
             open: function () {
                 console.info("Record audio dialog opened");
                 attachBtn = $(".ui-dialog-buttonpane button:contains('Attach')");
@@ -232,10 +231,10 @@ $(document).ready(function($) {
             },
             autoOpen: false,
             buttons: {
-                "Upload from system" : function() {
-                    console.info("Upload clicked");
-                    inputTag.click();
-                },
+                // "Upload from system" : function() {
+                //     console.info("Upload clicked");
+                //     inputTag.click();
+                // },
                 "Retry": function () {
                     console.info("Retry clicked");
                     $(this).dialog("destroy");
@@ -244,17 +243,17 @@ $(document).ready(function($) {
                 "Attach": function () {
                     console.info("Attach clicked");
                     saveAttachment();
-                    $(this).dialog("close");
+                    $(this).dialog("destroy");
                 },
                 "Cancel": function () {
                     console.info("Camera dialog closed");
-                    $(this).dialog("close");
+                    $(this).dialog("destroy");
                 },
             }
         });
 
         function destroyCam() {
-            // player.recorder.destroy();
+            player.recorder.destroy();
             player = null;
             wrapperDiv.remove();
         }

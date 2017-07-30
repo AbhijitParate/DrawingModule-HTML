@@ -5,25 +5,24 @@
 
 $(document).ready(function () {
 
+    // console.info(patientIdentifier);
+
     var progressLabel, progressBar;
 
-    /*
-    if(pageMode == "view"){
-        $("#status-save").hide();
-        loadDataFromEncounter();
-    } else if (pageMode == "edit"){
-        loadDataFromEncounter();
-    }
-    */
-
-    var previousAttachments;
+    // var previousAttachments;
 
     function loadDataFromEncounter() {
         console.debug("EcnounterId : " + encounterId);
 
-        $.getJSON(emr.fragmentActionLink("annotation", "drawingDetails", "getEncounterDetails", { encounterId: encounterId }),
+        // var url = emr.fragmentActionLink("docsanddrawing", "drawingDetails", "getEncounterDetails", { encounterId: encounterId });
+        var url = "../ws/rest/v1/docsanddrawing/encounter/get?encounterid="+encounterId;
+
+        console.debug(url);
+
+        $.getJSON(url,
             function success(data) {
-                recreateCanvas(data.drawing);
+            // console.log(data);
+                recreateCanvas(data.json);
                 if(data.obs.length > 0) {
                     previousAttachments = data.obs;
                 }
@@ -33,217 +32,156 @@ $(document).ready(function () {
                 emr.errorMessage("Failed to load Encounter!");
             })
             .always(function() {
-                console.log( "complete" );
+                // console.log( "complete" );
                 emr.successMessage("Encounter loaded successfully!");
             });
     }
 
     function recreateCanvas(drawing) {
-        console.debug(drawing);
-        fabric.loadSVGFromURL("../ws/rest/v1/annotation/obs/" + drawing.uuid +"/"+drawing.name, function(objects, options) {
-            var obj = fabric.util.groupSVGElements(objects, options);
-            canvas.add(obj).renderAll();
+
+        let div = $("<div />");
+        $("<img src='./../ms/uiframework/resource/docsanddrawing/images/loading.gif' width='100' height='100' />").appendTo(div);
+        div.dialog({
+            title: 'Loading...',
+            resizable: false,
+            position: {
+                of: window,
+                at: "center center",
+                my: "center center"
+            },
+            height: "180",
+            width: "100"
         });
+
+        // console.debug(drawing);
+
+        $.getJSON(
+            "../ws/rest/v1/docsanddrawing/obs/" + drawing.uuid +"/"+drawing.name,
+            function success(data) {
+                // console.log(data);
+                canvas.loadFromJSON(data,
+                    function onLoad() {
+                    canvas.renderAll();
+                    // updateFlag = true;
+                    // enableUndoRedo();
+                    div.dialog('destroy');
+                });
+            });
     }
 
     function recreateAttachments(obsArray) {
-        console.debug(obsArray);
-        var attachmentDiv = $("<div/>");
-        var list = $("<ul/>").addClass("attachments-list");
+        // console.debug(obsArray);
+        // var attachmentDiv = $("<div/>").css('width','100%');;
+        var list = $("<ul/>").css('width','100%');
 
         obsArray.forEach(function (obs) {
             list.append(createListItem(obs));
         });
-        attachmentDiv.append(list);
-        return attachmentDiv;
+        // attachmentDiv.append(list);
+        return list;
     }
 
     function createListItem(obs) {
-        var a = $("<a/>").addClass("attachments-list-item")
-            .attr("href", "../ws/rest/v1/annotation/obs/" + obs.uuid +"/"+obs.name)
-            .attr("title", obs.name)
-            .text(obs.name)
-            .css({ display: "block" })
-            .lightcase();
-        return $("<li/>").append(a);
-    }
-
-    // Show list of attachments on click
-    $("#status-view-attachments").click(function () {
-        if(previousAttachments){
-            var dom = recreateAttachments(previousAttachments);
-            $("<div/>").attr("title", "Attachments").append(dom).dialog({
-                closeText: "hide"
-            }).dialog( "open" );
-        } else {
-            // $("#dialog-attachment").dialog("open");
-            createAttachmentDialog();
-        }
-    });
-
-    function removeAttachment(id) {
-        for (let i = 0; i < attachments.length; i++) {
-            if (attachments[i].id === id) {
-                attachments.splice(i, 1);
-                break;
-            }
-        }
-        console.info("file removed");
-    }
-
-    function createLocalAttachmentItem(attachment) {
-        let listItem = $("<li/>").css({"list-style":"none"});
+        let listItem = $("<li/>").addClass('attachment-list-item');
         let div = $("<div />").appendTo(listItem);
-        div.css({display:"inline-flex", margin:"5px"});
-        let span = $("<span />");
-        span.css({
-            color:"red",
-            "font-size":"20px",
-            "margin-right":"15px"
-        });
+        let text_view = $("<p/>")
+            .attr("href", "../ws/rest/v1/docsanddrawing/obs/" + obs.uuid +"/"+obs.name)
+            .attr("data-id", obs.uuid)
+            .attr("title", obs.name)
+            .css({  "font-size" : "20px",
+                    "max-width": "240px",
+                    "white-space": "nowrap",
+                    "overflow": "hidden",
+                    "display": "inline-block",
+                    "text-overflow": "ellipsis" })
+            .attr("title", obs.name)
+            .text(obs.name);
+        text_view.appendTo(div);
 
-        let icon = $("<i/>");
-        icon.addClass("icon-remove");
-        icon.attr("data-file", attachment.id);
-        icon.click(function (){
-            removeAttachment(attachment.id);
-            listItem.remove();
-        });
-        icon.appendTo(span);
+        let span = $("<span />");
+
+        let preview_view = $("<a/>")
+            .addClass("icon-eye-open")
+            .attr("href", "../ws/rest/v1/docsanddrawing/obs/" + obs.uuid +"/"+obs.name)
+            .attr("data-id", obs.uuid)
+            .attr("target","_blank")
+            .attr("title", "Preview");
+        preview_view.appendTo(span);
+
+        let download_view = $("<a/>")
+            .addClass("icon-download-alt")
+            .attr("href", "../ws/rest/v1/docsanddrawing/obs/" + obs.uuid +"/"+obs.name)
+            .attr("data-id", obs.uuid)
+            .attr("download", obs.name)
+            .attr("title", "Download");
+
+        download_view.appendTo(span);
+        if(pageMode !== "view") {
+            let icon = $("<i/>")
+                .addClass("icon-remove")
+                .attr("data-file", obs.uuid)
+                .click(function () {
+                    removePreviousAttachment(obs.uuid);
+                    listItem.remove();
+                });
+            icon.appendTo(span);
+        }
 
         span.appendTo(div);
 
-        let a_view = $("<a/>")
-            .addClass("attachments-list-item")
-            .attr("href","#")
-            .attr("data-id", attachment.id)
-            .attr("title", attachment.name)
-            .text(attachment.name)
-            .css({ display: "block",
-                "font-size":"20px" ,
-                'width': '200px',
-                'white-space': 'nowrap',
-                'text-overflow': 'ellipsis',
-                'overflow': 'hidden',
-            });
-        a_view.click(function () {
-            console.info("Attachment ID: " + $(this).attr("data-id"));
-            $("#attachmentPreview").empty();
-            $("#attachmentPreview").append(getPreviewAttachment($(this).attr("data-id")));
-        });
-        a_view.appendTo(div);
         return listItem;
-    }
-
-    // For reference
-    function getPreviewAttachment(id) {
-
-        console.info(id + " clicked.");
-
-        for (let i = 0; i < attachments.length; i++) {
-            let attachment = attachments[i];
-            console.info("before if " + attachment.id);
-            console.info(attachment.id === id);
-            if (""+attachment.id === id+"") {
-                console.info(attachment.type);
-                switch (attachment.type) {
-                    case "image":
-                        console.info("Image file");
-                        return $('<img class="previewWindow" src=' + attachment.data + '>');
-                    case "video":
-                        console.info("Video file");
-                        if (attachment.data instanceof Blob) {
-                            let videoReader = new FileReader();
-                            videoReader.onloadend = (function (e) {
-                                let video = $('<video class="video-js vjs-default-skin previewWindow" controls autoplay>');
-                                $('<source src=' + e.target.result + '>').appendTo(video);
-                                return video;
-                            });
-                            videoReader.readAsDataURL(attachment.data);
-                        } else {
-                            let video = $('<video class="video-js vjs-default-skin previewWindow" controls autoplay>');
-                            $('<source src=' + attachment.data + '>').appendTo(video);
-                            return video;
-                        }
-
-                        console.info("Video data-> " + attachment.data);
-                        break;
-                    case "audio":
-                        console.info("Audio file");
-                        if (attachment.data instanceof Blob) {
-                            let audioReader = new FileReader();
-                            audioReader.onloadend = (function (e) {
-                                let audio = $('<audio class="video-js vjs-default-skin previewWindow" controls autoplay>');
-                                $('<source src=' + e.target.result + '>').appendTo(audio);
-                                return audio;
-                            });
-                            audioReader.readAsDataURL(attachment.data);
-                        } else {
-                            let audio = $('<audio class="video-js vjs-default-skin previewWindow" controls autoplay>');
-                            $('<source src=' + attachment.data + '>').appendTo(audio);
-                            return audio;
-                        }
-
-                        console.info("Audio data-> " + attachment.data);
-                        break;
-                    case "note":
-                        console.info("Text file");
-                        return $('<textarea class="previewWindow" title="Preview Text" disabled>')
-                        .text(atob(attachment.data.replace("data:text/plain;base64,", "")));
-                    default:
-                        console.info("File attachment");
-                        return $('<img class="previewWindow" src="images/no-preview.jpg">');
-                }
-            }
-        }
-    }
-
-    function recreateLocalAttachments() {
-        console.debug(attachments);
-        var attachmentDiv = $("<div/>");
-        if(attachments.length > 0) {
-            var list = $("<ul/>").addClass("attachments-list")
-                .css({'float':'left', "margin":"5px"});
-
-            attachments.forEach(function (attachment) {
-                list.append(createLocalAttachmentItem(attachment));
-            });
-            attachmentDiv.append(list);
-
-            let previewDiv = $("<div />")
-                .attr("id","attachmentPreview")
-                .css({
-                'float': 'right',
-                'height': '300px',
-                'width': '400px'
-            }).appendTo(attachmentDiv);
-            $("<img src='images/no-preview.jpg' width='400' height='300' />").appendTo(previewDiv);
-        } else {
-            $("<p />").css("text-align", "center").text("No attachments").appendTo(attachmentDiv);
-        }
-        return attachmentDiv;
     }
 
     function createAttachmentDialog() {
         let dialog = $("<div/>");
-        let attachmentDiv = recreateLocalAttachments();
-        attachmentDiv.appendTo(dialog);
+        let previewDiv;
+        $("<button id='expandButton' />").append($("<i class='icon-chevron-right'/>"))
+            .click(function () {
+                if (expanded) {
+                    collapse();
+                } else {
+                    expand();
+                }
+            })
+            .appendTo(dialog);
+
+        let attachmentDiv = $("<div />").attr("id","attachmentDiv")
+            .appendTo(dialog);
+
+        if(attachments !== null && attachments.length > 0){
+            $("<h4 />").text("New attachments").appendTo(attachmentDiv);
+            let localAttachDiv = recreateLocalAttachments();
+            localAttachDiv.appendTo(attachmentDiv);
+        }
+
+        if(previousAttachments){
+            $("<h4 />").text("Previous attachments").appendTo(attachmentDiv);
+            let prevAttachDiv = recreateAttachments(previousAttachments);
+            prevAttachDiv.appendTo(attachmentDiv);
+        }
+
+        previewDiv = $("<div />").attr("id","attachmentPreview")
+            .appendTo(dialog);
+        $("<img src='./../ms/uiframework/resource/docsanddrawing/images/no-preview.jpg' " +
+            "width='550' height='500' />").appendTo(previewDiv);
+
         dialog.attr("title", "Attachments");
         dialog.dialog({
-            width: 700,
-            height: 450,
+            width: 600,
+            height: 700,
             modal:true,
             resizable: true,
             position: {
-                of: "#canvasWrapper",
+                // of: "#canvasWrapper",
                 at: "center center",
                 my: "center center"
             },
             open: function () {
-                console.info("Attachments dialog opened");
+                // console.info("Attachments dialog opened");
+                if(expanded) expand();
             },
             close: function () {
-                console.info("Attachments dialog closed");
+                // console.info("Attachments dialog closed");
                 $(this).dialog("destroy");
             },
             autoOpen: false,
@@ -258,23 +196,172 @@ $(document).ready(function () {
     }
 
     // Show list of attachments on click
-    $("#status-save").click(function () {
-        $(this).prop('disabled', true);
-        $("#status-cancel").prop('disabled', true);
-        $("#status-view-attachments").prop('disabled', true);
-        $("#main-container").hide();
-        progressLabel = $("<p/>");
-        progressBar = $("<div/>").progressbar({
-            max: attachments.length,
-            value: false,
-            change: function() {
-                progressLabel.text( "Saving : " + progressBar.progressbar( "value" ) + "%" );
-            },
-            complete: function() {
-                progressLabel.text( "Complete!" );
+    $("#status-view-attachments").click(function () {
+            createAttachmentDialog();
+    });
+
+    function removeAttachment(id) {
+        for (let i = 0; i < attachments.length; i++) {
+            if (attachments[i].id === id) {
+                attachments.splice(i, 1);
+                break;
             }
+        }
+        // console.info("file removed");
+    }
+
+    function removePreviousAttachment(uuid) {
+        for (let i = 0; i < previousAttachments.length; i++) {
+            if (previousAttachments[i].uuid === uuid) {
+                previousAttachments.splice(i, 1);
+                break;
+            }
+        }
+        // console.info("file removed");
+    }
+
+    function createLocalAttachmentItem(attachment) {
+        let listItem = $("<li/>").addClass('attachment-list-item');
+        let div = $("<div />").appendTo(listItem);
+        let span = $("<span />");
+
+        let icon = $("<i/>");
+        icon.addClass("icon-remove");
+        icon.attr("data-file", attachment.id);
+        icon.click(function (){
+            removeAttachment(attachment.id);
+            listItem.remove();
         });
-        $("#progress-container").append(progressLabel).append(progressBar).show();
+        icon.appendTo(span);
+
+        let a_view = $("<a/>")
+            .attr("href","#")
+            .attr("data-id", attachment.id)
+            .attr("title", attachment.name)
+            .text(attachment.name);
+        a_view.click(function () {
+            // console.info("Attachment ID: " + $(this).attr("data-id"));
+            $("#attachmentPreview").empty();
+            $("#attachmentPreview").append(getPreviewAttachment($(this).attr("data-id")));
+            if(!expanded) expand();
+        });
+        a_view.appendTo(div);
+        span.appendTo(div);
+        return listItem;
+    }
+
+    // For reference
+    function getPreviewAttachment(id) {
+
+        // console.info(id + " clicked.");
+
+        for (let i = 0; i < attachments.length; i++) {
+            let attachment = attachments[i];
+            // console.info("before if " + attachment.id);
+            // console.info(attachment);
+            if (""+attachment.id === id+"") {
+                // console.info(attachment.type);
+                switch (attachment.type) {
+                    case "image":
+                        // console.info("Image file");
+                        return $('<img class="previewWindow" src=' + attachment.data + '>');
+                    case "video":
+                        // console.info("Video file");
+                        if (attachment.data instanceof Blob) {
+                            let videoReader = new FileReader();
+                            videoReader.onloadend = (function (e) {
+                                let video = $('<video class="video-js vjs-default-skin previewWindow" controls autoplay>');
+                                $('<source src=' + e.target.result + '>').appendTo(video);
+                                return video;
+                            });
+                            videoReader.readAsDataURL(attachment.data);
+                        } else {
+                            let video = $('<video class="video-js vjs-default-skin previewWindow" controls autoplay>');
+                            $('<source src=' + attachment.data + '>').appendTo(video);
+                            return video;
+                        }
+
+                        // console.info("Video data-> " + attachment.data);
+                        break;
+                    case "audio":
+                        // console.info("Audio file");
+                        if (attachment.data instanceof Blob) {
+                            let audioReader = new FileReader();
+                            audioReader.onloadend = (function (e) {
+                                let audio = $('<audio class="video-js vjs-default-skin previewWindow" controls autoplay>');
+                                $('<source src=' + e.target.result + '>').appendTo(audio);
+                                return audio;
+                            });
+                            audioReader.readAsDataURL(attachment.data);
+                        } else {
+                            let audio = $('<audio class="video-js vjs-default-skin previewWindow" controls autoplay>');
+                            $('<source src=' + attachment.data + '>').appendTo(audio);
+                            return audio;
+                        }
+
+                        // console.info("Audio data-> " + attachment.data);
+                        break;
+                    case "note":
+                        // console.info("Text file");
+                        return $('<textarea class="previewWindow" title="Preview Text" disabled>')
+                        .text(atob(attachment.data.replace("data:text/plain;base64,", "")));
+                    default:
+                        // console.info("File attachment");
+                        return $('<img class="previewWindow" width="550" height="500" '
+                            + 'src="./../ms/uiframework/resource/docsanddrawing/images/no-preview.jpg" />');
+                }
+            }
+        }
+    }
+
+    function recreateLocalAttachments() {
+        var list = $("<ul/>")
+            .css({
+            });
+
+        attachments.forEach(function (attachment) {
+            // console.log(attachment);
+            list.append(createLocalAttachmentItem(attachment));
+        });
+        return list;
+    }
+
+    let expanded = false;
+
+    function expand() {
+        let uiDialog = $('.ui-dialog');
+        uiDialog.animate({width: '1000px'});
+        $("#expandButton").empty().append($("<i class='icon-chevron-left'/>"));
+        $("#attachmentPreview").css('display','block');
+        expanded = true;
+    }
+
+    function collapse() {
+        let uiDialog = $('.ui-dialog');
+        uiDialog.animate({width: '500px'});
+        $("#expandButton").empty().append($("<i class='icon-chevron-right'/>"));
+        $("#attachmentPreview").css('display','none');
+        expanded = false;
+    }
+
+    // Show list of attachments on clicks
+    $("#status-save").click(function () {
+        // $(this).prop('disabled', true);
+        // $("#status-cancel").prop('disabled', true);
+        // $("#status-view-attachments").prop('disabled', true);
+        // $("#main-container").hide();
+        // progressLabel = $("<p/>");
+        // progressBar = $("<div/>").progressbar({
+        //     max: attachments.length,
+        //     value: false,
+        //     change: function() {
+        //         progressLabel.text( "Saving : " + progressBar.progressbar( "value" ) + "%" );
+        //     },
+        //     complete: function() {
+        //         progressLabel.text( "Complete!" );
+        //     }
+        // });
+        // $("#progress-container").append(progressLabel).append(progressBar).show();
         saveData();
     });
 
@@ -286,22 +373,29 @@ $(document).ready(function () {
     var formData = new FormData();
 
     function saveData() {
-        prepareForm();
-        saveSVG(formData);
-        saveAttachments(formData);
-        savePreviousObs();
-        uploadData();
+        // prepareForm();
+        // saveSVG(formData);
+        // saveJSON();
+        // saveAttachments(formData);
+        // savePreviousObs();
+        // uploadData();
+        saveNdownloadFile();
     }
 
     function prepareForm() {
-        formData.append("patientid", patientid);
-        formData.append("visitid", visitid);
-        formData.append("providerid", providerid);
+        formData.append("patientid", patientId);
+        formData.append("visitid", visitId);
+        formData.append("providerid", providerId);
     }
 
     function saveSVG() {
         formData.append("files[]", btoa(canvas.toSVG()));
         formData.append("filenames[]", Math.floor(Date.now()) + ".svg" );
+    }
+
+    function saveJSON() {
+        formData.append("files[]", btoa(JSON.stringify(canvas)));
+        formData.append("filenames[]", Math.floor(Date.now()) + ".drawing" );
     }
 
     function saveAttachments() {
@@ -322,6 +416,17 @@ $(document).ready(function () {
         }
     }
 
+    function saveNdownloadFile() {
+        var zip = new JSZip();
+
+        zip.file(getTimeStamp() + ".drawing", JSON.stringify(canvas));
+
+        zip.generateAsync({type: "blob"})
+            .then(function (file) {
+                saveAs(file, getTimeStamp() + ".drw");
+            });
+    }
+
     function uploadData() {
         //new ajax request
         let request = new XMLHttpRequest();
@@ -331,7 +436,7 @@ $(document).ready(function () {
             if(event.lengthComputable){
                 //get our percentage
                 var percent = (Math.round(event.loaded / event.total) * 100);
-                console.error( " progress: " + percent + " %");
+                // console.error( " progress: " + percent + " %");
                 // progressBar.progressbar( "value", percent);
             }
         });
@@ -344,11 +449,11 @@ $(document).ready(function () {
         //for errors we'll use the info element but for now console log it
         request.upload.addEventListener('error',function(event){
             progressLabel.text("Error occurred!");
-            console.log("error: " + event);
+            // console.log("error: " + event);
         });
 
         //open the request
-        request.open("POST","upload.form");
+        request.open("POST","../ws/rest/v1/docsanddrawing/upload");
 
         //set the request header for no caching
         request.setRequestHeader("Cache-Control","no-cache");
@@ -359,8 +464,8 @@ $(document).ready(function () {
         request.onreadystatechange = function() {
             if (this.readyState === 4 && this.status === 200) {
                 // progressBar.hide();
-                console.info( "success: Upload succeeded");
-                console.info( "success: Upload response : " + request.responseText);
+                // console.info( "success: Upload succeeded");
+                // console.info( "success: Upload response : " + request.responseText);
                 if(request.responseText.includes("success")) {
                     progressLabel.text("Encounter saved successfully!");
                     window.location.href = returnlink;
@@ -368,6 +473,11 @@ $(document).ready(function () {
                 } else {
                     progressLabel.text("Failed to save Encounter!");
                     emr.errorMessage("Failed to save Encounter!");
+                    $(this).prop('disabled', false);
+                    $("#status-cancel").prop('disabled', false);
+                    $("#status-view-attachments").prop('disabled', false);
+                    $("#main-container").show();
+                    $("#progress-container").hide();
                 }
             }
         };

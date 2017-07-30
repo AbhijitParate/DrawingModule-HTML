@@ -1,6 +1,13 @@
 /*Container for the whole page*/
 
+.status-bar {
+    width: 978px;
+    height: 40px;
+    margin: 0 auto;
+}
+
 .outerContainer {
+    margin: 0 auto;
     width: 978px;
     height: 817px;
     border: solid dimgrey 2px;
@@ -104,4 +111,8 @@
 
 .control-header {
     height: 30px;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+    display: none;
 }

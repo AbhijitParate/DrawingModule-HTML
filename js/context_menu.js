@@ -1,55 +1,6 @@
 $(document).ready(function() {
 
-    let clickPoint;
-
-    $(document).contextmenu({
-        delegate: ".upper-canvas",
-        autoFocus: true,
-        preventContextMenuForPopup: true,
-        preventSelect: true,
-        taphold: true,
-        menu: [
-            {
-                title: "Add image",
-                cmd: "add-image"
-            },
-            {
-                title: "Add audio clip",
-                cmd: "add-audio"
-            },
-            {
-                title: "Add video clip",
-                cmd: "add-video"
-            }
-        ],
-        // Implement the beforeOpen callback to dynamically change the entries
-        beforeOpen: function (event, ui) {
-
-            clickPoint = new fabric.Point(event.offsetX, event.offsetY);
-
-            // Optionally return false, to prevent opening the menu now
-        },
-        // Handle menu selection to implement a fake-clipboard
-        select: function (event, ui) {
-            // var clickPoint = new fabric.Point(event.offsetX, event.offsetY);
-            let input;
-            let options = {top: clickPoint.y, left: clickPoint.x};
-            switch (ui.cmd) {
-                case "add-image":
-                    console.log("add-image : " + clickPoint);
-                    createImageDialog();
-                    break;
-                case "add-audio":
-                    console.log("add-audio : " + clickPoint);
-                    createAudioDialog();
-                    break;
-                case "add-video":
-                    console.log("add-video : " + clickPoint);
-                    createVideoDialog();
-                    break;
-            }
-        },
-    });
+    var clickPoint;
 
     function createImageDialog() {
         let dialog = $("<div/>");
@@ -73,11 +24,11 @@ $(document).ready(function() {
             dialog.dialog("destroy");
         });
         input.appendTo(dialog);
-        $("<button />").text("Upload from device").button().on("click", function () {
+        $("<button />").css('margin', '10px').text("Upload from device").button().on("click", function () {
             input.click();
         }).appendTo(dialog);
         $("<p />").appendTo(dialog);
-        $("<button />").text("Capture using web-cam").button().on("click", function () {
+        $("<button />").css('margin', '10px').text("Capture using web-cam").button().on("click", function () {
             createWebcamDialog();
             dialog.dialog("destroy");
         }).appendTo(dialog);
@@ -201,6 +152,7 @@ $(document).ready(function() {
             },
             close: function () {
                 destroyCam();
+                // $(this).dialog("destroy");
             },
             autoOpen: false,
             buttons: {
@@ -234,7 +186,8 @@ $(document).ready(function() {
         });
 
         function destroyCam() {
-            player.recorder.reset();
+            player.recorder.destroy();
+            // $(this).dialog("destroy");
             imageDiv.remove();
         }
 
@@ -392,11 +345,11 @@ $(document).ready(function() {
             dialog.dialog("close");
         });
         inputTag.appendTo(dialog);
-        $("<button />").text("Upload from device").button().on("click", function () {
+        $("<button />").css('margin', '10px').text("Upload from device").button().on("click", function () {
             inputTag.click();
         }).appendTo(dialog);
         $("<p />").appendTo(dialog);
-        $("<button />").text("Record using microphone").button().on("click", function () {
+        $("<button />").css('margin', '10px').text("Record using microphone").button().on("click", function () {
             createRecordDialog();
             dialog.dialog("destroy");
         }).appendTo(dialog);
@@ -457,7 +410,7 @@ $(document).ready(function() {
         audioTag.attr("id","myAudio");
         audioTag.appendTo(wrapperDiv);
         let attachmentAudio;
-        let player;
+        var audioPlayer;
         var attachBtn, retryBtn, uploadBtn;
         dialog.dialog({
             modal:true,
@@ -475,10 +428,10 @@ $(document).ready(function() {
                 retryBtn = $(".ui-dialog-buttonpane button:contains('Retry')");
                 uploadBtn = $(".ui-dialog-buttonpane button:contains('Upload')");
 
-                player = videojs("myAudio", {
+                audioPlayer = videojs("myAudio", {
                     controls: true,
                     width: 600,
-                    height: 300,
+                    height: 400,
                     plugins: {
                         wavesurfer: {
                             src: "live",
@@ -501,28 +454,28 @@ $(document).ready(function() {
                 $("#myAudio").css("background-color", "#9FD6BA");
 
                 // error handling
-                player.on('deviceError', function() {
-                    console.warn('device error:', player.deviceErrorCode);
+                audioPlayer.on('deviceError', function() {
+                    console.warn('device error:', audioPlayer.deviceErrorCode);
                 });
-                player.on('error', function(error) {
+                audioPlayer.on('error', function(error) {
                     console.log('error:', error);
                 });
-                player.on('startRecord', function() {
+                audioPlayer.on('startRecord', function() {
                     console.log('started recording!');
                 });
                 // snapshot is available
-                player.on('finishRecord', function() {
+                audioPlayer.on('finishRecord', function() {
                     // the blob object contains the image data that
                     // can be downloaded by the user, stored on server etc.
                     // console.log('snapshot ready: ', player.recordedData);
                     // attachBtn.text('Capture');
                     console.info("finished recording");
-                    let data = player.recordedData;
+                    let data = audioPlayer.recordedData;
                     let fr = new FileReader();
                     fr.onload = function(e) {
                         // console.info(e.target.result);
                         attachmentAudio = new Attachment("audio_"+getTimeStamp()+".wav", "audio", e.target.result );
-                        player.recorder.destroy();
+                        audioPlayer.recorder.destroy();
                         $("<p />").text("Recorded audio").appendTo(wrapperDiv);
                         let audioTag = $("<audio/>");
                         audioTag.attr("controls","");
@@ -540,13 +493,6 @@ $(document).ready(function() {
 
                 attachBtn.button("disable");
                 retryBtn.button("disable");
-
-                // Clicking mic button programmatically creates an error
-
-            },
-            close: function () {
-                destroyCam();
-                $(this).dialog("destroy");
             },
             autoOpen: false,
             buttons: {
@@ -562,19 +508,21 @@ $(document).ready(function() {
                 "Attach": function () {
                     console.info("Attach clicked");
                     saveAttachment();
-                    $(this).dialog("close");
+                    $(this).dialog("destroy");
+                    destroyMic();
                 },
                 "Cancel": function () {
                     console.info("Camera dialog closed");
-                    $(this).dialog("close");
+                    $(this).dialog("destroy");
+                    destroyMic();
                 },
             }
         });
 
-        function destroyCam() {
-            // player.recorder.destroy();
-            player = null;
-            wrapperDiv.remove();
+        function destroyMic() {
+            audioPlayer.recorder.destroy();
+            // audioPlayer.waveform.destroy();
+            audioPlayer = null;
         }
 
         function saveAttachment() {
@@ -595,7 +543,7 @@ $(document).ready(function() {
         input.attr("type", "file");
         input.attr("hidden","");
         input.attr("name","video[]");
-        input.attr("accept","video/*");
+        input.attr("accept","video/mp4,video/webm,video/ogg");
         input.on("change", function (e) {
             let video = e.target.files[0];
             let reader = new FileReader();
@@ -610,11 +558,11 @@ $(document).ready(function() {
             dialog.dialog("destroy");
         });
         input.appendTo(dialog);
-        $("<button />").text("Upload from device").button().on("click", function () {
+        $("<button />").css('margin', '10px').text("Upload from device").button().on("click", function () {
             input.click();
         }).appendTo(dialog);
         $("<p />").appendTo(dialog);
-        $("<button />").text("Capture using web-cam").button().on("click", function () {
+        $("<button />").css('margin', '10px').text("Capture using web-cam").button().on("click", function () {
             createCamcorderDialog();
             dialog.dialog("destroy");
         }).appendTo(dialog);
@@ -676,7 +624,7 @@ $(document).ready(function() {
         // $("<option/>").attr("value", "3").text("1024×768").appendTo(select);
         $("<option/>").attr("value", "4").text("1280×720").appendTo(select);
         let label = $("<label/>").css("float","right");
-        label.text("Image size : ");
+        label.text("Video size : ");
         label.appendTo(selectDiv);
         let imageDiv = $("<div/>").appendTo(dialog);
         let video = $("<video/>").addClass("video-js vjs-default-skin");
@@ -742,7 +690,7 @@ $(document).ready(function() {
                     // console.log('snapshot ready: ', player.recordedData);
                     // attachBtn.text('Capture');
                     console.info("finished recording");
-                    let data = player.recordedData.video;
+                    let data = player.recordedData;
 
                     console.debug(data);
 
@@ -940,8 +888,8 @@ $(document).ready(function() {
                 // console.log('snapshot ready: ', player.recordedData);
                 // attachBtn.text('Capture');
                 console.info("finished recording");
-                let data = player.recordedData;
-
+                let data = player.recordedData.video;
+                console.log(data);
                 let fr = new FileReader();
                 fr.onload = function(e) {
                     attachmentVideo = new Attachment("video_"+getTimeStamp()+".webm", "video", e.target.result );
@@ -957,6 +905,84 @@ $(document).ready(function() {
         });
         $(".vjs-device-button.vjs-control.vjs-icon-device-perm").click();
     }
+
+    $(document).contextmenu({
+        delegate: ".upper-canvas",
+        autoFocus: true,
+        preventContextMenuForPopup: true,
+        preventSelect: true,
+        taphold: true,
+        menu: [
+            {
+                title: "Add image",
+                cmd: "add-image"
+            },
+            {
+                title: "Add audio clip",
+                cmd: "add-audio"
+            },
+            {
+                title: "Add video clip",
+                cmd: "add-video"
+            },
+            {
+                title: "Fill color in selected shape",
+                cmd: "add-color"
+            }
+        ],
+        // Implement the beforeOpen callback to dynamically change the entries
+        beforeOpen: function (event, ui) {
+
+            clickPoint = new fabric.Point(event.offsetX, event.offsetY);
+
+            let activeObject = canvas.getActiveObject();
+            if (canvas.getActiveObject() &&
+                (activeObject.type === "rect"
+                || activeObject.type === "circle"
+                || activeObject.type === "triangle"
+                || activeObject.type === "polygon")) {
+                $(document).contextmenu("enableEntry", "add-color", true);
+            } else {
+                $(document).contextmenu("enableEntry", "add-color", false);
+            }
+
+            // Optionally return false, to prevent opening the menu now
+        },
+        // Handle menu selection to implement a fake-clipboard
+        select: function (event, ui) {
+            // var clickPoint = new fabric.Point(event.offsetX, event.offsetY);
+            let input;
+            let options = {top: clickPoint.y, left: clickPoint.x};
+            switch (ui.cmd) {
+                case "add-image":
+                    console.log("add-image : " + clickPoint);
+                    createImageDialog();
+                    break;
+                case "add-audio":
+                    console.log("add-audio : " + clickPoint);
+                    createAudioDialog();
+                    break;
+                case "add-video":
+                    console.log("add-video : " + clickPoint);
+                    createVideoDialog();
+                    break;
+                case "add-color":
+                    let activeObject = canvas.getActiveObject();
+                    console.log(activeObject);
+                    if (activeObject !== undefined && activeObject !== null) {
+                        if ((activeObject.type === "rect"
+                            || activeObject.type === "circle"
+                            || activeObject.type === "triangle"
+                            || activeObject.type === "polygon")) {
+                            activeObject.set("fill", fillColor);
+                            updateStack();
+                            canvas.renderAll();
+                        }
+                    }
+                    break;
+            }
+        },
+    });
 
 });
 
@@ -1077,8 +1103,8 @@ fabric.Media = fabric.util.createClass(
  * @param {Function} callback Callback to invoke when an image instance is created
  */
 fabric.Media.fromObject = function (object, callback) {
-    console.info("recreating object");
-    console.info(object);
+    // console.info("recreating object");
+    // console.info(object);
     var obj =  new fabric.Media(object.data, {
         top: object.top,
         left: object.left
@@ -1103,6 +1129,11 @@ function getPreviewDialog(data, mimeType) {
                 // height: 520,
                 close: function () {
                     $(this).dialog('destroy');
+                },
+                buttons : {
+                    "Close" : function () {
+                        $(this).dialog('destroy');
+                    }
                 }
             });
             break;
@@ -1116,9 +1147,14 @@ function getPreviewDialog(data, mimeType) {
             $("<source />").attr("src", data).appendTo(audio);
             div.dialog({
                 width: 500,
-                height: 120,
+                height: 200,
                 close: function () {
                     $(this).dialog('destroy');
+                },
+                buttons : {
+                    "Close" : function () {
+                        $(this).dialog('destroy');
+                    }
                 }
             });
             break;
@@ -1135,6 +1171,11 @@ function getPreviewDialog(data, mimeType) {
                 height: 500,
                 close: function () {
                     $(this).dialog('destroy');
+                },
+                buttons : {
+                    "Close" : function () {
+                        $(this).dialog('destroy');
+                    }
                 }
             });
             break;

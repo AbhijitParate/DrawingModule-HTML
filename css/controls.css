@@ -103,3 +103,11 @@
 .vjs-using-native-controls .vjs-control-bar {
     display: flex !important;
 }
+
+.selected {
+    background: darkgray;
+}
+
+.selected:hover {
+    background: grey;
+}

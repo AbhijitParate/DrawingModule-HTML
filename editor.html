@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <title>Drawing Editor</title>
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="./js/libs/jquery-3.1.1.min.js"></script>
 
-    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link href="./css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <!--<link href="./css/font-awesome.css" rel="stylesheet">-->
 
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="./css/jquery-ui.min.css">
+    <script src="./js/libs/jquery-ui.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/spectrum.min.css">
+    <script src="./js/libs/spectrum.min.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/webui-popover/2.1.15/jquery.webui-popover.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/webui-popover/2.1.15/jquery.webui-popover.min.js"></script>
+    <link rel="stylesheet" href="./css/jquery.webui-popover.min.css" />
+    <script src="./js/libs/jquery.webui-popover.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.ui-contextmenu/1.14.0/jquery.ui-contextmenu.min.js"></script>
+    <script src="./js/libs/jquery.ui-contextmenu.min.js"></script>
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.8/fabric.min.js"></script>
+    <script src="./js/libs/fabric.min.js"></script>
 
     <script type="text/javascript" src="js/webcam.js"></script>
 
@@ -29,24 +29,25 @@
 
     <link rel="stylesheet" type="text/css" href="css/videojs.record.css" >
 
-    <script src="https://vjs.zencdn.net/5.15.1/video.min.js"></script>
+    <script src="./js/libs/video.min.js"></script>
 
-    <script src="//cdn.webrtc-experiment.com/RecordRTC.js"></script>
+    <script src="./js/libs/RecordRTC.min.js"></script>
 
-    <script src="https://collab-project.github.io/videojs-wavesurfer/dist/wavesurfer.min.js"></script>
-    <script src="https://collab-project.github.io/videojs-wavesurfer/dist/wavesurfer.microphone.min.js"></script>
-    <script src="https://collab-project.github.io/videojs-wavesurfer/dist/videojs.wavesurfer.min.js"></script>
+    <script src="./js/libs/wavesurfer.min.js"></script>
+    <script src="./js/libs/wavesurfer.microphone.min.js"></script>
+    <script src="./js/libs/videojs.wavesurfer.min.js"></script>
 
-    <script src="https://collab-project.github.io/videojs-record/dist/videojs.record.min.js"></script>
-    <script src="https://collab-project.github.io/videojs-record/dist/videojs.record.lamejs.min.js"></script>
-
+    <script src="./js/libs/videojs.record.min.js"></script>
+    <script src="./js/libs/videojs.record.lamejs.min.js"></script>
     <script src="js/libs/blobUtils.js"></script>
 
     <script type="text/javascript" src="js/libs/FileSaver.min.js"></script>
     <script src="js/libs/jspdf.min.js"></script>
+    <script src="js/libs/jszip.min.js"></script>
+    <script src="js/libs/jszip-utils.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightcase/2.3.6/css/lightcase.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightcase/2.3.6/js/lightcase.min.js"></script>
+    <link rel="stylesheet" href="./css/lightcase.css" />
+    <script src="./js/libs/lightcase.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/editor.css">
     <link rel="stylesheet" type="text/css" href="css/controls.css">
@@ -61,6 +62,7 @@
     <script src="js/actions.js"></script>
     <script src="js/fabric.Media.js"></script>
     <script src="js/context_menu.js"></script>
+    <script src="js/backup_restore.js"></script>
 
     <script src="js/attachments/attachment-image.js"></script>
     <script src="js/attachments/attachment-video.js"></script>
@@ -72,17 +74,19 @@
 <body>
 
     <div id="drawing-and-attachments">
-        <h2 style="margin:0;">Add Drawing</h2>
-        <div id="status-bar" style="margin: 2px; height: 45px;" >
-            <button id="status-save" class="confirm right" style="margin-right: 0">
-                <span style="color: black"><i class="icon-save"></i> Save</span>
+        <div class="text-center">
+            <h2>Document and Drawing Annotation Module Web APP</h2>
+        </div>
+        <div class="status-bar" >
+            <button id="status-save" class="float-right ui-button ui-widget ui-corner-all" style="background: darkgreen;">
+                <span style="color: white; float: left;">Save</span>
             </button>
-            <button id="status-cancel" class="cancel right" >
-                <span style="color: black"><i class="icon-remove"></i> Cancel</span>
-            </button>
-            <button id="status-view-attachments" class="right" style="margin-right: 10px; " >
-                <span style="color: black"><i class="icon-paper-clip"></i> Attachments</span>
-            </button>
+            <!--<button id="status-cancel" class="cancel right" >-->
+                <!--<span style="color: black"><i class="icon-remove"></i> Cancel</span>-->
+            <!--</button>-->
+            <!--<button id="status-view-attachments" class="right" style="margin-right: 10px; " >-->
+                <!--<span style="color: black"><i class="icon-paper-clip"></i> Attachments</span>-->
+            <!--</button>-->
         </div>
         <div id="main-container" class="outerContainer">
             <!--Action Panel-->
@@ -90,39 +94,9 @@
                 <div id="controls">
                     <h3 class="control-header">Draw</h3>
                     <div style="padding:1%;">
-                        <button type="button" id="pencil" class="draw button-regular ui-button ui-widget ui-corner-all" title="Pencil">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M16.84,2.73C16.45,2.73 16.07,2.88 15.77,3.17L13.65,5.29L18.95,10.6L21.07,8.5C21.67,7.89 21.67,6.94 21.07,6.36L17.9,3.17C17.6,2.88 17.22,2.73 16.84,2.73M12.94,6L4.84,14.11L7.4,14.39L7.58,16.68L9.86,16.85L10.15,19.41L18.25,11.3M4.25,15.04L2.5,21.73L9.2,19.94L8.96,17.78L6.65,17.61L6.47,15.29" ></path>
-                            </svg>
-                        </button>
-                        <button type="button" id="erase" class="draw button-regular ui-button ui-widget ui-corner-all" title="Eraser">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M15.14,3C14.63,3 14.12,3.2 13.73,3.59L2.59,14.73C1.81,15.5 1.81,16.77 2.59,17.56L5.03,20H12.69L21.41,11.27C22.2,10.5 22.2,9.23 21.41,8.44L16.56,3.59C16.17,3.2 15.65,3 15.14,3M17,18L15,20H22V18" ></path>
-                            </svg>
-                        </button>
-                        <button type="button" id="shape" class="button-regular ui-button ui-widget ui-corner-all" title="Shapes">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M2,2H11V11H2V2M17.5,2C20,2 22,4 22,6.5C22,9 20,11 17.5,11C15,11 13,9 13,6.5C13,4 15,2 17.5,2M6.5,14L11,22H2L6.5,14M19,17H22V19H19V22H17V19H14V17H17V14H19V17Z" ></path>
-                            </svg>
-                        </button>
-                        <button type="button" id="delete" class="button-regular ui-button ui-widget ui-corner-all" title="Delete">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M20.37,8.91L19.37,10.64L7.24,3.64L8.24,1.91L11.28,3.66L12.64,3.29L16.97,5.79L17.34,7.16L20.37,8.91M6,19V7H11.07L18,11V19A2,2 0 0,1 16,21H8A2,2 0 0,1 6,19Z" ></path>
-                            </svg>
-                        </button>
                         <button type="button" id="text" class="button-regular ui-button ui-widget ui-corner-all" title="Text">
                             <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                                 <path fill="#000000" d="M3,3H16V6H11V18H8V6H3V3M12,7H14V9H12V7M15,7H17V9H15V7M18,7H20V9H18V7M12,10H14V12H12V10M12,13H14V15H12V13M12,16H14V18H12V16M12,19H14V21H12V19Z" ></path>
-                            </svg>
-                        </button>
-                        <button type="button" id="select" class="button-regular ui-button ui-widget ui-corner-all" title="Select">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M13.64,21.97C13.14,22.21 12.54,22 12.31,21.5L10.13,16.76L7.62,18.78C7.45,18.92 7.24,19 7,19A1,1 0 0,1 6,18V3A1,1 0 0,1 7,2C7.24,2 7.47,2.09 7.64,2.23L7.65,2.22L19.14,11.86C19.57,12.22 19.62,12.85 19.27,13.27C19.12,13.45 18.91,13.57 18.7,13.61L15.54,14.23L17.74,18.96C18,19.46 17.76,20.05 17.26,20.28L13.64,21.97Z" ></path>
-                            </svg>
-                        </button>
-                        <button type="button" id="draw-color-picker" class="button-regular ui-button ui-widget ui-corner-all" title="Draw Color">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M20.71,4.63L19.37,3.29C19,2.9 18.35,2.9 17.96,3.29L9,12.25L11.75,15L20.71,6.04C21.1,5.65 21.1,5 20.71,4.63M7,14A3,3 0 0,0 4,17C4,18.31 2.84,19 2,19C2.92,20.22 4.5,21 6,21A4,4 0 0,0 10,17A3,3 0 0,0 7,14Z" ></path>
                             </svg>
                         </button>
                         <button type="button" id="fill-color-picker" class="button-regular ui-button ui-widget ui-corner-all" title="Fill Color">
@@ -130,6 +104,36 @@
                                 <path fill="#000000" d="M19,11.5C19,11.5 17,13.67 17,15A2,2 0 0,0 19,17A2,2 0 0,0 21,15C21,13.67 19,11.5 19,11.5M5.21,10L10,5.21L14.79,10M16.56,8.94L7.62,0L6.21,1.41L8.59,3.79L3.44,8.94C2.85,9.5 2.85,10.47 3.44,11.06L8.94,16.56C9.23,16.85 9.62,17 10,17C10.38,17 10.77,16.85 11.06,16.56L16.56,11.06C17.15,10.47 17.15,9.5 16.56,8.94Z" ></path>
                             </svg>
                         </button>
+                        <button type="button" id="shape" class="button-regular ui-button ui-widget ui-corner-all" title="Shapes">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                <path fill="#000000" d="M2,2H11V11H2V2M17.5,2C20,2 22,4 22,6.5C22,9 20,11 17.5,11C15,11 13,9 13,6.5C13,4 15,2 17.5,2M6.5,14L11,22H2L6.5,14M19,17H22V19H19V22H17V19H14V17H17V14H19V17Z" ></path>
+                            </svg>
+                        </button>
+                        <button type="button" id="pencil" class="draw button-regular ui-button ui-widget ui-corner-all" title="Pencil">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                <path fill="#000000" d="M16.84,2.73C16.45,2.73 16.07,2.88 15.77,3.17L13.65,5.29L18.95,10.6L21.07,8.5C21.67,7.89 21.67,6.94 21.07,6.36L17.9,3.17C17.6,2.88 17.22,2.73 16.84,2.73M12.94,6L4.84,14.11L7.4,14.39L7.58,16.68L9.86,16.85L10.15,19.41L18.25,11.3M4.25,15.04L2.5,21.73L9.2,19.94L8.96,17.78L6.65,17.61L6.47,15.29" ></path>
+                            </svg>
+                        </button>
+                        <button type="button" id="draw-color-picker" class="button-regular ui-button ui-widget ui-corner-all" title="Draw Color">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                <path fill="#000000" d="M20.71,4.63L19.37,3.29C19,2.9 18.35,2.9 17.96,3.29L9,12.25L11.75,15L20.71,6.04C21.1,5.65 21.1,5 20.71,4.63M7,14A3,3 0 0,0 4,17C4,18.31 2.84,19 2,19C2.92,20.22 4.5,21 6,21A4,4 0 0,0 10,17A3,3 0 0,0 7,14Z" ></path>
+                            </svg>
+                        </button>
+                        <!--<button type="button" id="erase" class="draw button-regular ui-button ui-widget ui-corner-all" title="Eraser">-->
+                            <!--<svg style="width:24px;height:24px" viewBox="0 0 24 24">-->
+                                <!--<path fill="#000000" d="M15.14,3C14.63,3 14.12,3.2 13.73,3.59L2.59,14.73C1.81,15.5 1.81,16.77 2.59,17.56L5.03,20H12.69L21.41,11.27C22.2,10.5 22.2,9.23 21.41,8.44L16.56,3.59C16.17,3.2 15.65,3 15.14,3M17,18L15,20H22V18" ></path>-->
+                            <!--</svg>-->
+                        <!--</button>-->
+                        <button type="button" id="delete" class="button-regular ui-button ui-widget ui-corner-all" title="Delete">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                <path fill="#000000" d="M20.37,8.91L19.37,10.64L7.24,3.64L8.24,1.91L11.28,3.66L12.64,3.29L16.97,5.79L17.34,7.16L20.37,8.91M6,19V7H11.07L18,11V19A2,2 0 0,1 16,21H8A2,2 0 0,1 6,19Z" ></path>
+                            </svg>
+                        </button>
+                        <!--<button type="button" id="select" class="button-regular ui-button ui-widget ui-corner-all" title="Select">-->
+                            <!--<svg style="width:24px;height:24px" viewBox="0 0 24 24">-->
+                                <!--<path fill="#000000" d="M13.64,21.97C13.14,22.21 12.54,22 12.31,21.5L10.13,16.76L7.62,18.78C7.45,18.92 7.24,19 7,19A1,1 0 0,1 6,18V3A1,1 0 0,1 7,2C7.24,2 7.47,2.09 7.64,2.23L7.65,2.22L19.14,11.86C19.57,12.22 19.62,12.85 19.27,13.27C19.12,13.45 18.91,13.57 18.7,13.61L15.54,14.23L17.74,18.96C18,19.46 17.76,20.05 17.26,20.28L13.64,21.97Z" ></path>-->
+                            <!--</svg>-->
+                        <!--</button>-->
                     </div>
                     <h3 class="control-header">Transform</h3>
                     <div style="padding: 1%;">
@@ -156,6 +160,11 @@
                         <button type="button" id="rotate-clock" class="button-regular ui-button ui-widget ui-corner-all" title="Rotate Clockwise">
                             <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                                 <path fill="#000000" d="M10,4V1L14,5L10,9V6A6,6 0 0,0 4,12L4.08,13H2.06L2,12A8,8 0 0,1 10,4M17,2H20A2,2 0 0,1 22,4V20A2,2 0 0,1 20,22H17A2,2 0 0,1 15,20V4A2,2 0 0,1 17,2M4,15H13V22H4A2,2 0 0,1 2,20V17A2,2 0 0,1 4,15Z" ></path>
+                            </svg>
+                        </button>
+                        <button type="button" id="crop" class="button-regular ui-button ui-widget ui-corner-all" title="Discard unselected objects">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                <path fill="#000000" d="M7,17V1H5V5H1V7H5V17A2,2 0 0,0 7,19H17V23H19V19H23V17M17,15H19V7C19,5.89 18.1,5 17,5H9V7H17V15Z" ></path>
                             </svg>
                         </button>
                     </div>
@@ -260,39 +269,39 @@
                                 <path fill="#000000" d="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z" ></path>
                             </svg>
                         </button>
-                        <input  id="import-upload-input" type="file" accept="image/*" hidden>
-                        <button type="button" id="import-svg" class="button-regular ui-button ui-widget ui-corner-all" title="Import canvas from svg file">
-                            SVG
-                        </button>
+                        <!--<input  id="import-upload-input" type="file" accept="image/*" hidden>-->
+                        <!--<button type="button" id="import-svg" class="button-regular ui-button ui-widget ui-corner-all" title="Import canvas from svg file">-->
+                            <!--SVG-->
+                        <!--</button>-->
                     </div>
-                    <h3 class="control-header">Attach file</h3>
-                    <div style="padding: 1%;">
-                        <button type="button" id="attachImage" class="button-regular ui-button ui-widget ui-corner-all" title="Attach image">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M6,20H15L18,20V12L14,16L12,14L6,20M8,9A2,2 0 0,0 6,11A2,2 0 0,0 8,13A2,2 0 0,0 10,11A2,2 0 0,0 8,9Z" ></path>
-                            </svg>
-                        </button>
-                        <button type="button" id="attachVideo" class="button-regular ui-button ui-widget ui-corner-all" title="Attach video">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M17,19V13L14,15.2V13H7V19H14V16.8L17,19Z" ></path>
-                            </svg>
-                        </button>
-                        <button type="button" id="attachAudio" class="button-regular ui-button ui-widget ui-corner-all" title="Attach audio">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M9,16A2,2 0 0,0 7,18A2,2 0 0,0 9,20A2,2 0 0,0 11,18V13H14V11H10V16.27C9.71,16.1 9.36,16 9,16Z" ></path>
-                            </svg>
-                        </button>
-                        <button type="button" id="attachNote" class="button-regular ui-button ui-widget ui-corner-all" title="Attach note">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M6,2H14L20,8V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M13,3.5V9H18.5L13,3.5M7,13L8.5,20H10.5L12,17L13.5,20H15.5L17,13H18V11H14V13H15L14.1,17.2L13,15V15H11V15L9.9,17.2L9,13H10V11H6V13H7Z" ></path>
-                            </svg>
-                        </button>
-                        <button type="button" id="attachFile" class="button-regular ui-button ui-widget ui-corner-all" title="Attach file">
-                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                                <path fill="#000000" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" ></path>
-                            </svg>
-                        </button>
-                    </div>
+                    <!--<h3 class="control-header">Attach file</h3>-->
+                    <!--<div style="padding: 1%;">-->
+                        <!--<button type="button" id="attachImage" class="button-regular ui-button ui-widget ui-corner-all" title="Attach image">-->
+                            <!--<svg style="width:24px;height:24px" viewBox="0 0 24 24">-->
+                                <!--<path fill="#000000" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M6,20H15L18,20V12L14,16L12,14L6,20M8,9A2,2 0 0,0 6,11A2,2 0 0,0 8,13A2,2 0 0,0 10,11A2,2 0 0,0 8,9Z" ></path>-->
+                            <!--</svg>-->
+                        <!--</button>-->
+                        <!--<button type="button" id="attachVideo" class="button-regular ui-button ui-widget ui-corner-all" title="Attach video">-->
+                            <!--<svg style="width:24px;height:24px" viewBox="0 0 24 24">-->
+                                <!--<path fill="#000000" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M17,19V13L14,15.2V13H7V19H14V16.8L17,19Z" ></path>-->
+                            <!--</svg>-->
+                        <!--</button>-->
+                        <!--<button type="button" id="attachAudio" class="button-regular ui-button ui-widget ui-corner-all" title="Attach audio">-->
+                            <!--<svg style="width:24px;height:24px" viewBox="0 0 24 24">-->
+                                <!--<path fill="#000000" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M9,16A2,2 0 0,0 7,18A2,2 0 0,0 9,20A2,2 0 0,0 11,18V13H14V11H10V16.27C9.71,16.1 9.36,16 9,16Z" ></path>-->
+                            <!--</svg>-->
+                        <!--</button>-->
+                        <!--<button type="button" id="attachNote" class="button-regular ui-button ui-widget ui-corner-all" title="Attach note">-->
+                            <!--<svg style="width:24px;height:24px" viewBox="0 0 24 24">-->
+                                <!--<path fill="#000000" d="M6,2H14L20,8V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M13,3.5V9H18.5L13,3.5M7,13L8.5,20H10.5L12,17L13.5,20H15.5L17,13H18V11H14V13H15L14.1,17.2L13,15V15H11V15L9.9,17.2L9,13H10V11H6V13H7Z" ></path>-->
+                            <!--</svg>-->
+                        <!--</button>-->
+                        <!--<button type="button" id="attachFile" class="button-regular ui-button ui-widget ui-corner-all" title="Attach file">-->
+                            <!--<svg style="width:24px;height:24px" viewBox="0 0 24 24">-->
+                                <!--<path fill="#000000" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" ></path>-->
+                            <!--</svg>-->
+                        <!--</button>-->
+                    <!--</div>-->
                     <h3 class="control-header">Print</h3>
                     <div style="padding: 1%;">
                         <button type="button" id="print" class="button-regular ui-button ui-widget ui-corner-all" title="Print">
@@ -314,11 +323,24 @@
                         <button type="button" id="save-png" class="button-regular ui-button ui-widget ui-corner-all" title="Save as PNG">
                             png
                         </button>
-                        <button type="button" id="save-json" class="button-regular ui-button ui-widget ui-corner-all" title="Save as JSON">
-                            json
-                        </button>
-                        <button type="button" id="save-svg" class="button-regular ui-button ui-widget ui-corner-all" title="Save as SVG">
-                            svg
+                        <!--<button type="button" id="save-json" class="button-regular ui-button ui-widget ui-corner-all" title="Save as JSON">-->
+                            <!--json-->
+                        <!--</button>-->
+                        <!--<button type="button" id="save-svg" class="button-regular ui-button ui-widget ui-corner-all" title="Save as SVG">-->
+                            <!--svg-->
+                        <!--</button>-->
+                    </div>
+                    <h3 id="header-backup-restore" class="control-header">Restore</h3>
+                    <div style="padding: 1%;">
+                        <!--<button type="button" id="backup" class="button-regular ui-button ui-widget ui-corner-all" title="Backup drawing">-->
+                            <!--<svg style="width:24px;height:24px" viewBox="0 0 24 24">-->
+                                <!--<path fill="#000000" d="M17,13L12,18L7,13H10V9H14V13M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z" ></path>-->
+                            <!--</svg>-->
+                        <!--</button>-->
+                        <button type="button" id="restore" class="button-regular ui-button ui-widget ui-corner-all" title="Restore drawing">
+                            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                <path fill="#000000" d="M14,13V17H10V13H7L12,8L17,13M19.35,10.03C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.03C2.34,8.36 0,10.9 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.03Z" ></path>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -327,42 +349,42 @@
             <div id="canvasContainer" class="canvasContainer">
                 <div id="canvasWrapper" style="height: 100%; width: 100%; position: relative;">
                     <canvas id="canvas" width="800" height="800" ></canvas>
-                    <button type="button" id="zoom-in" class="button-canvas" style="position: absolute; top: 10px; right: 10px;" title="Zoom in">
+                    <button type="button" id="zoom-in" class="button-canvas ui-button ui-widget ui-corner-all" style="position: absolute; top: 10px; right: 10px;" title="Zoom in">
                         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                             <path fill="#000000" d="M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M8,5V8H5V10H8V13H10V10H13V8H10V5H8Z" ></path>
                         </svg>
                     </button>
-                    <button type="button" id="zoom-reset" class="button-canvas" style="position: absolute; top: 50px; right: 10px;" title="Reset zoom">
+                    <button type="button" id="zoom-reset" class="button-canvas ui-button ui-widget ui-corner-all" style="position: absolute; top: 50px; right: 10px;" title="Reset zoom">
                         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                             <path fill="#000000" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" ></path>
                         </svg>
                     </button>
-                    <button type="button" id="zoom-out" class="button-canvas" style="position: absolute; top: 90px; right: 10px;" title="Zoom out">
+                    <button type="button" id="zoom-out" class="button-canvas ui-button ui-widget ui-corner-all" style="position: absolute; top: 90px; right: 10px;" title="Zoom out">
                         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                             <path fill="#000000" d="M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M5,8V10H13V8H5Z" ></path>
                         </svg>
                     </button>
-                    <button type="button" id="pan-left" class="button-canvas" style="position: absolute; bottom: 50px; right: 90px;" title="Move canvas left">
+                    <button type="button" id="pan-left" class="button-canvas ui-button ui-widget ui-corner-all" style="position: absolute; bottom: 50px; right: 90px;" title="Move canvas left">
                         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                             <path fill="#000000" d="M18.41,7.41L17,6L11,12L17,18L18.41,16.59L13.83,12L18.41,7.41M12.41,7.41L11,6L5,12L11,18L12.41,16.59L7.83,12L12.41,7.41Z" ></path>
                         </svg>
                     </button>
-                    <button type="button" id="pan-up" class="button-canvas" style="position: absolute; bottom: 90px; right: 50px;" title="Move canvas up">
+                    <button type="button" id="pan-up" class="button-canvas ui-button ui-widget ui-corner-all" style="position: absolute; bottom: 90px; right: 50px;" title="Move canvas up">
                         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                             <path fill="#000000" d="M7.41,18.41L6,17L12,11L18,17L16.59,18.41L12,13.83L7.41,18.41M7.41,12.41L6,11L12,5L18,11L16.59,12.41L12,7.83L7.41,12.41Z" ></path>
                         </svg>
                     </button>
-                    <button type="button" id="pan-center" class="button-canvas" style="position: absolute; bottom: 50px; right: 50px;" title="Re-center canvas position">
+                    <button type="button" id="pan-center" class="button-canvas ui-button ui-widget ui-corner-all" style="position: absolute; bottom: 50px; right: 50px;" title="Re-center canvas position">
                         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                             <path fill="#000000" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M19,19H15V21H19A2,2 0 0,0 21,19V15H19M19,3H15V5H19V9H21V5A2,2 0 0,0 19,3M5,5H9V3H5A2,2 0 0,0 3,5V9H5M5,15H3V19A2,2 0 0,0 5,21H9V19H5V15Z" ></path>
                         </svg>
                     </button>
-                    <button type="button" id="pan-right" class="button-canvas" style="position: absolute; bottom: 50px; right: 10px;" title="Move canvas right">
+                    <button type="button" id="pan-right" class="button-canvas ui-button ui-widget ui-corner-all" style="position: absolute; bottom: 50px; right: 10px;" title="Move canvas right">
                         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                             <path fill="#000000" d="M5.59,7.41L7,6L13,12L7,18L5.59,16.59L10.17,12L5.59,7.41M11.59,7.41L13,6L19,12L13,18L11.59,16.59L16.17,12L11.59,7.41Z" ></path>
                         </svg>
                     </button>
-                    <button type="button" id="pan-down" class="button-canvas" style="position: absolute; bottom: 10px; right: 50px;" title="Move canvas down">
+                    <button type="button" id="pan-down" class="button-canvas ui-button ui-widget ui-corner-all" style="position: absolute; bottom: 10px; right: 50px;" title="Move canvas down">
                         <svg style="width:24px;height:24px" viewBox="0 0 24 24">
                             <path fill="#000000" d="M16.59,5.59L18,7L12,13L6,7L7.41,5.59L12,10.17L16.59,5.59M16.59,11.59L18,13L12,19L6,13L7.41,11.59L12,16.17L16.59,11.59Z" ></path>
                         </svg>
@@ -447,74 +469,6 @@
         <div id="progress-container" hidden>
 
         </div>
-    </div>
-
-    <div style="border: none">
-        <h2 > Change Log</h2>
-
-        <h3> Update 9 : March 15</h3>
-            <p> * Modified Modal to be generated on the fly. </p>
-            <p> * Modified status bar </p>
-            <p> * Added size option in web-cam and images </p>
-
-        <h3> Update 9 : October 15</h3>
-            <p> * Fixed fill color for shapes. </p>
-            <p> * Rearranged menu buttons. </p>
-            <p> * Added file upload option. </p>
-
-        <h3> Update 8 : September 27</h3>
-            <p> * Added Video, Audio, Image and Notes upload as attachment with preview </p>
-            <p> * Added tooltips </p>
-            <p> * Refactored code</p>
-
-        <h3 > Update 7.1 : September 21 </h3>
-            <p> * Fixed image upload from templates </p>
-
-        <h3 > Update 7 : September 20 </h3>
-            <p> * Modified size and zoom scale</p>
-            <p> * Added attachments action for Video, Audio, Notes and Image buttons.</p>
-            <p> * Added dialog to show selected attachments. </p>
-            <p> * Attachments can be removed on click onf cross image next to the attachment name. </p>
-            <p> * Added attach more files from attachments dialog. </p>
-            <p> * Added preview of attached image files in the attachments dialog. </p>
-
-        <h3 > Update 6 : September 17 </h3>
-            <p> * Added Color pallet</p>
-            <p> * Added user defined image upload dialog </p>
-            <p> * Added preview of selected image </p>
-            <p> * Added sample templates for demo purpose </p>
-            <p> * Preview of user selected image from device </p>
-            <p> * Fixed Zoom and Stroke-size slider </p>
-
-        <h3 > Update 5: August 31</h3>
-            <p> * Fixed slider to change pen stroke size </p>
-            <p> * Added zooming with slider </p>
-            <p> * Fixed template tab.
-                User can upload image in Template tab now. </p>
-            <p> * Capture image using web-cam and export to canvas.  </p>
-            <p> * Upload user selected image to canvas. </p>
-            <p> * Print / Download canvas image as PDF </p>
-
-        <h3 > Update 4: August 13</h3>
-            <p> * Added jQuery and jQuery UI </p>
-            <p> * Added shapes select menu</p>
-            <p> * Disable right click context menu on canvas</p>
-            <p> * Added Zoom In and Out feature</p>
-            <p> * Added reset zoom</p>
-            <p> * Added select tool to select and move drawings.</p>
-
-        <h3 > Update 3: July 31</h3>
-            <p> * Added Text </p>
-            <p> * Added Undo-Redo </p>
-            <p> * Added size of pencil width change (buggy) </p>
-
-        <h3 > Update 2: July 24</h3>
-            <p> * Added Arrow, Line, Shape (Rectangle) </p>
-            <p> * Added clear canvas </p>
-
-        <h3 > Update 1: June 26</h3>
-            <p> * Added Layout: css and js files </p>
-            <p> * Added pencil, eraser, colors </p>
     </div>
 
 </body>

@@ -1,28 +1,34 @@
 /**
- * Created by abhij on 3/7/2017.
+ * Created by abhijit on 3/7/2017.
  *
  */
 // Fabric.js Canvas object
 let canvas;
 
-const ERASE = "erase", DRAW = "draw", FILL = 'fill';
+const ERASE = "erase", DRAW = "draw", FILL = 'fill', SELECT = 'select';
 
-let EDITOR_MODE = DRAW;
+let EDITOR_MODE;
 
 let CANVAS_CURRENT;
 let UNDO_STACK = [];
 let REDO_STACK = [];
 
+// Used in object:added and object:modified to control undo and redo stack update
 let updateFlag = true;
 
 $(document).ready(function() {
+
     canvas = window._canvas = new fabric.Canvas('canvas', {
         selection: true,
-        // backgroundColor: '#EAEDED',
         preserveObjectStacking: true
     });
 
-    canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), 1.0);
+    fabric.Object.prototype.set({
+        transparentCorners: false,
+        cornerColor: "grey",
+        cornerSize: 12,
+        padding: 2
+    });
 
     let selectState = new SelectState(false, null);
 
@@ -34,7 +40,7 @@ $(document).ready(function() {
     canvas.on("object:added", function (e) {
         if(updateFlag) {
             var object = e.target;
-            console.log('object:added');
+            // console.log('object:added');
             updateStack();
         }
     });
@@ -42,13 +48,13 @@ $(document).ready(function() {
     canvas.on("object:removed", function (e) {
         if(updateFlag) {
             var object = e.target;
-            console.log('object:removed');
+            // console.log('object:removed');
             updateStack();
         }
     });
 
     canvas.on("object:modified", function (event) {
-        console.log('object:modified');
+        // console.log('object:modified');
         var object = event.target;
         if(updateFlag) {
             updateStack();
@@ -56,23 +62,30 @@ $(document).ready(function() {
     });
 
     canvas.on("object:selected", function (event) {
-        console.log('object:selected');
+        // console.log('object:selected');
         var object = event.target;
-        console.info(object.type);
-        if( EDITOR_MODE === FILL && (object.type === 'rect' || object.type === 'circle' || object.type === 'triangle' || object.type === 'polygon')) {
-            object.set('fill' , fillColor);
-            updateStack();
-        }
+        // console.info(object.type);
+        // if( EDITOR_MODE === FILL
+        //     && (object.type === "rect"
+        //         || object.type === "circle"
+        //         || object.type === "triangle"
+        //         || object.type === "polygon")) {
+        //     object.set("fill" , fillColor);
+        //     updateStack();
+        // }
     });
 
     canvas.on("mouse:up", function (event) {
-        // console.log('3 event:mouse:up - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
+        // // console.log('3 event:mouse:up - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
             if(selectState.isFirstClick === true){
                 if(canvas.getActiveObject())
-                    if(selectState.object.tag === "media" && isEventWithinObject(event.e, selectState.object)) {
-                        console.log('object:double-clicked');
+                    if(selectState.object && selectState.object.tag && selectState.object.tag === "media" && isEventWithinObject(event.e, selectState.object)) {
+                        // console.log('object:double-clicked');
                         selectState.object.show();
                         selectState.isFirstClick = false;
+                    } else if (selectState.object && selectState.object.type === "text" && isEventWithinObject(event.e, selectState.object)){
+                        // console.info("Text double clicked.");
+                        createDialogForText(selectState.object);
                     }
             } else {
                 selectState = new SelectState(true, canvas.getActiveObject());
@@ -81,13 +94,35 @@ $(document).ready(function() {
                 }, 500);
             }
     });
-    
+
+    var timeout;
+
+    function ping() {
+        // console.log("pinging....");
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            // console.log("PING");
+            $.ajax({
+                url : '../ws/rest/v1/docsanddrawing/ping',
+                type : "GET",
+                dataType:"json",
+                success : function(data) {
+                    // console.log(data.result);
+                },
+                error : function(request, error) {
+                    // console.log("Request: "+JSON.stringify(request));
+                }
+            });
+        }, 10 * 1000);
+    }
+
     canvas.on("mouse:down", function (event) {
-        console.log('2 object:mouse:down - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
+        // console.log('2 object:mouse:down - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
+        ping();
     });
 
     function isEventWithinObject(touchEvent, object) {
-        console.log("Touch X:" + touchEvent.offsetX + " Y:" + touchEvent.offsetY );
+        // console.log("Touch X:" + touchEvent.offsetX + " Y:" + touchEvent.offsetY );
         return touchEvent.offsetX >= object.aCoords.tl.x && touchEvent.offsetX <= object.aCoords.br.x
             && touchEvent.offsetY >= object.aCoords.tl.y && touchEvent.offsetY <= object.aCoords.br.y;
     }
@@ -96,33 +131,100 @@ $(document).ready(function() {
 
 });
 
+function createDialogForText(object) {
+    // console.info(object);
+    let dialog = $("<div/>");
+    dialog.attr("title", "Annotation");
+
+    let wrapperDiv = $("<div />").css({
+        margin:'5px',
+    });
+
+    let noteTextArea = $("<textarea />");
+    noteTextArea.css({"height":"200", "width":"400", "float":"left","margin-top": "10px"});
+    noteTextArea.attr("title","Annotation");
+    noteTextArea.appendTo(wrapperDiv);
+
+    object?noteTextArea.val(object.text):false;
+
+    var attachBtn, clearBtn, uploadBtn;
+
+    let validate = function () {
+        if(noteTextArea.val() !== ""){
+            attachBtn.button("enable");
+            clearBtn.button("enable");
+        } else {
+            attachBtn.button("disable");
+            clearBtn.button("disable");
+        }
+    };
+
+    noteTextArea.on("change keyup paste", validate);
+
+    wrapperDiv.appendTo(dialog);
+
+    dialog.dialog({
+        modal:true,
+        resizable: true,
+        position: {
+            of: window,
+            at: "center center",
+            my: "center center"
+        },
+        height: "auto",
+        width: "460",
+        open: function () {
+            document.onkeydown = null;
+            attachBtn = $(".ui-dialog-buttonpane button:contains('Add')");
+            clearBtn = $(".ui-dialog-buttonpane button:contains('Clear')");
+            uploadBtn = $(".ui-dialog-buttonpane button:contains('Upload')");
+            !object ? attachBtn.button("disable") : false;
+            !object ? clearBtn.button("disable") : false;
+        },
+        close: function () {
+            $(this).dialog("destroy");
+            document.onkeydown = keyFunction;
+        },
+        autoOpen: false,
+        buttons: {
+            "Clear": function () {
+                // console.info("Retry clicked");
+                noteTextArea.val("");
+                attachBtn.button("disable");
+                clearBtn.button("disable");
+            },
+            "Add": function () {
+                // console.info("Attach clicked");
+                // console.info(noteTextArea.val().replace(/\n/g," "));
+                canvas.remove(object);
+                let text = new fabric.Text(noteTextArea.val(), {
+                    fontFamily: "sans-serif",
+                    textAlign: "left",
+                    left: object?object.left:100,
+                    top: object?object.top:100,
+                    fill: "black",
+                    charSpacing : 0
+                });
+                canvas.add(text);
+                canvas.renderAll();
+                $(this).dialog("close");
+            },
+            "Cancel": function () {
+                $(this).dialog("close");
+            },
+        }
+    });
+    dialog.dialog("open");
+}
+
 function State(data) {
     this.data = data;
 }
 
 function updateStack() {
-    console.log('stack updated');
+    // console.log('stack updated');
     UNDO_STACK.push(new State(CANVAS_CURRENT));
     CANVAS_CURRENT = JSON.stringify(canvas);
-}
-
-function undo() {
-    if(UNDO_STACK.length > 0) {
-        console.log("undo");
-        updateFlag = false;
-        disableUndoRedo();
-        canvas.clear().renderAll();
-        REDO_STACK.push(new State(CANVAS_CURRENT));
-        let state = UNDO_STACK.pop();
-        CANVAS_CURRENT = state.data;
-        canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
-            canvas.renderAll();
-            updateFlag = true;
-            enableUndoRedo();
-        });
-    } else {
-        console.log("not undone");
-    }
 }
 
 function disableUndoRedo() {
@@ -135,9 +237,29 @@ function enableUndoRedo() {
     $("#redo").attr("disabled", false);
 }
 
+function undo() {
+    if(UNDO_STACK.length > 0) {
+        // console.log("undo");
+        updateFlag = false;
+        disableUndoRedo();
+        canvas.clear().renderAll();
+        REDO_STACK.push(new State(CANVAS_CURRENT));
+        let state = UNDO_STACK.pop();
+        CANVAS_CURRENT = state.data;
+        canvas.loadFromJSON(CANVAS_CURRENT, function onLoad() {
+            canvas.renderAll();
+            updateFlag = true;
+            enableUndoRedo();
+        });
+
+    } else {
+        // console.log("not undone");
+    }
+}
+
 function redo() {
     if(REDO_STACK.length > 0) {
-        console.log("redo");
+        // console.log("redo");
         updateFlag = false;
         disableUndoRedo();
         canvas.clear().renderAll();
@@ -150,7 +272,7 @@ function redo() {
             enableUndoRedo();
         });
     } else {
-        console.log("not redone");
+        // console.log("not redone");
     }
 }
 
@@ -159,47 +281,31 @@ function clearCanvas() {
 }
 
 // Copy Paste
-let copiedObject;
-let copiedObjects = [];
+var copiedObjects = [];
 function copy(){
-    if(canvas.getActiveGroup()){
-        for(var i in canvas.getActiveGroup().objects){
-            var object = fabric.util.object.clone(canvas.getActiveGroup().objects[i]);
-            object.set("top", object.top+5);
-            object.set("left", object.left+5);
-            copiedObjects[i] = object;
-        }
-    }
-    else if(canvas.getActiveObject()){
-        var object = fabric.util.object.clone(canvas.getActiveObject());
-        object.set("top", object.top+5);
-        object.set("left", object.left+5);
-        copiedObject = object;
+    // if(canvas.getActiveGroup()){
+    //     console.log(canvas.getActiveGroup());
+    //     for(let i = 0; i < canvas.getActiveGroup()._objects.length; i++){
+    //         copiedObjects[i] = fabric.util.object.clone(canvas.getActiveGroup()._objects[i]);
+    //     }
+    // } else
+    if(canvas.getActiveObject()){
         copiedObjects = [];
+        copiedObjects[0] = fabric.util.object.clone(canvas.getActiveObject());
     }
 }
 
 function paste(){
     if(copiedObjects.length > 0){
-        for(var i in copiedObjects){
-            canvas.add(copiedObjects[i]);
+        canvas.discardActiveObject();
+        for(let i = 0; i < copiedObjects.length; i++){
+            let object = copiedObjects[i];
+            object.set("top", object.top+10);
+            object.set("left", object.left+10);
+            canvas.add(fabric.util.object.clone(copiedObjects[i]));
         }
     }
-    else if(copiedObject){
-        var object = fabric.util.object.clone(copiedObject);
-        object.set("top", object.top+5);
-        object.set("left", object.left+5);
-        var copiedObject1 = object;
-        canvas.add(copiedObject1);
-    }
     canvas.renderAll();
-}
-
-function clone(obj) {
-    var object = fabric.util.object.clone(obj);
-    object.set("top", obj.top+10);
-    object.set("left", obj.left+10);
-    canvas.add(obj);
 }
 
 function deleteObjects() {
@@ -216,8 +322,6 @@ function deleteObjects() {
         });
     }
 }
-// todo: check if more anc be added to this.. https://jsfiddle.net/d29u79vn/
-
 
 function rotateObject(angleOffset) {
     let obj = canvas.getActiveObject(),
