@@ -29,7 +29,15 @@ $(document).ready(function() {
         }).appendTo(dialog);
         $("<p />").appendTo(dialog);
         $("<button />").css('margin', '10px').text("Capture using web-cam").button().on("click", function () {
-            createWebcamDialog();
+            var isFirefox = typeof InstallTrigger !== 'undefined';
+            if (isFirefox) {
+                // Call the getUserMedia method here
+                createWebcamDialog();
+            } else {
+                console.log('Native device media streaming (getUserMedia) not supported in this browser.');
+                // Display a friendly "sorry" message to the user.
+                alert("Please use FireFox to access the camera");
+            }
             dialog.dialog("destroy");
         }).appendTo(dialog);
         dialog.dialog({
@@ -350,7 +358,15 @@ $(document).ready(function() {
         }).appendTo(dialog);
         $("<p />").appendTo(dialog);
         $("<button />").css('margin', '10px').text("Record using microphone").button().on("click", function () {
-            createRecordDialog();
+            var isFirefox = typeof InstallTrigger !== 'undefined';
+            if (isFirefox) {
+                // Call the getUserMedia method here
+                createRecordDialog();
+            } else {
+                console.log('Native device media streaming (getUserMedia) not supported in this browser.');
+                // Display a friendly "sorry" message to the user.
+                alert("Please use FireFox to access the camera");
+            }
             dialog.dialog("destroy");
         }).appendTo(dialog);
         dialog.dialog({
@@ -503,7 +519,15 @@ $(document).ready(function() {
                 "Retry": function () {
                     console.info("Retry clicked");
                     $(this).dialog("destroy");
-                    createRecordDialog();
+                    var isFirefox = typeof InstallTrigger !== 'undefined';
+                    if (isFirefox) {
+                        // Call the getUserMedia method here
+                        createRecordDialog();
+                    } else {
+                        console.log('Native device media streaming (getUserMedia) not supported in this browser.');
+                        // Display a friendly "sorry" message to the user.
+                        alert("Please use FireFox to access the camera");
+                    }
                 },
                 "Attach": function () {
                     console.info("Attach clicked");
@@ -563,7 +587,15 @@ $(document).ready(function() {
         }).appendTo(dialog);
         $("<p />").appendTo(dialog);
         $("<button />").css('margin', '10px').text("Capture using web-cam").button().on("click", function () {
-            createCamcorderDialog();
+            var isFirefox = typeof InstallTrigger !== 'undefined';
+            if (isFirefox) {
+                // Call the getUserMedia method here
+                createCamcorderDialog();
+            } else {
+                console.log('Native device media streaming (getUserMedia) not supported in this browser.');
+                // Display a friendly "sorry" message to the user.
+                alert("Please use FireFox to access the camera");
+            }
             dialog.dialog("destroy");
         }).appendTo(dialog);
         $("<p />").text("Supported formats: MP4, Webm or 3GP ").appendTo(dialog);

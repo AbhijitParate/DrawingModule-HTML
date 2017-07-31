@@ -47,19 +47,19 @@ $(document).ready(function() {
         },
         open : function () {
 
-            $.ajax({
-                type: "GET",
-                url: "../ws/rest/v1/docsanddrawing/template/all",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(data){
-                    $("#template-select").empty();
-                    $.each(data, function (i) {
-                        console.log(data[i]);
-                        var option = $("<option />").attr('value',data[i]).text(data[i]).appendTo("#template-select");
-                    });
-                }
-            });
+            // $.ajax({
+            //     type: "GET",
+            //     url: "../ws/rest/v1/docsanddrawing/template/all",
+            //     contentType: "application/json; charset=utf-8",
+            //     dataType: "json",
+            //     success: function(data){
+            //         $("#template-select").empty();
+            //         $.each(data, function (i) {
+            //             console.log(data[i]);
+            //             var option = $("<option />").attr('value',data[i]).text(data[i]).appendTo("#template-select");
+            //         });
+            //     }
+            // });
 
             $(".ui-dialog-buttonpane button:contains('Use selected')")
                 .button("disable");
@@ -133,6 +133,7 @@ $(document).ready(function() {
         };
         xhr.send();
     });
+
     $("#import-template").click(function () {
         dialogTemplate.dialog("open");
     });
@@ -217,7 +218,15 @@ $(document).ready(function() {
     }
 
     $("#import-camera").click(function () {
-        showWebcamDialog();
+        var isFirefox = typeof InstallTrigger !== 'undefined';
+        if (isFirefox) {
+            // Call the getUserMedia method here
+            showWebcamDialog();
+        } else {
+            console.log('Native device media streaming (getUserMedia) not supported in this browser.');
+            // Display a friendly "sorry" message to the user.
+            alert("Please use FireFox to access the camera");
+        }
     });
 
     function getInputTag() {
