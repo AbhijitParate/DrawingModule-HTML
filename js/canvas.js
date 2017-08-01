@@ -95,32 +95,6 @@ $(document).ready(function() {
             }
     });
 
-    var timeout;
-
-    function ping() {
-        // console.log("pinging....");
-        clearTimeout(timeout);
-        timeout = setTimeout(function() {
-            // console.log("PING");
-            $.ajax({
-                url : '../ws/rest/v1/docsanddrawing/ping',
-                type : "GET",
-                dataType:"json",
-                success : function(data) {
-                    // console.log(data.result);
-                },
-                error : function(request, error) {
-                    // console.log("Request: "+JSON.stringify(request));
-                }
-            });
-        }, 10 * 1000);
-    }
-
-    canvas.on("mouse:down", function (event) {
-        // console.log('2 object:mouse:down - X: ' + event.e.offsetX + ' Y: ' + event.e.offsetY);
-        ping();
-    });
-
     function isEventWithinObject(touchEvent, object) {
         // console.log("Touch X:" + touchEvent.offsetX + " Y:" + touchEvent.offsetY );
         return touchEvent.offsetX >= object.aCoords.tl.x && touchEvent.offsetX <= object.aCoords.br.x

@@ -567,7 +567,7 @@ $(document).ready(function() {
         input.attr("type", "file");
         input.attr("hidden","");
         input.attr("name","video[]");
-        input.attr("accept","video/mp4,video/webm,video/ogg");
+        input.attr("accept","video/mp4,video/x-m4v,video/webm");
         input.on("change", function (e) {
             let video = e.target.files[0];
             let reader = new FileReader();
@@ -598,7 +598,7 @@ $(document).ready(function() {
                 alert("Please use FireFox to access the camera");
             }
         }).appendTo(dialog);
-        $("<p />").text("Supported formats: MP4, Webm or 3GP ").appendTo(dialog);
+        $("<p />").text("Supported formats: MP4 and Webm").appendTo(dialog);
         dialog.dialog({
             modal:true,
             resizable: true,
@@ -1201,6 +1201,14 @@ function getPreviewDialog(data, mimeType) {
             div.dialog({
                 width: 500,
                 height: 500,
+                open: function () {
+                    let type = data.substr(11, 4);
+                  console.log(type);
+                  if (type === "webm"){
+                      alert("Some .webm files are not supported. "
+                          + "If you are having trouble previewing the file please use a converter to convert video to MP4.");
+                  }
+                },
                 close: function () {
                     $(this).dialog('destroy');
                 },
